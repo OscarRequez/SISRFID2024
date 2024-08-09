@@ -1,5 +1,5 @@
 <?php
-class Usuario_model extends CI_Model {
+class M_usuarios extends CI_Model {
 
     public function __construct() {
         $this->load->database(); // Cargar la base de datos

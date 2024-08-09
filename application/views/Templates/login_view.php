@@ -1,4 +1,4 @@
-<?php include('Templates/header.php'); ?>
+<?php $this->load->view('templates/header'); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -48,7 +48,7 @@
                 <?php if ($this->session->flashdata('error')): ?>
                     <div class="alert alert-danger"><?php echo $this->session->flashdata('error'); ?></div>
                 <?php endif; ?>
-                <form method="post" action="<?php echo site_url('login/authenticate'); ?>">
+                <form method="post" action="<?php echo site_url('C_login/authenticate'); ?>">
                     <div class="form-group">
                         <label for="email">Email:</label>
                         <input type="text" class="form-control" id="email" name="email" placeholder="Introduce tu email" required>
@@ -67,5 +67,5 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-<?php include('Templates/footer.php'); ?>
+<?php $this->load->view('templates/footer'); ?>
 

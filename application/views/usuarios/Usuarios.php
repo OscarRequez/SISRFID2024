@@ -1,4 +1,4 @@
-<?php include('Templates/header.php'); ?>
+<?php $this->load->view('templates/header'); ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -55,4 +55,4 @@
 </table>
 </body>
 </html>
-<?php include('Templates/footer.php'); ?>
+<?php $this->load->view('templates/footer'); ?>
