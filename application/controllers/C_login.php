@@ -31,6 +31,7 @@ class C_Login extends CI_Controller
                 $this->session->set_userdata('role', $user->role);  // ID del rol
                 $this->session->set_userdata('rol_name', $user->rol_name); // Nombre del rol
                 $this->session->set_userdata('username', $user->nombre); // Guardar el nombre del usuario
+                $this->session->set_userdata('email', $user->email); // Guardar el nombre del usuario
     
                 // Redirigir a la página principal del sistema
                 redirect('welcome');

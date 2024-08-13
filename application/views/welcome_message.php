@@ -1,114 +1,96 @@
-<?php $this->load->library('session'); ?>
+<?php $this->load->view('templates/header'); ?>
 
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>SISAMED</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Estilo para la barra lateral */
-        .sidebar {
-            height: 100vh;
-            width: 250px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: #3B4045;
-            padding-top: 20px;
-        }
+<style>
+    /* Estilo para gráficos */
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 60%;
+        border: 1px solid #122EF9;
+    }
 
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 15px;
-            color: #BBC8E1;
-            display: block;
-        }
-
-        .sidebar a:hover {
-            background-color: #2A65D5;
-        }
-
-        .content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-
-        /* Estilo para el punto verde y el texto */
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            background-color: #14F605;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-
-        .status-text {
-            display: inline-block;
-            color: #fff;
-            /* Color verde para el texto */
-        }
-    </style>
+    .table-responsive {
+        border: 1px solid #122EF9;
+    }
+</style>
 </head>
+<!-- welcome.php -->
 
-<body>
+<div class="col py-3">
+    <h1>Bienvenido a SISAMED</h1>
 
-    <!-- Contenido principal -->
-    <div class="content">
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <!-- Tabla de Datos -->
 
-        <!-- Barra lateral -->
-        <div class="sidebar">
-            <div class="card-header bg-primary text-white d-flex align-items-center">
-                <!-- Contenido textual a la izquierda -->
-                <div class="mr-auto">
-                    <h5> <?php echo $this->session->userdata('username'); ?> </h5>
-                    <p>
-                        <?php echo $this->session->userdata('rol_name'); ?> <br>
-
-                        <?php if ($this->session->userdata('user_id')): ?>
-                            <span class="status-indicator"></span>
-                            <span class="status-text">En línea</span>
-                        <?php else: ?>
-                            <span class="status-indicator"></span>
-                            <span class="status-text">Desconectado</span>
-                        <?php endif; ?>
-                    </p>
-
-                </div>
-
-                           <!-- Imagen a la derecha -->
-            <div class="ml-3 bg-dark">
-                <img src="<?php echo base_url('assets/imagenes/usuarios/oscar.png'); ?>" class="img-fluid rounded" style="width: 50px; height: 50px;">
-            </div>
-            </div>
-
- 
-
-            <a href="<?php echo site_url('welcome'); ?>">Inicio</a>
-            <a href="<?php echo site_url('Equipos'); ?>">Equipos Medicos</a>
-            <a href="<?php echo site_url('usuarios'); ?>">Usuarios</a>
-            <a href="<?php echo site_url('welcome'); ?>">RFID</a>
-            <a href="<?php echo site_url('usuarios'); ?>">Reportes</a>
-            <a href="<?php echo site_url('otros'); ?>">Mantenimiento</a>
-            <a href="<?php echo site_url('otros'); ?>">Manuales y documentación</a>
-            <a href="<?php echo site_url('logout'); ?>">Cerrar sesión</a>
-        </div>
-
-        <!-- Contenido -->
-        <div class="main-content">
-            <!-- Aquí puedes agregar el contenido principal de la página -->
-        </div>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Ventas</th>
+                    <th>Gastos</th>
+                    <th>Beneficio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2024-08-01</td>
+                    <td>$5000</td>
+                    <td>$2000</td>
+                    <td>$3000</td>
+                </tr>
+                <tr>
+                    <td>2024-08-02</td>
+                    <td>$6000</td>
+                    <td>$2500</td>
+                    <td>$3500</td>
+                </tr>
+                <!-- Más filas según sea necesario -->
+            </tbody>
+        </table>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
 
-</html>
+    <!-- Gráfico de Datos -->
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Configuración del gráfico
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'bar', // Tipo de gráfico (puede ser 'bar', 'line', 'pie', etc.)
+        data: {
+            labels: ['2024-08-01', '2024-08-02'], // Etiquetas para el eje X
+            datasets: [{
+                label: 'Ventas',
+                data: [5000, 6000], // Datos para el gráfico
+                backgroundColor: 'rgba(39, 198, 26, 0.8)', // Color de fondo de las barras
+                borderColor: 'rgba(75, 192, 192, 1)', // Color del borde de las barras
+                borderWidth: 1
+            }, {
+                label: 'Gastos',
+                data: [2000, 2500], // Datos para el gráfico
+                backgroundColor: 'rgba(31, 104, 199, 0.8)', // Color de fondo de las barras
+                borderColor: 'rgba(16, 15, 18, 1)', // Color del borde de las barras
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+
+<?php $this->load->view('templates/footer'); ?>

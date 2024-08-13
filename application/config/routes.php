@@ -61,3 +61,7 @@ $route['logout'] = 'C_login/logout'; //CERRAR SESION
 
 //usuarios
 $route['usuarios'] = 'usuarios/C_usuarios';
+//usuarios
+$route['roles'] = 'usuarios/C_roles';
+$route['obtener_roles_ajax'] = 'usuarios/C_usuarios/obtener_roles_ajax';
+$route['guardar_usuario'] = 'usuarios/C_usuarios/guardar';
