@@ -24,11 +24,31 @@ class C_usuarios extends MY_Controller
         $this->load->database(); // Cargar la base de datos
     }
 
-    public function index()
-    {
+    
+    public function index() {
         $data['usuarios'] = $this->mUsuario->get_usuarios_con_roles(); // Obtener usuarios con sus roles
+        // Carga la vista
         $this->load->view('usuarios/Usuarios', $data); // Cargar la vista correspondiente
     }
+
+    public function mostrar() {
+   
+        $buscar = $this->input->post('buscar');
+        $pagina = $this->input->post('nropagina');
+        $cantidad = $this->input->post('cantidad');
+    
+        // Calcula el inicio para la paginación
+        $inicio = ($pagina - 1) * $cantidad;
+    
+        // Obtén los usuarios paginados y el total de registros
+        $data['usuarios'] = $this->mUsuario->get_users($cantidad, $inicio, $buscar);
+        $data['totalregistros'] = $this->mUsuario->count_all_users($buscar);
+        $data['cantidad'] = $cantidad;
+    
+        // Devuelve los datos en formato JSON
+        echo json_encode($data);
+    }
+    
 
     public function obtener_roles_ajax() {
         
@@ -36,7 +56,7 @@ class C_usuarios extends MY_Controller
         echo json_encode($roles); // Envía los roles en formato JSON
     }
 
-
+    // USUARIO NUEVO AGREGAR A LA BASE DE DATOS
     public function guardar() {
         if ($this->input->post()) {
             $nombre = $this->input->post('nombre');
@@ -65,6 +85,56 @@ class C_usuarios extends MY_Controller
             // Redirigir a la lista de usuarios o mostrar un mensaje de éxito
             redirect('usuarios'); // Cambia la redirección según tus necesidades
         }
+    }
+    // USUARIO NUEVO AGREGAR A LA BASE DE DATOS
+
+    public function actualizar() {
+        $id = $this->input->post('id');
+        $nombre = $this->input->post('nombre');
+        $email = $this->input->post('email');
+        $rol = $this->input->post('rol');
+        $contraseña = $this->input->post('contraseña');
+    
+        // Obtén el usuario que está realizando la actualización
+        $usuario_modificador = $this->session->userdata('email'); // O el valor que uses para identificar al usuario
+    
+        // Construye el array de datos a actualizar
+        $datos = array(
+            'nombre' => $nombre,
+            'email' => $email,
+            'rol_id' => $rol,
+            'fecmod' => date('Y-m-d H:i:s'), // Fecha y hora actual
+            'usumod' => $usuario_modificador // Usuario que realiza la modificación
+        );
+    
+        // Si se ha enviado una nueva contraseña, agrégala a los datos a actualizar
+        if (!empty($contraseña)) {
+            $datos['password'] = password_hash($contraseña, PASSWORD_BCRYPT); // Asegúrate de cifrar la contraseña
+        }
+    
+        // Llama al modelo para realizar la actualización
+        $this->mUsuario->actualizar_usuario($id, $datos);
+    
+        // Redirige o muestra un mensaje según el resultado
+        redirect('usuarios'); // Redirige a la lista de usuarios o la página que desees
+    }
+
+
+    public function cambiar_estado_usuario($id) {
+        // Cargar el modelo si no lo has hecho en el constructor
+        $this->load->model('M_usuarios');
+        
+        // Obtener el estado actual del usuario
+        $usuario = $this->mUsuario->get_usuario($id);
+    
+        // Cambiar el estado
+        $nuevo_estado = $usuario['estado'] == 1 ? 0 : 1;
+        
+        // Actualizar el estado en la base de datos
+        $this->mUsuario->update_usuario_estado($id, $nuevo_estado);
+        
+        // Responder con éxito (puedes devolver JSON si es necesario)
+        echo json_encode(['success' => true]);
     }
 
 }

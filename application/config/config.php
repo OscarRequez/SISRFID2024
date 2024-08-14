@@ -1,6 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/*Este campo se pone para configurar todo el codigo para una zona horaria compatible con la region de uso*/
+date_default_timezone_set('America/La_Paz');
 /*
 |--------------------------------------------------------------------------
 | Base Site URL

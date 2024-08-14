@@ -16,81 +16,136 @@
 </style>
 </head>
 <!-- welcome.php -->
-
 <div class="col py-3">
-    <h1>Bienvenido a SISAMED</h1>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Estadísticas Generales -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Equipos Registrados</h5>
+                        <p class="card-text"><strong>150</strong></p>
+                    </div>
+                </div>
+            </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <!-- Tabla de Datos -->
+            <!-- Gráfico de Solicitudes de Mantenimiento -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <canvas id="maintenanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Ventas</th>
-                    <th>Gastos</th>
-                    <th>Beneficio</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>2024-08-01</td>
-                    <td>$5000</td>
-                    <td>$2000</td>
-                    <td>$3000</td>
-                </tr>
-                <tr>
-                    <td>2024-08-02</td>
-                    <td>$6000</td>
-                    <td>$2500</td>
-                    <td>$3500</td>
-                </tr>
-                <!-- Más filas según sea necesario -->
-            </tbody>
-        </table>
-    </div>
+            <!-- Notificaciones -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Notificaciones</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">Equipo X necesita mantenimiento</li>
+                            <li class="list-group-item">Solicitud Y completada</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Gráficos adicionales y accesos rápidos -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Distribución de Equipos</h5>
+                        <canvas id="equipmentDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Gráfico de Datos -->
-    <div class="chart-container">
-        <canvas id="myChart"></canvas>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Últimas Solicitudes de Mantenimiento</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Equipo</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Equipo A</td>
+                                    <td>01/08/2024</td>
+                                    <td>En proceso</td>
+                                </tr>
+                                <tr>
+                                    <td>Equipo B</td>
+                                    <td>02/08/2024</td>
+                                    <td>Completado</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<br>
 
-<!-- Bootstrap JS and dependencies -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Configuración del gráfico
-    const ctx = document.getElementById('myChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'bar', // Tipo de gráfico (puede ser 'bar', 'line', 'pie', etc.)
+    const ctx = document.getElementById('maintenanceChart').getContext('2d');
+    const maintenanceChart = new Chart(ctx, {
+        type: 'bar', // Puedes cambiar a 'line', 'pie', etc.
         data: {
-            labels: ['2024-08-01', '2024-08-02'], // Etiquetas para el eje X
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio'], // Etiquetas del eje X
             datasets: [{
-                label: 'Ventas',
-                data: [5000, 6000], // Datos para el gráfico
-                backgroundColor: 'rgba(39, 198, 26, 0.8)', // Color de fondo de las barras
-                borderColor: 'rgba(75, 192, 192, 1)', // Color del borde de las barras
-                borderWidth: 1
-            }, {
-                label: 'Gastos',
-                data: [2000, 2500], // Datos para el gráfico
-                backgroundColor: 'rgba(31, 104, 199, 0.8)', // Color de fondo de las barras
-                borderColor: 'rgba(16, 15, 18, 1)', // Color del borde de las barras
-                borderWidth: 1
+                label: 'Solicitudes de Mantenimiento',
+                data: [12, 19, 3, 5, 2, 3, 7], // Datos para cada mes
+                backgroundColor: 'rgba(106, 222, 90, 0.5)', // Color de las barras
+                borderColor: 'rgba(123, 225, 217 , 1)', // Color del borde de las barras
+                borderWidth: 2
             }]
         },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    beginAtZero: true // El eje Y comienza en 0
                 }
             }
         }
     });
 </script>
 
+<script>
+    const ctx2 = document.getElementById('equipmentDistributionChart').getContext('2d');
+    const equipmentDistributionChart = new Chart(ctx2, {
+        type: 'pie', // Tipo de gráfico: 'pie' para gráfico circular
+        data: {
+            labels: ['Operativos', 'En Mantenimiento', 'Dados de Baja'], // Etiquetas de cada sección
+            datasets: [{
+                label: 'Distribución de Equipos',
+                data: [50, 30, 20], // Datos para cada sección
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(255, 159, 64, 0.5)',
+                    'rgba(255, 99, 132, 0.5)'
+                ], // Colores para cada sección
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true, // El gráfico se ajusta al tamaño del contenedor
+        }
+    });
+</script>
 
-<?php $this->load->view('templates/footer'); ?>
+

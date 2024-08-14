@@ -65,3 +65,8 @@ $route['usuarios'] = 'usuarios/C_usuarios';
 $route['roles'] = 'usuarios/C_roles';
 $route['obtener_roles_ajax'] = 'usuarios/C_usuarios/obtener_roles_ajax';
 $route['guardar_usuario'] = 'usuarios/C_usuarios/guardar';
+$route['actualizar_usuario'] = 'usuarios/C_usuarios/actualizar';
+$route['cambiar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/cambiar_estado_usuario/$1';
+
+
+$route['usuarios/mostrar'] = 'usuarios/C_usuarios/mostrar';
