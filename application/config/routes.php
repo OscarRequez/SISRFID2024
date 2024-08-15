@@ -67,6 +67,9 @@ $route['obtener_roles_ajax'] = 'usuarios/C_usuarios/obtener_roles_ajax';
 $route['guardar_usuario'] = 'usuarios/C_usuarios/guardar';
 $route['actualizar_usuario'] = 'usuarios/C_usuarios/actualizar';
 $route['cambiar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/cambiar_estado_usuario/$1';
-
-
 $route['usuarios/mostrar'] = 'usuarios/C_usuarios/mostrar';
+
+//Roles de usuario
+$route['usuarios/mostrarRoles'] = 'usuarios/C_roles/mostrarRoles';
+$route['permisos/obtenerPermisosUnicos'] = 'usuarios/C_roles/agregarRol';
+

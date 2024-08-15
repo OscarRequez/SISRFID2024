@@ -2,72 +2,97 @@
 
 
 <style>
-    /* Estilo para gráficos */
+    /* Asegúrate de que el contenedor principal no tenga un ancho mayor al 100% */
+    .container {
+        max-width: 80%;
+
+        /* Oculta el desbordamiento horizontal */
+    }
+
+    /* Ajusta el tamaño de los gráficos para que se ajusten al contenedor */
     .chart-container {
-        position: relative;
-        height: 400px;
         width: 60%;
-        border: 1px solid #122EF9;
+        height: 100%;
+        /* Asegúrate de que los gráficos no excedan el contenedor */
+        max-width: 100%;
+        max-height: 80%;
+        position: relative;
+
+    }
+
+    .col-md-3,
+    .col-md-6,
+    .col-md-4,
+    .col-md-8 {
+        padding: 0.5rem;
+        /* Ajusta el padding si es necesario */
+        box-sizing: border-box;
+        /* Incluye padding en el cálculo del ancho total */
+        max-width: 80%;
+        max-height: 80%;
     }
 
     .table-responsive {
-        border: 1px solid #122EF9;
+
+        max-width: 60%;
+        max-height: 80%;
     }
 </style>
 </head>
 <!-- welcome.php -->
+
 <div class="col py-3">
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Estadísticas Generales -->
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Equipos Registrados</h5>
-                        <p class="card-text"><strong>150</strong></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gráfico de Solicitudes de Mantenimiento -->
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <canvas id="maintenanceChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notificaciones -->
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Notificaciones</h5>
-                        <ul class="list-group">
-                            <li class="list-group-item">Equipo X necesita mantenimiento</li>
-                            <li class="list-group-item">Solicitud Y completada</li>
-                        </ul>
-                    </div>
+    <div class="row">
+        <!-- Estadísticas Generales -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Equipos Registrados</h5>
+                    <p class="card-text"><strong>150</strong></p>
                 </div>
             </div>
         </div>
 
-        <!-- Gráficos adicionales y accesos rápidos -->
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Distribución de Equipos</h5>
-                        <canvas id="equipmentDistributionChart"></canvas>
-                    </div>
+        <!-- Gráfico de Solicitudes de Mantenimiento -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="maintenanceChart"></canvas>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Últimas Solicitudes de Mantenimiento</h5>
-                        <table class="table table-striped">
+        <!-- Notificaciones -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Notificaciones</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">Equipo X necesita mantenimiento</li>
+                        <li class="list-group-item">Solicitud Y completada</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos adicionales y accesos rápidos -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Distribución de Equipos</h5>
+                    <canvas class="chart-container" id="equipmentDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Últimas Solicitudes de Mantenimiento</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-responsive">
                             <thead>
                                 <tr>
                                     <th>Equipo</th>
@@ -93,6 +118,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 <br>
 
@@ -149,3 +175,5 @@
 </script>
 
 
+
+<?php $this->load->view('templates/footer'); ?>

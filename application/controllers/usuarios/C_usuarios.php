@@ -8,10 +8,21 @@ class C_usuarios extends MY_Controller
         parent::__construct();
         $this->load->model('M_permisos');
         $this->load->model('usuarios/M_usuarios', 'mUsuario');
-        $this->load->model('usuarios/M_roles','mRoles');
+        $this->load->model('usuarios/M_roles', 'mRoles');
         
         // Verificar si el usuario está autenticado
         if (!$this->session->userdata('user_id')) {
+            redirect('login');
+        }
+
+        // Verificar si el usuario está activo en la base de datos
+        $user_id = $this->session->userdata('user_id');
+        $this->load->database(); // Cargar la base de datos
+        $usuario = $this->db->get_where('usuarios', ['id' => $user_id, 'estado' => 1])->row();
+
+        if (!$usuario) {
+            // Si el usuario no existe o no está activo, destruir la sesión y redirigir al login
+            $this->session->sess_destroy();
             redirect('login');
         }
 
@@ -20,9 +31,8 @@ class C_usuarios extends MY_Controller
         if (!$this->M_permisos->tiene_permiso($rol_id, 'usuarios')) {
             redirect('no_autorizado');
         }
-
-        $this->load->database(); // Cargar la base de datos
     }
+
 
     
     public function index() {
@@ -89,15 +99,19 @@ class C_usuarios extends MY_Controller
     // USUARIO NUEVO AGREGAR A LA BASE DE DATOS
 
     public function actualizar() {
+        // Obtén los datos del formulario
         $id = $this->input->post('id');
         $nombre = $this->input->post('nombre');
         $email = $this->input->post('email');
         $rol = $this->input->post('rol');
         $contraseña = $this->input->post('contraseña');
-    
+
+        // Debug para ver si se recibe la contraseña
+        var_dump($contraseña);
+        
         // Obtén el usuario que está realizando la actualización
-        $usuario_modificador = $this->session->userdata('email'); // O el valor que uses para identificar al usuario
-    
+        $usuario_modificador = $this->session->userdata('username'); // O el valor que uses para identificar al usuario
+        
         // Construye el array de datos a actualizar
         $datos = array(
             'nombre' => $nombre,
@@ -106,19 +120,19 @@ class C_usuarios extends MY_Controller
             'fecmod' => date('Y-m-d H:i:s'), // Fecha y hora actual
             'usumod' => $usuario_modificador // Usuario que realiza la modificación
         );
-    
+        
         // Si se ha enviado una nueva contraseña, agrégala a los datos a actualizar
         if (!empty($contraseña)) {
-            $datos['password'] = password_hash($contraseña, PASSWORD_BCRYPT); // Asegúrate de cifrar la contraseña
+            // Verifica que la contraseña tenga el formato adecuado si es necesario
+            $datos['contraseña'] = password_hash($contraseña, PASSWORD_BCRYPT); // Asegúrate de cifrar la contraseña
         }
-    
+        
         // Llama al modelo para realizar la actualización
         $this->mUsuario->actualizar_usuario($id, $datos);
-    
+        
         // Redirige o muestra un mensaje según el resultado
         redirect('usuarios'); // Redirige a la lista de usuarios o la página que desees
     }
-
 
     public function cambiar_estado_usuario($id) {
         // Cargar el modelo si no lo has hecho en el constructor

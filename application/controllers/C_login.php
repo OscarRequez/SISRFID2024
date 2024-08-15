@@ -15,8 +15,7 @@ class C_Login extends CI_Controller
     }
 
     // INICIO OR-02 07/08/2024 OSCAR REQUEZ MODULO DE INICIO DE SESION
-    public function authenticate()
-    {
+    public function authenticate() {
         $email = trim($this->input->post('email'));
         $password = trim($this->input->post('password'));
     
@@ -24,6 +23,13 @@ class C_Login extends CI_Controller
         $user = $this->M_login->validate_user($email);
     
         if ($user) {
+            // Verificar si el usuario está activo
+            if ($user->estado != 1) {
+                $this->session->set_flashdata('error', 'Tu cuenta está inactiva. Por favor, contacta al administrador.');
+                redirect('login');
+                return; // Termina la ejecución para evitar redirección adicional
+            }
+    
             // Verificar si la contraseña es correcta encriptada con password_verify (BCRYPT)
             if (password_verify($password, $user->contraseña)) {
                 // Guardar la información del usuario en la sesión
@@ -31,19 +37,21 @@ class C_Login extends CI_Controller
                 $this->session->set_userdata('role', $user->role);  // ID del rol
                 $this->session->set_userdata('rol_name', $user->rol_name); // Nombre del rol
                 $this->session->set_userdata('username', $user->nombre); // Guardar el nombre del usuario
-                $this->session->set_userdata('email', $user->email); // Guardar el nombre del usuario
+                $this->session->set_userdata('email', $user->email); // Guardar el email del usuario
     
                 // Redirigir a la página principal del sistema
                 redirect('welcome');
             } else {
                 $this->session->set_flashdata('error', 'Email o contraseña incorrectos.');
-                redirect('login_error');
+                redirect('login');
             }
         } else {
             $this->session->set_flashdata('error', 'Email o contraseña incorrectos.');
-            redirect('login_error');
+            redirect('login');
         }
     }
+    
+
 
     // Método para cerrar sesión
     public function logout()

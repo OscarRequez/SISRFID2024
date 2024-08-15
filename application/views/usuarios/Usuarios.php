@@ -25,7 +25,7 @@
 
     /* Estilo de los enlaces de paginación */
     .pagination a {
-        color: #0BAC52;
+        color: #404BDF;
         /* Color del texto */
         padding: 8px 16px;
         margin: 0 4px;
@@ -141,7 +141,7 @@
                             (item.estado == 1 ? ' fs-4 bi bi-person-circle' : ' fs-4 bi bi-person-circle') +
                             ' icon-toggle" data-id="' + item.id + '" data-estado="' + item.estado + '" style="color: ' +
                             (item.estado == 1 ? 'green' : 'red') + '; cursor: pointer;"></i></center></td>' +
-                            '<td><center><button class="btn btn-sm editModal" style="background-color:#527E99; color:#DBE4DB" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-email="' + item.email + '" data-rol="' + item.rol_nombre + '">Editar</button>' +' | '+
+                            '<td><center><button class="btn btn-sm editModal" style="background-color:#527E99; color:#DBE4DB" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-email="' + item.email + '" data-rol="' + item.rol_nombre + '">Editar</button>' + ' | ' +
                             '<a href="<?php echo site_url('usuarios/eliminar/'); ?>' + item.id + '" class="btn btn-sm" style="background-color:#F82A46; color:#DBE4DB"  onclick="return confirm(\'¿Estás seguro de que deseas eliminar este usuario?\');">Eliminar</a></center></td>' +
                             '</tr>';
                     });
@@ -187,9 +187,9 @@
     </script>
 
     <!-- HTML para la tabla y la paginación -->
-    <div class="table-responsive">
+    <div class="table table-responsive">
         <h4 class="mb-3">Lista de Usuarios</h4>
-        <table class="table table-hover  table-bordered table-responsive">
+        <table class="table table-hover table-bordered table-responsive">
             <thead style="background-color:#7A7CE5; color:#fff">
                 <tr>
                     <th>ID</th>
@@ -237,7 +237,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="editContraseña" class="form-label">Contraseña</label>
-                            <input type="text" class="form-control" id="editContraseña" name="contraseña">
+                            <input type="password" class="form-control" id="editContraseña" name="contraseña">
                         </div>
                     </form>
                 </div>
@@ -307,6 +307,7 @@
                 // Establecer los valores en el formulario de edición
                 document.getElementById('editNombre').value = nombre;
                 document.getElementById('editEmail').value = email;
+                document.getElementById('editContraseña').value = ''; // Limpia el campo de contraseña
 
                 // Cargar los roles y seleccionar el rol actual
                 obtenerRoles('editRol', rol);
@@ -322,6 +323,7 @@
                     var nombreEdit = document.getElementById('editNombre').value;
                     var emailEdit = document.getElementById('editEmail').value;
                     var rolEdit = document.getElementById('editRol').value;
+                    var contraseñaEdit = document.getElementById('editContraseña').value;
 
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', '<?php echo site_url('actualizar_usuario'); ?>', true);
@@ -342,7 +344,15 @@
                             alert('Error al guardar los cambios.');
                         }
                     };
-                    xhr.send('id=' + encodeURIComponent(id) + '&nombre=' + encodeURIComponent(nombreEdit) + '&email=' + encodeURIComponent(emailEdit) + '&rol=' + encodeURIComponent(rolEdit));
+
+                    // Envía la contraseña junto con los otros datos
+                    var postData = 'id=' + encodeURIComponent(id) +
+                        '&nombre=' + encodeURIComponent(nombreEdit) +
+                        '&email=' + encodeURIComponent(emailEdit) +
+                        '&rol=' + encodeURIComponent(rolEdit) +
+                        '&contraseña=' + encodeURIComponent(contraseñaEdit);
+
+                    xhr.send(postData);
                 }
             }
         });

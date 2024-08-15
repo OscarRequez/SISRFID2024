@@ -13,9 +13,9 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <!-- Incluir SweetAlert CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
     <!-- Incluir SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
@@ -29,27 +29,36 @@
     <style>
         * {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-            .status-indicator {
-                width: 10px;
-                height: 10px;
-                background-color: #3AEF2E;
-                border-radius: 50%;
-                display: inline-block;
-                margin-right: 5px;
-            }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: green;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
 
-            .status-text {
-                display: inline-block;
-                color: #fff;
-                /* Color blanco para el texto */
-            }
+        .status-text {
+            display: inline-block;
+            color: #fff;
+            /* Color blanco para el texto */
+        }
 
-            /* Estilo para la imagen de usuario */
+        /* Estilo para la imagen de usuario */
+        .user-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 600px) {
+
+            /* Ajusta el valor según el punto de quiebre que prefieras */
             .user-img {
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
+                width: 0px;
+                height: 0px;
             }
         }
 
@@ -60,6 +69,7 @@
             text-decoration: none;
         }
 
+    
         /* Efecto hover para los enlaces del menú */
         #menu a.nav-link:hover {
             color: #565FDC;
@@ -76,9 +86,8 @@
                         <span id="currentDateTime"></span>
                     </span>
                 </div>
-
             </nav>
-            <div class="container">
+            <div class="container-fluid">
                 <div class="row flex-nowrap">
                     <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
                         <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
@@ -96,57 +105,106 @@
                                             <i class="fs-4 bi bi bi-heart-pulse"></i> <span class="ms-1 d-none d-sm-inline">Equipos Médicos</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
-                                            <li class="w-100">
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-pencil-square"></i> <span class="d-none d-sm-inline">Registro</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-list-check"></i> <span class="d-none d-sm-inline">Listado</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-journal-text"></i> <span class="d-none d-sm-inline">Reportes</span></a>
-                                            </li>
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'registro')): ?>
+                                                <li class="w-100">
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-pencil-square"></i>
+                                                        <span class="d-none d-sm-inline">Registro</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'listado')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-list-check"></i>
+                                                        <span class="d-none d-sm-inline">Listado</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'reportes')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-journal-text"></i>
+                                                        <span class="d-none d-sm-inline">Reportes</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
                                         </ul>
                                     <?php endif; ?>
                                 </li>
-
-
 
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'usuarios')): ?>
                                         <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span>
+                                            <i class="fs-4 bi-people"></i>
+                                            <span class="ms-1 d-none d-sm-inline">Usuarios</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu2" data-bs-parent="#menu">
-                                            <li class="w-100">
-                                                <a href="<?php echo site_url('usuarios'); ?>" class="nav-link px-0"> <i class=" fs-4 bi bi-people-fill"></i> <span class="d-none d-sm-inline">Usuarios</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="<?php echo site_url('roles'); ?>" class="nav-link px-0"> <i class="fs-4 bi bi-person-lines-fill"></i> <span class="d-none d-sm-inline">Roles</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-person-fill-lock"></i> <span class="d-none d-sm-inline">Permisos</span></a>
-                                            </li>
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'usuarios', 'usuarios')): ?>
+                                                <li class="w-100">
+                                                    <a href="<?php echo site_url('usuarios'); ?>" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-people-fill"></i>
+                                                        <span class="d-none d-sm-inline">Usuarios</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'usuarios', 'roles')): ?>
+                                                <li>
+                                                    <a href="<?php echo site_url('roles'); ?>" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-person-lines-fill"></i>
+                                                        <span class="d-none d-sm-inline">Roles</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'usuarios', 'permisos')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-person-fill-lock"></i>
+                                                        <span class="d-none d-sm-inline">Permisos</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
                                         </ul>
                                     <?php endif; ?>
                                 </li>
 
-
-
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid')): ?>
                                         <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi bi-radar"></i> <span class="ms-1 d-none d-sm-inline">RFID</span>
+                                            <i class="fs-4 bi bi-radar"></i>
+                                            <span class="ms-1 d-none d-sm-inline">RFID</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
-                                            <li class="w-100">
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-check2-square"></i> <span class="d-none d-sm-inline">Lectura</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-clipboard2-plus"></i> <span class="d-none d-sm-inline">Registro</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-journal-text"></i> <span class="d-none d-sm-inline">Reportes</span></a>
-                                            </li>
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'lectura')): ?>
+                                                <li class="w-100">
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-check2-square"></i>
+                                                        <span class="d-none d-sm-inline">Lectura</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'registro')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-clipboard2-plus"></i>
+                                                        <span class="d-none d-sm-inline">Registro</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'reportes')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-journal-text"></i>
+                                                        <span class="d-none d-sm-inline">Reportes</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
                                         </ul>
                                     <?php endif; ?>
                                 </li>
@@ -154,15 +212,27 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'documentacion')): ?>
                                         <a href="#submenu4" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi bi-file-earmark-pdf"></i> <span class="ms-1 d-none d-sm-inline">Documentacion</span>
+                                            <i class="fs-4 bi bi-file-earmark-pdf"></i>
+                                            <span class="ms-1 d-none d-sm-inline">Documentación</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu4" data-bs-parent="#menu">
-                                            <li class="w-100">
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-files"></i> <span class="d-none d-sm-inline">Manuales</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-clipboard2-plus"> </i> <span class="d-none d-sm-inline">Registro</span></a>
-                                            </li>
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'documentacion', 'manuales')): ?>
+                                                <li class="w-100">
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-files"></i>
+                                                        <span class="d-none d-sm-inline">Manuales</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'documentacion', 'registro')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-clipboard2-plus"></i>
+                                                        <span class="d-none d-sm-inline">Registro</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
                                         </ul>
                                     <?php endif; ?>
                                 </li>
@@ -170,18 +240,30 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento')): ?>
                                         <a href="#submenu5" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi bi-wrench-adjustable-circle"></i> <span class="ms-1 d-none d-sm-inline">Mantenimiento</span>
+                                            <i class="fs-4 bi bi-info-circle"></i>
+                                            <span class="ms-1 d-none d-sm-inline">Mantenimiento</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu5" data-bs-parent="#menu">
-                                            <li class="w-100">
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-files"></i> <span class="d-none d-sm-inline">Manuales</span></a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="nav-link px-0"> <i class="fs-4 bi bi-clipboard2-plus"> </i> <span class="d-none d-sm-inline">Solicitud</span></a>
-                                            </li>
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento', 'manuales')): ?>
+                                                <li class="w-100">
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-phone-vibrate"></i>
+                                                        <span class="d-none d-sm-inline">Contacto</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento', 'solicitud')): ?>
+                                                <li>
+                                                    <a href="#" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-journal-text"></i>
+                                                        <span class="d-none d-sm-inline">Reportes</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
                                         </ul>
+                                    <?php endif; ?>
                                 </li>
-                            <?php endif; ?>
                             </ul>
 
                             <hr>
@@ -190,17 +272,15 @@
                                     <img src="assets/imagenes/usuarios/oscar.png" alt="Usuario" width="40" height="40" class="rounded-circle">
                                     <span class="d-none d-sm-inline mx-1"><?php echo $this->session->userdata('username'); ?> <br> <?php echo $this->session->userdata('rol_name');  ?></span>
                                 </a>
-                                <Center>
-                                    <p>
-                                        <?php if ($this->session->userdata('user_id')): ?>
-                                            <span class="status-indicator"></span>
-                                            <span class="status-text">En línea</span>
-                                        <?php else: ?>
-                                            <span class="status-indicator"></span>
-                                            <span class="status-text">Desconectado</span>
-                                        <?php endif; ?>
-                                    </p>
-                                </Center>
+                                <div class="text-center">
+                                    <?php if ($this->session->userdata('user_id')): ?>
+                                        <span class="status-indicator"></span>
+                                        <span class="status-text d-none d-md-inline">En línea</span>
+                                    <?php else: ?>
+                                        <span class="status-indicator"></span>
+                                        <span class="status-text d-none d-md-inline">Desconectado</span>
+                                    <?php endif; ?>
+                                </div>
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
                                     <li><a class="dropdown-item" href="#">Perfil</a></li>
                                     <li><a class="dropdown-item" href="#">Configuración</a></li>
