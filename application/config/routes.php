@@ -71,5 +71,13 @@ $route['usuarios/mostrar'] = 'usuarios/C_usuarios/mostrar';
 
 //Roles de usuario
 $route['usuarios/mostrarRoles'] = 'usuarios/C_roles/mostrarRoles';
-$route['permisos/obtenerPermisosUnicos'] = 'usuarios/C_roles/agregarRol';
+$route['permisos/obtenerPermisosUnicos'] = 'usuarios/C_roles/agregarRolCheckbox';
+$route['roles/agregar'] = 'usuarios/C_roles/agregar';
+$route['usuarios/obtenerPermisosDeUnRol'] = 'usuarios/C_roles/obtenerPermisosDeUnRol/$1';// Ruta para obtener permisos de un rol
+
+$route['checksParaEditar'] = 'usuarios/C_roles/agregarRolCheckbox';
+
+
+
+
 
