@@ -15,8 +15,10 @@ class M_Roles extends CI_Model
         return $query->result_array();
     }
 
+    //OBTENER ROLES PARA LOS SELECTS DE USUARIO
     public function obtener_roles()
     {
+        $this->db->where('estado', 1); // Filtrar roles con estado 1
         $query = $this->db->get('roles'); // 'roles' es el nombre de la tabla
         return $query->result(); // Devolver el resultado como un array de objetos
     }
@@ -86,11 +88,56 @@ class M_Roles extends CI_Model
     }
 
     // Función para obtener permisos de un rol
-    public function obtenerPermisosDeUnRol($rol_id) {
+    public function obtenerPermisosDeUnRol($rol_id)
+    {
         $this->db->select('modulo, submodulo');
         $this->db->from('permisos');
         $this->db->where('rol_id', $rol_id);
         $query = $this->db->get();
         return $query->result_array();
+    }
+
+
+    //PARA ACTUAÑIZAR LOS PERMISOS DE UN ROL
+    // Método para actualizar el rol en la tabla de roles
+    public function actualizarRol($rol_id, $data)
+    {
+        $this->db->where('id', $rol_id);
+        $this->db->update('roles', $data);
+    }
+
+    // Método para actualizar los permisos asociados al rol
+    public function actualizarPermisos($rol_id, $modulos, $submodulos)
+    {
+        // Primero, eliminamos todos los permisos actuales del rol si necesitamos datos de auditoria, se revisa el rol si fue modificado
+        $this->db->where('rol_id', $rol_id);
+        $this->db->delete('permisos');
+
+        // Ahora, insertamos los nuevos permisos
+        foreach ($modulos as $modulo) {
+            // Insertar permiso del módulo
+            $data = array(
+                'rol_id' => $rol_id,
+                'modulo' => $modulo,
+                'submodulo' => null, // Sin submódulo asociado
+                'usucre' => $this->session->userdata('email'), // Asumiendo que el ID del usuario está en la sesión
+                'feccre' => date('Y-m-d H:i:s')
+            );
+            $this->db->insert('permisos', $data);
+
+            // Insertar submódulos asociados si los hay
+            if (isset($submodulos[$modulo])) {
+                foreach ($submodulos[$modulo] as $submodulo) {
+                    $data = array(
+                        'rol_id' => $rol_id,
+                        'modulo' => $modulo,
+                        'submodulo' => $submodulo,
+                        'usucre' => $this->session->userdata('email'),
+                        'feccre' => date('Y-m-d H:i:s')
+                    );
+                    $this->db->insert('permisos', $data);
+                }
+            }
+        }
     }
 }

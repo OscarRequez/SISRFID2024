@@ -142,7 +142,7 @@
                             ' icon-toggle" data-id="' + item.id + '" data-estado="' + item.estado + '" style="color: ' +
                             (item.estado == 1 ? 'green' : 'red') + '; cursor: pointer;"></i></center></td>' +
                             '<td><center><button class="btn btn-sm editModal" style="background-color:#527E99; color:#DBE4DB" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-email="' + item.email + '" data-rol="' + item.rol_nombre + '">Editar</button>' + ' | ' +
-                            '<a href="<?php echo site_url('usuarios/eliminar/'); ?>' + item.id + '" class="btn btn-sm" style="background-color:#F82A46; color:#DBE4DB"  onclick="return confirm(\'¿Estás seguro de que deseas eliminar este usuario?\');">Eliminar</a></center></td>' +
+                            '<a href="<?php echo site_url('eliminar_estado_usuario/'); ?>' + item.id + '" class="btn btn-sm" style="background-color:#F82A46; color:#DBE4DB"  onclick="return confirm(\'¿Estás seguro de que deseas eliminar este usuario?\');">Eliminar</a></center></td>' +
                             '</tr>';
                     });
 

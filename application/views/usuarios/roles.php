@@ -167,8 +167,8 @@
                     <div id="editarPermisos"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary">Guardar cambios</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="guardarCambiosRol">Guardar cambios</button>
                 </div>
             </div>
         </div>
@@ -283,7 +283,7 @@
     //PARA EDITAR, PERO SOLO LLENA LOS CAMPOS DEL REGISTRO EN EL MODAL EDITAR
 
     var editarRolModal = document.getElementById('editarRolModal');
-      // Actualizar el título del modal con el nombre del rol
+    // Actualizar el título del modal con el nombre del rol
 
     editarRolModal.addEventListener('show.bs.modal', function(event) {
         var button = event.relatedTarget;
@@ -312,10 +312,12 @@
 
         // Cargar los módulos y submódulos
         cargarModulos2();
-        cargarPermisosDelRol(id); // Cargar permisos del rol para marcar los checkboxes
+        setTimeout(function() {
+            cargarPermisosDelRol(id);
+        }, 1000);
     });
 
-    
+
 
     // Función para cargar módulos y submódulos
     function cargarModulos2() {
@@ -416,7 +418,6 @@
 
 
 <script>
-    // TABLA DE ROLES
     function mostrarRoles(pagina = 1, cantidad = 5) {
         $.ajax({
             url: "<?php echo site_url('usuarios/mostrarRoles'); ?>",
@@ -429,15 +430,15 @@
             success: function(response) {
                 var filas = "";
                 $.each(response.roles, function(key, item) {
-                    filas += '<tr>' +
+                    filas += '<tr id="rol_' + item.id + '">' +
                         '<td>' + item.id + '</td>' +
-                        '<td>' + item.nombre + '</td>' +
-                        '<td>' + (item.estado == 1 ? 'Activo' : 'Inactivo') + '</td>' +
+                        '<td id="rolNombre_' + item.id + '">' + item.nombre + '</td>' +
+                        '<td id="rolEstado_' + item.id + '">' + (item.estado == 1 ? 'Activo' : 'Inactivo') + '</td>' +
                         '<td>' +
-                        '<button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarRolModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-estado="' + item.estado + '">' +
+                        '<button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editarRolModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-estado="' + item.estado + '">' +
                         'Editar</button>' +
-                        ' <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#verPermisosModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" onclick="mostrarPermisos(' + item.id + ', \'' + item.nombre + '\')">' +
-                        '<i class="bi bi-eye"></i>Ver</button>' +
+                        ' <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#verPermisosModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" onclick="mostrarPermisos(' + item.id + ', \'' + item.nombre + '\')">' +
+                        '<i class="bi bi-eye"></i> Ver</button>' +
                         '</td>' +
                         '</tr>';
                 });
@@ -544,5 +545,65 @@
         var rol_id = $(this).data('id');
         var rol_nombre = $(this).data('nombre'); // Obtener el nombre del rol
         mostrarPermisos(rol_id, rol_nombre);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Manejar el evento de clic en el botón "Guardar cambios"
+        $('#guardarCambiosRol').on('click', function() {
+            var rolId = $('#rolId').val(); // Obtener el ID del rol
+            var nombreRol = $('#nombreRolEdit').val(); // Obtener el nombre del rol
+            var estadoRol = $('#estadoRolEdit').is(':checked') ? 1 : 0; // Obtener el estado del rol (1 si está activo, 0 si no)
+
+            // Obtener los módulos y submódulos seleccionados
+            var modulosSeleccionados = [];
+            $('input[name="modulos[]"]:checked').each(function() {
+                modulosSeleccionados.push($(this).val());
+            });
+
+            var submodulosSeleccionados = {};
+            $('input[name^="submodulos"]:checked').each(function() {
+                var modulo = $(this).attr('name').match(/\[([^\]]+)\]/)[1];
+                if (!submodulosSeleccionados[modulo]) {
+                    submodulosSeleccionados[modulo] = [];
+                }
+                submodulosSeleccionados[modulo].push($(this).val());
+            });
+
+            // Enviar datos al servidor mediante AJAX
+            $.ajax({
+                url: "<?php echo site_url('roles_actualizar_Permisos'); ?>", // URL del controlador que maneja la actualización
+                type: "POST",
+                dataType: "json",
+                data: {
+                    rol_id: rolId,
+                    nombre: nombreRol,
+                    estado: estadoRol,
+                    modulos: modulosSeleccionados,
+                    submodulos: submodulosSeleccionados
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Operación Exitosa!",
+                            text: "Rol actualizado correctamente!",
+                            icon: "success"
+                        }).then(() => {
+                            // Actualizar el campo específico en la interfaz
+                            $('#rolNombre_' + rolId).text(nombreRol);
+                            $('#rolEstado_' + rolId).text(estadoRol ? 'Activo' : 'Inactivo');
+                        });
+                        $('#editarRolModal').modal('hide'); // Cerrar el modal
+                    } else {
+                        alert('Error al actualizar el rol: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al actualizar el rol:", error);
+                    alert('Ocurrió un error al intentar guardar los cambios.');
+                }
+            });
+        });
     });
 </script>

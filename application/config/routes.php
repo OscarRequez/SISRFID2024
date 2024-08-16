@@ -68,14 +68,16 @@ $route['guardar_usuario'] = 'usuarios/C_usuarios/guardar';
 $route['actualizar_usuario'] = 'usuarios/C_usuarios/actualizar';
 $route['cambiar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/cambiar_estado_usuario/$1';
 $route['usuarios/mostrar'] = 'usuarios/C_usuarios/mostrar';
+$route['eliminar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/eliminar/$1';
 
 //Roles de usuario
 $route['usuarios/mostrarRoles'] = 'usuarios/C_roles/mostrarRoles';
 $route['permisos/obtenerPermisosUnicos'] = 'usuarios/C_roles/agregarRolCheckbox';
 $route['roles/agregar'] = 'usuarios/C_roles/agregar';
 $route['usuarios/obtenerPermisosDeUnRol'] = 'usuarios/C_roles/obtenerPermisosDeUnRol/$1';// Ruta para obtener permisos de un rol
-
 $route['checksParaEditar'] = 'usuarios/C_roles/agregarRolCheckbox';
+$route['roles_actualizar_Permisos'] = 'usuarios/C_roles/actualizar_permisos';//PARA ACTUALIZAR LOS PERMISOS DE UN ROL
+
 
 
 

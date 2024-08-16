@@ -135,9 +135,7 @@ class C_usuarios extends MY_Controller
     }
 
     public function cambiar_estado_usuario($id) {
-        // Cargar el modelo si no lo has hecho en el constructor
-        $this->load->model('M_usuarios');
-        
+
         // Obtener el estado actual del usuario
         $usuario = $this->mUsuario->get_usuario($id);
     
@@ -149,6 +147,37 @@ class C_usuarios extends MY_Controller
         
         // Responder con éxito (puedes devolver JSON si es necesario)
         echo json_encode(['success' => true]);
+    }
+
+
+    //16/08/2024 eliminar el usuario de la tabla
+
+    public function eliminar($id) {
+        // Verifica que el ID sea numérico
+        if (!is_numeric($id)) {
+            show_error('ID inválido');
+            return;
+        }
+
+        // Prepara los datos para actualizar
+        $data = array(
+            'estado' => 3, // El estado que deseas asignar
+            'fecmod' => date('Y-m-d H:i:s'), // Fecha de modificación
+            'usumod' => $this->session->userdata('email') // ID del usuario que hace la modificación
+        );
+
+        // Llama al modelo para actualizar el estado
+        $result = $this->mUsuario->actualizar_usuario_eliminado($id, $data);
+
+        if ($result) {
+            // Redirige de vuelta a la lista de usuarios
+            $this->session->set_flashdata('success', 'Usuario actualizado exitosamente');
+            redirect('usuarios'); // Cambia 'listar' por el nombre de tu método para listar usuarios
+        } else {
+            // Redirige con un mensaje de error
+            $this->session->set_flashdata('error', 'Error al actualizar el usuario');
+            redirect('usuarios'); // Cambia 'listar' por el nombre de tu método para listar usuarios
+        }
     }
 
 }

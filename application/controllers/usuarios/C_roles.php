@@ -161,5 +161,29 @@ public function obtenerDatosRol($rol_id) {
 }
 
 
+//PARA ACTUALIZAR LOS ROLES:
+public function actualizar_permisos() {
+    $rol_id = $this->input->post('rol_id');
+    $nombre = $this->input->post('nombre');
+    $estado = $this->input->post('estado');
+    $modulos = $this->input->post('modulos');
+    $submodulos = $this->input->post('submodulos');
+
+    // Actualizar el nombre y estado del rol
+    $data_rol = array(
+        'nombre' => $nombre,
+        'estado' => $estado,
+        'fecmod' => date('Y-m-d H:i:s'),
+        'usumod' => $this->session->userdata('email') // Asumiendo que tienes el ID del usuario en la sesión
+    );
+    $this->mRoles->actualizarRol($rol_id, $data_rol);
+
+    // Actualizar los permisos del rol
+    $this->mRoles->actualizarPermisos($rol_id, $modulos, $submodulos);
+
+    echo json_encode(['success' => true]);
+}
+
+
     
 }

@@ -75,6 +75,7 @@
             color: #565FDC;
             /* Color de texto al hacer hover */
             transition: background-color 0.3s ease, color 0.3s ease;
+            transform: scale(1.1);
         }
     </style>
 
@@ -163,8 +164,8 @@
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'usuarios', 'permisos')): ?>
                                                 <li>
                                                     <a href="#" class="nav-link px-0">
-                                                        <i class="fs-4 bi bi-person-fill-lock"></i>
-                                                        <span class="d-none d-sm-inline">Permisos</span>
+                                                        <i class="fs-4 bi bi-emoji-sunglasses-fill"></i>
+                                                        <span class="d-none d-sm-inline">Avatars</span>
                                                     </a>
                                                 </li>
                                             <?php endif; ?>
@@ -269,7 +270,7 @@
                             <hr>
                             <div class="dropdown pb-4">
                                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="assets/imagenes/usuarios/oscar.png" alt="Usuario" width="40" height="40" class="rounded-circle">
+                                   <img src="assets/imagenes/usuarios/oscar.png" alt="Usuario" width="50" height="50" class="rounded-circle">
                                     <span class="d-none d-sm-inline mx-1"><?php echo $this->session->userdata('username'); ?> <br> <?php echo $this->session->userdata('rol_name');  ?></span>
                                 </a>
                                 <div class="text-center">
