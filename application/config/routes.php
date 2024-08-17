@@ -69,7 +69,6 @@ $route['actualizar_usuario'] = 'usuarios/C_usuarios/actualizar';
 $route['cambiar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/cambiar_estado_usuario/$1';
 $route['usuarios/mostrar'] = 'usuarios/C_usuarios/mostrar';
 $route['eliminar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/eliminar/$1';
-
 //Roles de usuario
 $route['usuarios/mostrarRoles'] = 'usuarios/C_roles/mostrarRoles';
 $route['permisos/obtenerPermisosUnicos'] = 'usuarios/C_roles/agregarRolCheckbox';
@@ -77,6 +76,14 @@ $route['roles/agregar'] = 'usuarios/C_roles/agregar';
 $route['usuarios/obtenerPermisosDeUnRol'] = 'usuarios/C_roles/obtenerPermisosDeUnRol/$1';// Ruta para obtener permisos de un rol
 $route['checksParaEditar'] = 'usuarios/C_roles/agregarRolCheckbox';
 $route['roles_actualizar_Permisos'] = 'usuarios/C_roles/actualizar_permisos';//PARA ACTUALIZAR LOS PERMISOS DE UN ROL
+
+//AVATARES
+
+$route['avatars'] = 'usuarios/C_avatars';// Ruta para la página principal de avatares
+$route['avatars_agregar'] = 'usuarios/C_avatars/agregar';// Ruta para agregar un nuevo avatar (puedes usar POST para este método)
+$route['avatars_eliminar/(:num)'] = 'usuarios/C_avatars/eliminar/$1';// Ruta para eliminar un avatar (este método usa un ID como parámetro)
+$route['obtener_avatares'] = 'Welcome/obtener_avatares';
+$route['actualizar_avatar'] = 'Welcome/actualizarAvatar';
 
 
 

@@ -69,7 +69,7 @@
             text-decoration: none;
         }
 
-    
+
         /* Efecto hover para los enlaces del menú */
         #menu a.nav-link:hover {
             color: #565FDC;
@@ -163,7 +163,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'usuarios', 'permisos')): ?>
                                                 <li>
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('avatars'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-emoji-sunglasses-fill"></i>
                                                         <span class="d-none d-sm-inline">Avatars</span>
                                                     </a>
@@ -270,8 +270,8 @@
                             <hr>
                             <div class="dropdown pb-4">
                                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                   <img src="assets/imagenes/usuarios/oscar.png" alt="Usuario" width="50" height="50" class="rounded-circle">
-                                    <span class="d-none d-sm-inline mx-1"><?php echo $this->session->userdata('username'); ?> <br> <?php echo $this->session->userdata('rol_name');  ?></span>
+                                    <img id="userAvatar" src="<?php echo base_url($this->session->userdata('avatar_path')); ?>" alt="Usuario" width="50" height="50" class="rounded-circle">
+                                    <span class="d-none d-sm-inline mx-1"><?php echo $this->session->userdata('username'); ?> <br> <?php echo $this->session->userdata('rol_name'); ?></span>
                                 </a>
                                 <div class="text-center">
                                     <?php if ($this->session->userdata('user_id')): ?>
@@ -283,16 +283,98 @@
                                     <?php endif; ?>
                                 </div>
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                                    <li><a class="dropdown-item" href="#">Perfil</a></li>
-                                    <li><a class="dropdown-item" href="#">Configuración</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo site_url('welcome'); ?>">Perfil</a></li>
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#avatarModal">Avatars</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="<?php echo site_url('logout'); ?> ">Cerrar sesión</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo site_url('logout'); ?>">Cerrar sesión</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Modal para seleccionar avatar -->
+                    <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="avatarModalLabel">Selecciona tu avatar</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Galería de avatares -->
+                                    <div id="avatarGallery" class="row">
+                                        <!-- Los avatares se cargarán aquí mediante AJAX -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        $(document).ready(function() {
+                            // Función para cargar los avatares desde el servidor
+                            function cargarAvatares() {
+                                $.ajax({
+                                    url: '<?php echo site_url('obtener_avatares'); ?>',
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    success: function(data) {
+                                        let avatarGallery = $('#avatarGallery');
+                                        avatarGallery.empty();
+                                        $.each(data, function(index, avatar) {
+                                            avatarGallery.append(`
+                            <div class="col-md-3 mb-3">
+                                <div class="card">
+                                    <img src="<?php echo base_url(); ?>${avatar.ruta_imagen}" class="card-img-top img-thumbnail rounded-circle" alt="${avatar.nombre}">
+                                    <div class="card-body text-center">
+                                        <p class="card-title">${avatar.nombre}</p>
+                                        <button class="btn btn-primary select-avatar" data-avatar-id="${avatar.id}" data-avatar-path="${avatar.ruta_imagen}"><i class="bi bi-hand-index"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                                        });
+                                    }
+                                });
+                            }
+
+                            // Cargar los avatares cuando se abre el modal
+                            $('#avatarModal').on('show.bs.modal', function() {
+                                cargarAvatares();
+                            });
+
+                            // Manejar la selección del avatar
+                            $(document).on('click', '.select-avatar', function() {
+                                const avatarId = $(this).data('avatar-id');
+                                const avatarPath = $(this).data('avatar-path');
+
+                                // Enviar el ID del avatar al controlador para actualizar la base de datos
+                                $.ajax({
+                                    url: '<?php echo site_url('actualizar_avatar'); ?>',
+                                    type: 'POST',
+                                    data: {
+                                        avatar_id: avatarId
+                                    },
+                                    dataType: 'json',
+                                    success: function(response) {
+                                        if (response.success) {
+                                            // Actualizar la imagen del avatar en la interfaz
+                                            $('#userAvatar').attr('src', '<?php echo base_url(); ?>' + avatarPath);
+                                            alert(response.message);
+                                        } else {
+                                            alert(response.message);
+                                        }
+                                    }
+                                });
+
+                                // Cierra el modal después de seleccionar el avatar
+                                $('#avatarModal').modal('hide');
+                            });
+                        });
+                    </script>
+
                     <script>
                         function updateDateTime() {
                             const options = {

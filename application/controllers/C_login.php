@@ -15,13 +15,14 @@ class C_Login extends CI_Controller
     }
 
     // INICIO OR-02 07/08/2024 OSCAR REQUEZ MODULO DE INICIO DE SESION
-    public function authenticate() {
+    public function authenticate()
+    {
         $email = trim($this->input->post('email'));
         $password = trim($this->input->post('password'));
-    
+
         // Validar usuario usando el email
         $user = $this->M_login->validate_user($email);
-    
+
         if ($user) {
             // Verificar si el usuario está activo
             if ($user->estado != 1) {
@@ -29,16 +30,28 @@ class C_Login extends CI_Controller
                 redirect('login');
                 return; // Termina la ejecución para evitar redirección adicional
             }
-    
+
             // Verificar si la contraseña es correcta encriptada con password_verify (BCRYPT)
             if (password_verify($password, $user->contraseña)) {
+                // Obtener la ruta del avatar utilizando el ID almacenado en `ImagenUsu`
+                $avatar = $this->M_login->obtenerAvatarPorId($user->ImagenUsu);
+
+                // Verificar si se encontró un avatar válido
+                if ($avatar) {
+                    $this->session->set_userdata('avatar_path', $avatar->ruta_imagen); // Guardar la ruta de la imagen del avatar en la sesión
+                } else {
+                    // Si no se encuentra un avatar, configura la imagen por defecto
+                $this->session->set_userdata('avatar_path','assets/imagenes/avatars/defecto_avatar.png');
+
+                }
+
                 // Guardar la información del usuario en la sesión
                 $this->session->set_userdata('user_id', $user->id);
                 $this->session->set_userdata('role', $user->role);  // ID del rol
                 $this->session->set_userdata('rol_name', $user->rol_name); // Nombre del rol
                 $this->session->set_userdata('username', $user->nombre); // Guardar el nombre del usuario
                 $this->session->set_userdata('email', $user->email); // Guardar el email del usuario
-    
+
                 // Redirigir a la página principal del sistema
                 redirect('welcome');
             } else {
@@ -50,7 +63,7 @@ class C_Login extends CI_Controller
             redirect('login');
         }
     }
-    
+
 
 
     // Método para cerrar sesión
