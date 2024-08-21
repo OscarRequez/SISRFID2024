@@ -1,67 +1,67 @@
 <?php $this->load->view('templates/header'); ?>
 
 <style>
-    th,
-    td {
-        border: 1px solid #ddd;
-        padding: 8px;
+
+.chart-container {
+        width: 60%;
+        height: 100%;
+        max-width: 100%;
+        max-height: 80%;
+        position: relative;
     }
 
-    th {
-        background-color: #f2f2f2;
+    .col-md-3,
+    .col-md-6,
+    .col-md-4,
+    .col-md-8 {
+        padding: 0.5rem;
+        box-sizing: border-box;
+        max-width: 80%;
+        max-height: 80%;
     }
 
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    /* Contenedor de la paginación */
     .pagination {
         display: flex;
         justify-content: center;
         margin: 20px 0;
     }
 
-    /* Estilo de los enlaces de paginación */
     .pagination a {
         color: #404BDF;
-        /* Color del texto */
         padding: 8px 16px;
         margin: 0 4px;
         border: 1px solid #dee2e6;
-        /* Borde del enlace */
         border-radius: 4px;
         text-decoration: none;
         font-size: 16px;
     }
 
-    /* Estilo del enlace activo */
     .pagination .active a {
         background-color: #7A7CE5;
-        /* Fondo del enlace activo */
         color: #fff;
-        /* Color del texto activo */
         border-color: #7A84E5;
     }
 
-    /* Estilo de los enlaces deshabilitados */
     .pagination .disabled a {
         color: #6c757d;
-        /* Color del texto deshabilitado */
         border-color: #dee2e6;
         cursor: not-allowed;
     }
 
-    /* Estilo de los iconos de navegación */
     .pagination .disabled a,
     .pagination .active a {
         cursor: default;
     }
 
-    /* Estilo para el primer y último enlace de paginación */
     .pagination .first,
     .pagination .last {
         font-weight: bold;
+    }
+
+    /* Asegúrate de que las imágenes se ajusten al contenedor */
+    .table img {
+        max-width: 100px; /* Ajusta el tamaño según sea necesario */
+        height: auto;
     }
 </style>
 
@@ -451,11 +451,11 @@
                 var paginador = "";
 
                 if (pagina > 1) {
-                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(1, " + cantidad + ")'>&laquo;</a></li>";
-                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + (pagina - 1) + ", " + cantidad + ")'>&lsaquo;</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(1, " + cantidad + ")'>Primero</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
                 } else {
-                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>&laquo;</a></li>";
-                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>&lsaquo;</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Primero</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Anterior</a></li>";
                 }
 
                 for (var i = 1; i <= numerolinks; i++) {
@@ -463,11 +463,11 @@
                 }
 
                 if (pagina < numerolinks) {
-                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + (pagina + 1) + ", " + cantidad + ")'>&rsaquo;</a></li>";
-                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + numerolinks + ", " + cantidad + ")'>&raquo;</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + numerolinks + ", " + cantidad + ")'>Ultimo</a></li>";
                 } else {
-                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>&rsaquo;</a></li>";
-                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>&raquo;</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Siguiente</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Ultimo</a></li>";
                 }
 
                 $(".pagination").html(paginador);

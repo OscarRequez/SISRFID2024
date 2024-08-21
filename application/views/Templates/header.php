@@ -29,7 +29,16 @@
     <style>
         * {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            
         }
+        .py-3 {
+        max-width: 80%;
+        overflow-x: hidden;
+    }
+    .bg-primary{
+        background-color: #718528;
+    }
 
         .status-indicator {
             display: inline-block;
@@ -81,7 +90,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <nav class="navbar" style="background-color: #7887C7;">
+            <nav class="navbar bg-primary">
                 <div class="container-fluid">
                     <span class="navbar-text text-white ms-auto">
                         <span id="currentDateTime"></span>
@@ -108,7 +117,7 @@
                                         <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'registro')): ?>
                                                 <li class="w-100">
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('equipos'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-pencil-square"></i>
                                                         <span class="d-none d-sm-inline">Registro</span>
                                                     </a>
@@ -117,7 +126,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'listado')): ?>
                                                 <li>
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('listado'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-list-check"></i>
                                                         <span class="d-none d-sm-inline">Listado</span>
                                                     </a>

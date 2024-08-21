@@ -78,12 +78,18 @@ $route['checksParaEditar'] = 'usuarios/C_roles/agregarRolCheckbox';
 $route['roles_actualizar_Permisos'] = 'usuarios/C_roles/actualizar_permisos';//PARA ACTUALIZAR LOS PERMISOS DE UN ROL
 
 //AVATARES
-
 $route['avatars'] = 'usuarios/C_avatars';// Ruta para la página principal de avatares
 $route['avatars_agregar'] = 'usuarios/C_avatars/agregar';// Ruta para agregar un nuevo avatar (puedes usar POST para este método)
 $route['avatars_eliminar/(:num)'] = 'usuarios/C_avatars/eliminar/$1';// Ruta para eliminar un avatar (este método usa un ID como parámetro)
 $route['obtener_avatares'] = 'Welcome/obtener_avatares';
 $route['actualizar_avatar'] = 'Welcome/actualizarAvatar';
+
+//EQUIPOS 
+$route['equipos'] = 'equipos/C_equipos';// Ruta para la página principal de EQUIPOS
+$route['equipos_mostrar'] = 'equipos/C_equipos/mostrar_equipos';
+//$route['equipos_mostrar'] = 'equipos/C_equipos';
+//$route['equipos_mostrar'] = 'equipos/C_equipos';
+
 
 
 
