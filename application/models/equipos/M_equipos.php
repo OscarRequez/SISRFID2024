@@ -12,23 +12,27 @@ class M_equipos extends CI_Model
     // Obtener todos los equipos médicos (opcional)
     public function get_todos_equipos()
     {
-        $query = $this->db->get('equipos_medicos');
+        $this->db->select('equipos_medicos.*, ubicaciones.nombre as ubicacion_nombre');
+        $this->db->from('equipos_medicos');
+        $this->db->join('ubicaciones', 'ubicaciones.id = equipos_medicos.ubicacion_id', 'left');
+        $query = $this->db->get();
         return $query->result();
     }
 
     // Obtener equipos médicos paginados con búsqueda opcional
     public function get_equipos_paginados($limit, $offset, $buscar = '')
     {
-        $this->db->select('*');
+        $this->db->select('equipos_medicos.*, ubicaciones.nombre as ubicacion_nombre');
         $this->db->from('equipos_medicos');
-        
+        $this->db->join('ubicaciones', 'ubicaciones.id = equipos_medicos.ubicacion_id', 'left');
+
         if ($buscar) {
-            // Filtrado por término de búsqueda
             $this->db->group_start();
-            $this->db->like('nombre', $buscar);
-            $this->db->or_like('numero_serie', $buscar);
-            $this->db->or_like('tag_rfid_id', $buscar);
-            $this->db->or_like('ubicacion_id', $buscar);
+            $this->db->like('equipos_medicos.nombre', $buscar);
+            $this->db->or_like('equipos_medicos.numero_serie', $buscar);
+            $this->db->or_like('equipos_medicos.tag_rfid_id', $buscar);
+            $this->db->or_like('equipos_medicos.ubicacion_id', $buscar);
+            $this->db->or_like('ubicaciones.nombre', $buscar);
             $this->db->group_end();
         }
 
@@ -41,9 +45,8 @@ class M_equipos extends CI_Model
     public function count_all_equipos($buscar = '')
     {
         $this->db->from('equipos_medicos');
-        
+
         if ($buscar) {
-            // Filtrado por término de búsqueda
             $this->db->group_start();
             $this->db->like('nombre', $buscar);
             $this->db->or_like('numero_serie', $buscar);
@@ -53,6 +56,35 @@ class M_equipos extends CI_Model
         }
 
         return $this->db->count_all_results();
+    }
+
+    // Obtener ubicaciones para select
+    public function ubicaciones_para_select()
+    {
+        $query = $this->db->get('ubicaciones');
+        return $query->result_array();
+    }
+
+    // Verificación de número de serie que sea único
+    public function existsNumeroSerie($numero_serie, $exclude_id = NULL)
+    {
+        if ($exclude_id !== NULL) {
+            $this->db->where('id !=', $exclude_id);
+        }
+        $this->db->where('numero_serie', $numero_serie);
+        $query = $this->db->get('equipos_medicos');
+        return $query->num_rows() > 0;
+    }
+
+    // Verificación de tag RFID que sea único
+    public function existsTagRfidId($tag_rfid_id, $exclude_id = NULL)
+    {
+        if ($exclude_id !== NULL) {
+            $this->db->where('id !=', $exclude_id);
+        }
+        $this->db->where('tag_rfid_id', $tag_rfid_id);
+        $query = $this->db->get('equipos_medicos');
+        return $query->num_rows() > 0;
     }
 
     // Insertar un nuevo equipo médico
@@ -68,18 +100,53 @@ class M_equipos extends CI_Model
         return $this->db->update('equipos_medicos', $data);
     }
 
-    // Eliminar un equipo médico
-    public function eliminar_equipo($id)
-    {
-        $this->db->where('id', $id);
-        return $this->db->delete('equipos_medicos');
-    }
-
-    // Obtener un equipo médico por ID
+    // Obtener un equipo médico por ID PARA EDITAR
     public function obtener_equipo_por_id($id)
     {
         $this->db->where('id', $id);
         $query = $this->db->get('equipos_medicos');
         return $query->row();
+    }
+
+
+    // Función para eliminar un equipo (cambiar su estado a inactivo)
+    public function eliminar_equipo($id)
+    {
+        // Actualiza el estado del equipo a inactivo (0)
+        $this->db->where('id', $id);
+        $this->db->update('equipos_medicos', array('estado' => 0));
+
+        // Verifica si la actualización fue exitosa
+        return $this->db->affected_rows() > 0;
+    }
+
+
+    // Método para insertar los datos en la tabla equipos_eliminados
+    public function insertar_equipo_eliminado($id, $equipo, $motivo, $usr_inactivador)
+    {
+        $data = array(
+            'equipo_id' => $id,
+            'nombre' => isset($equipo->nombre) ? $equipo->nombre : null,
+            'numero_serie' => isset($equipo->numero_serie) ? $equipo->numero_serie : null,
+            'ubicacion_ultima' => isset($equipo->ubicacion_id) ? $equipo->ubicacion_id : null,
+            'estado_anterior' => isset($equipo->estado) ? $equipo->estado : null,
+            'motivo' => $motivo,
+            'usr_inactivador' => $usr_inactivador,
+            'fecha_inactivacion' => date('Y-m-d H:i:s')
+        );
+
+        return $this->db->insert('equipos_eliminados', $data);
+    }
+
+    // Función para obtener la información de eliminación del equipo
+    public function get_eliminacion_info($id) {
+        $this->db->where('equipo_id', $id);
+        $query = $this->db->get('equipos_eliminados');
+        
+        if ($query->num_rows() > 0) {
+            return $query->row(); // Devuelve la primera fila del resultado con todos los campos
+        }
+        
+        return false; // No se encontró información
     }
 }

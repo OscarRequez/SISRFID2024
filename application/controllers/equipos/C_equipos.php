@@ -9,6 +9,8 @@ class C_equipos extends MY_Controller
         $this->load->model('M_permisos');
         $this->load->model('equipos/M_equipos', 'mEquipos');
         $this->load->model('usuarios/M_roles', 'mRoles');
+        // Cargar la biblioteca form_validation
+        $this->load->library('form_validation');
 
         // Verificar si el usuario está autenticado
         if (!$this->session->userdata('user_id')) {
@@ -57,156 +59,304 @@ class C_equipos extends MY_Controller
         echo json_encode($data);
     }
 
+    public function obtener_ubicaciones_para_select()
+    {
+        $ubicaciones = $this->mEquipos->ubicaciones_para_select();
+        echo json_encode(array('ubicaciones' => $ubicaciones));
+    }
+
     // Método para agregar un equipo médico
     public function agregar_equipo()
     {
+        // Reglas de validación
         $this->form_validation->set_rules('nombre', 'Nombre', 'required');
-        $this->form_validation->set_rules('marca', 'Marca', 'required');
-        $this->form_validation->set_rules('modelo', 'Modelo', 'required');
+        $this->form_validation->set_rules('Descripcion', 'Descripción', 'required');
+        $this->form_validation->set_rules('Codigo', 'Código', 'required');
+        $this->form_validation->set_rules('RFID', 'RFID', 'required');
         $this->form_validation->set_rules('ubicacion', 'Ubicación', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $this->session->set_flashdata('error', validation_errors());
-            redirect('equipos');
+            // Redirige si hay errores de validación
+            $response = array(
+                'status' => 'error',
+                'message' => validation_errors()
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        // Verificar si el número de serie o RFID ya existen
+        $numero_serie = $this->input->post('Codigo');
+        $tag_rfid_id = $this->input->post('RFID');
+
+        if ($this->mEquipos->existsNumeroSerie($numero_serie)) {
+            $response = array(
+                'status' => 'Error en los datos',
+                'message' => 'El Codigo del equipo ya existe.'
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        if ($this->mEquipos->existsTagRfidId($tag_rfid_id)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'El Codigo RFID ya esta asignado a otro equipo.'
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        // Manejo de la imagen
+        $config['upload_path'] = './assets/imagenes/equipos/';
+        $config['allowed_types'] = 'jpg|jpeg|png';
+        $config['file_name'] = 'equipo_' . date('YmdHis');
+        $config['overwrite'] = TRUE;
+
+        $this->load->library('upload', $config);
+
+        if (!$this->upload->do_upload('imagen')) {
+            $response = array(
+                'status' => 'error',
+                'message' => $this->upload->display_errors()
+            );
+            echo json_encode($response);
+            return;
         } else {
-            // Manejo de la imagen
-            $config['upload_path'] = './uploads/equipos/';
+            $upload_data = $this->upload->data();
+            $imagen_nombre = $upload_data['file_name'];
+        }
+
+        // Preparación de los datos para insertar en la base de datos
+        $data = array(
+            'nombre' => $this->input->post('nombre'),
+            'descripcion' => $this->input->post('Descripcion'),
+            'numero_serie' => $this->input->post('Codigo'),
+            'tag_rfid_id' => $this->input->post('RFID'),
+            'ubicacion_id' => $this->input->post('ubicacion'),
+            'Imagen' => $imagen_nombre,
+            'estado' => 1,
+            'usucre' => $this->session->userdata('email'),
+            'feccre' => date('Y-m-d H:i:s')
+        );
+
+        // Llamada al modelo para insertar los datos
+        $this->mEquipos->insertar_equipo($data);
+
+        // Devuelve un éxito si la inserción es correcta
+        $response = array(
+            'status' => 'success',
+            'message' => 'Equipo médico agregado con éxito'
+        );
+        echo json_encode($response);
+    }
+
+
+
+    public function editar_equipo()
+    {
+        $id = $this->input->post('id'); // Asegúrate de recibir el ID
+        $this->form_validation->set_rules('nombre', 'Nombre', 'required');
+        $this->form_validation->set_rules('Descripcion', 'Descripción', 'required');
+        $this->form_validation->set_rules('Codigo', 'Código', 'required');
+        $this->form_validation->set_rules('RFID', 'RFID', 'required');
+        $this->form_validation->set_rules('ubicacion', 'Ubicación', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            $response = array(
+                'status' => 'error',
+                'message' => validation_errors()
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        $numero_serie = $this->input->post('Codigo');
+        $tag_rfid_id = $this->input->post('RFID');
+
+        if ($this->mEquipos->existsNumeroSerie($numero_serie, $id)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'El Codigo del equipo ya existe.'
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        if ($this->mEquipos->existsTagRfidId($tag_rfid_id, $id)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'El Codigo RFID ya esta asignado a otro equipo.'
+            );
+            echo json_encode($response);
+            return;
+        }
+
+        // Obtén la información actual del equipo
+        $equipo = $this->mEquipos->obtener_equipo_por_id($id);
+
+        // Array para almacenar los campos que serán actualizados
+        $data = array();
+
+        // Comparar cada campo para ver si ha cambiado
+        if ($this->input->post('nombre') !== $equipo->nombre) {
+            $data['nombre'] = $this->input->post('nombre');
+        }
+        if ($this->input->post('Descripcion') !== $equipo->descripcion) {
+            $data['descripcion'] = $this->input->post('Descripcion');
+        }
+        if ($this->input->post('Codigo') !== $equipo->numero_serie) {
+            $data['numero_serie'] = $this->input->post('Codigo');
+        }
+        if ($this->input->post('RFID') !== $equipo->tag_rfid_id) {
+            $data['tag_rfid_id'] = $this->input->post('RFID');
+        }
+        if ($this->input->post('ubicacion') !== $equipo->ubicacion_id) {
+            $data['ubicacion_id'] = $this->input->post('ubicacion');
+        }
+
+        // Siempre actualizar el estado, usuario y fecha de modificación
+        $data['estado'] = 1;
+        $data['usumod'] = $this->session->userdata('email');
+        $data['fecmod'] = date('Y-m-d H:i:s');
+
+        // Manejar la carga de imagen si se ha subido una nueva
+        if (!empty($_FILES['imagen']['name'])) {
+            $config['upload_path'] = './assets/imagenes/equipos/';
             $config['allowed_types'] = 'jpg|jpeg|png';
-            $config['file_name'] = 'equipo_' . date('YmdHis'); // Nombre único basado en la fecha y hora
+            $config['file_name'] = 'equipo_' . date('YmdHis');
             $config['overwrite'] = TRUE;
 
             $this->load->library('upload', $config);
 
             if (!$this->upload->do_upload('imagen')) {
-                $this->session->set_flashdata('error', $this->upload->display_errors());
-                redirect('equipos');
+                $response = array(
+                    'status' => 'error',
+                    'message' => $this->upload->display_errors()
+                );
+                echo json_encode($response);
+                return;
             } else {
-                $upload_data = $this->upload->data();
-                $imagen_nombre = $upload_data['file_name'];
-            }
-
-            $data = array(
-                'nombre' => $this->input->post('nombre'),
-                'marca' => $this->input->post('marca'),
-                'modelo' => $this->input->post('modelo'),
-                'ubicacion' => $this->input->post('ubicacion'),
-                'imagen' => $imagen_nombre, // Guardar el nombre de la imagen
-                'estado' => $this->input->post('estado') ? 1 : 0, // Estado activo/inactivo
-                'usucre' => $this->session->userdata('user_id'), // Usuario que creó el equipo
-                'feccre' => date('Y-m-d H:i:s') // Fecha de creación
-            );
-            $this->mEquipos->insertar_equipo($data);
-            $this->session->set_flashdata('success', 'Equipo médico agregado con éxito');
-            redirect('equipos');
-        }
-    }
-
-    // Método para editar un equipo médico
-    public function editar_equipo($id)
-    {
-        $this->form_validation->set_rules('nombre', 'Nombre', 'required');
-        $this->form_validation->set_rules('marca', 'Marca', 'required');
-        $this->form_validation->set_rules('modelo', 'Modelo', 'required');
-        $this->form_validation->set_rules('ubicacion', 'Ubicación', 'required');
-
-        if ($this->form_validation->run() == FALSE) {
-            $this->session->set_flashdata('error', validation_errors());
-            redirect('equipos');
-        } else {
-            $data = array(
-                'nombre' => $this->input->post('nombre'),
-                'marca' => $this->input->post('marca'),
-                'modelo' => $this->input->post('modelo'),
-                'ubicacion' => $this->input->post('ubicacion'),
-                'estado' => $this->input->post('estado') ? 1 : 0, // Estado activo/inactivo
-                'usumod' => $this->session->userdata('user_id'), // Usuario que modificó el equipo
-                'fecmod' => date('Y-m-d H:i:s') // Fecha de modificación
-            );
-
-            // Manejo de la imagen si es que se sube una nueva
-            if (!empty($_FILES['imagen']['name'])) {
-                $config['upload_path'] = './uploads/equipos/';
-                $config['allowed_types'] = 'jpg|jpeg|png';
-                $config['file_name'] = 'equipo_' . date('YmdHis'); // Nombre único basado en la fecha y hora
-                $config['overwrite'] = TRUE;
-
-                $this->load->library('upload', $config);
-
-                if (!$this->upload->do_upload('imagen')) {
-                    $this->session->set_flashdata('error', $this->upload->display_errors());
-                    redirect('equipos');
-                } else {
-                    $upload_data = $this->upload->data();
-                    $data['imagen'] = $upload_data['file_name'];
+                // Elimina la imagen anterior si existe
+                if (!empty($equipo->imagen)) {
+                    $path = './assets/imagenes/equipos/' . $equipo->imagen;
+                    if (file_exists($path)) {
+                        unlink($path);
+                    }
                 }
+                $upload_data = $this->upload->data();
+                $data['imagen'] = $upload_data['file_name'];
             }
-
-            $this->mEquipos->actualizar_equipo($id, $data);
-            $this->session->set_flashdata('success', 'Equipo médico actualizado con éxito');
-            redirect('equipos');
         }
+
+        // Solo actualizar si hay cambios
+        if (!empty($data)) {
+            $this->mEquipos->actualizar_equipo($id, $data);
+            $response = array(
+                'status' => 'success',
+                'message' => 'Equipo médico actualizado con éxito'
+            );
+        } else {
+            $response = array(
+                'status' => 'info',
+                'message' => 'No se realizaron cambios en el equipo.'
+            );
+        }
+
+        echo json_encode($response);
     }
+
 
     // Método para eliminar un equipo médico
-    public function eliminar_equipo($id)
+    public function eliminar_equipo()
     {
+        $id = $this->input->post('id'); // Recibe el ID del equipo a eliminar
+        $motivo = $this->input->post('motivo'); // Recibe el motivo de la inactivación
+        $usr_inactivador = $this->session->userdata('email'); // Obtiene el usuario que está haciendo la inactivación
+    
+        if (empty($id) || empty($motivo)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'ID del equipo o motivo no proporcionado.'
+            );
+            echo json_encode($response);
+            return;
+        }
+    
+        // Llama al modelo para obtener los datos del equipo antes de inactivarlo
         $equipo = $this->mEquipos->obtener_equipo_por_id($id);
-
-        // Eliminar la imagen del equipo si existe
-        if ($equipo && !empty($equipo->imagen)) {
-            $ruta_imagen = './uploads/equipos/' . $equipo->imagen;
-            if (file_exists($ruta_imagen)) {
-                unlink($ruta_imagen); // Eliminar el archivo de imagen
+    
+        if (!$equipo) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'Equipo no encontrado.'
+            );
+            echo json_encode($response);
+            return;
+        }
+    
+        // Inserta en la tabla equipos_eliminados
+        $eliminacion_result = $this->mEquipos->insertar_equipo_eliminado($id, $equipo, $motivo, $usr_inactivador);
+    
+        if ($eliminacion_result) {
+            // Llama al modelo para actualizar el estado del equipo a inactivo (0)
+            $result = $this->mEquipos->eliminar_equipo($id);
+    
+            if ($result) {
+                $response = array(
+                    'status' => 'success',
+                    'message' => 'Equipo médico inactivado con éxito.'
+                );
+            } else {
+                $response = array(
+                    'status' => 'error',
+                    'message' => 'No se pudo inactivar el equipo.'
+                );
             }
+        } else {
+            $response = array(
+                'status' => 'error',
+                'message' => 'No se pudo registrar la inactivación en la tabla de eliminados.'
+            );
         }
-
-        $this->mEquipos->eliminar_equipo($id);
-        $this->session->set_flashdata('success', 'Equipo médico eliminado con éxito');
-        redirect('equipos');
+    
+        echo json_encode($response); 
     }
 
-    public function guardar_equipo()
-    {
-        $id = $this->input->post('id');
-        $nombre = $this->input->post('nombre');
-        $marca = $this->input->post('marca');
-        $modelo = $this->input->post('modelo');
-        $ubicacion = $this->input->post('ubicacion');
-        $estado = $this->input->post('estado');
+    public function obtener_motivo_eliminacion() {
+        $id = $this->input->post('id'); // Obtener el ID del equipo enviado en la solicitud POST
 
-        // Manejo de la imagen
-        $config['upload_path'] = './uploads/equipos/';
-        $config['allowed_types'] = 'jpg|jpeg|png';
-        $config['file_name'] = date('YmdHis') . '_' . $_FILES['imagen']['name'];
-
-        $this->load->library('upload', $config);
-
-        if ($this->upload->do_upload('imagen')) {
-            $imagen = $this->upload->data('file_name');
-        } else {
-            $imagen = NULL; // O mantener la imagen existente en caso de editar
+        if (empty($id)) {
+            $response = array(
+                'status' => 'error',
+                'message' => 'ID del equipo no proporcionado.'
+            );
+            echo json_encode($response);
+            return;
         }
 
-        $data = array(
-            'nombre' => $nombre,
-            'marca' => $marca,
-            'modelo' => $modelo,
-            'ubicacion' => $ubicacion,
-            'estado' => $estado,
-            'imagen' => $imagen,
-            'usumod' => $this->session->userdata('user_id'),
-            'fecmod' => date('Y-m-d H:i:s')
-        );
+        // Llama al modelo para obtener la información de eliminación del equipo
+        $eliminacion_info = $this->mEquipos->get_eliminacion_info($id);
 
-        if ($id) {
-            $this->mEquipos->actualizar_equipo($id, $data);
+        if ($eliminacion_info) {
+            // Suponiendo que $eliminacion_info contiene los campos: motivo, usr_inactivador, fecha_inactivacion, numero_serie
+            $response = array(
+                'status' => 'success',
+                'data' => array(
+                    'motivo' => $eliminacion_info->motivo,
+                    'usr_inactivador' => $eliminacion_info->usr_inactivador,
+                    'fecha_inactivacion' => $eliminacion_info->fecha_inactivacion,
+                    'numero_serie' =>$eliminacion_info->numero_serie
+                )
+            );
         } else {
-            $data['usucre'] = $this->session->userdata('user_id');
-            $data['feccre'] = date('Y-m-d H:i:s');
-            $this->mEquipos->insertar_equipo($data);
+            $response = array(
+                'status' => 'error',
+                'message' => 'Información de eliminación no encontrada.'
+            );
         }
 
-        $this->session->set_flashdata('success', 'Equipo médico guardado con éxito');
-        redirect('equipos');
+        echo json_encode($response);
     }
+    
 }

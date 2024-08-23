@@ -1,13 +1,6 @@
 <?php $this->load->view('templates/header'); ?>
-
-
 <style>
-    /* Asegúrate de que el contenedor principal no tenga un ancho mayor al 100% */
-    .container {
-        max-width: 80%;
 
-        /* Oculta el desbordamiento horizontal */
-    }
 
     /* Ajusta el tamaño de los gráficos para que se ajusten al contenedor */
     .chart-container {
@@ -20,23 +13,6 @@
 
     }
 
-    .col-md-3,
-    .col-md-6,
-    .col-md-4,
-    .col-md-8 {
-        padding: 0.5rem;
-        /* Ajusta el padding si es necesario */
-        box-sizing: border-box;
-        /* Incluye padding en el cálculo del ancho total */
-        max-width: 80%;
-        max-height: 80%;
-    }
-
-    .table-responsive {
-
-        max-width: 60%;
-        max-height: 80%;
-    }
 </style>
 </head>
 <!-- welcome.php -->

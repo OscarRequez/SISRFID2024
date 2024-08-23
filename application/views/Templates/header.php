@@ -112,7 +112,7 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos')): ?>
                                         <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi bi bi-heart-pulse"></i> <span class="ms-1 d-none d-sm-inline">Equipos Médicos</span>
+                                        <i class="fs-4 bi bi-pc-display-horizontal"></i> <span class="ms-1 d-none d-sm-inline">Equipos Médicos</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'registro')): ?>
@@ -185,7 +185,7 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid')): ?>
                                         <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi bi-radar"></i>
+                                            <i class="fs-4 bi bi-router"></i>
                                             <span class="ms-1 d-none d-sm-inline">RFID</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
@@ -250,7 +250,7 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento')): ?>
                                         <a href="#submenu5" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                            <i class="fs-4 bi bi-info-circle"></i>
+                                         <i class="fs-4 bi bi-wrench-adjustable-circle-fill"></i>
                                             <span class="ms-1 d-none d-sm-inline">Mantenimiento</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu5" data-bs-parent="#menu">

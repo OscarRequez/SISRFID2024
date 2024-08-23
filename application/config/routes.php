@@ -61,7 +61,6 @@ $route['logout'] = 'C_login/logout'; //CERRAR SESION
 
 //usuarios
 $route['usuarios'] = 'usuarios/C_usuarios';
-//usuarios
 $route['roles'] = 'usuarios/C_roles';
 $route['obtener_roles_ajax'] = 'usuarios/C_usuarios/obtener_roles_ajax';
 $route['guardar_usuario'] = 'usuarios/C_usuarios/guardar';
@@ -76,7 +75,6 @@ $route['roles/agregar'] = 'usuarios/C_roles/agregar';
 $route['usuarios/obtenerPermisosDeUnRol'] = 'usuarios/C_roles/obtenerPermisosDeUnRol/$1';// Ruta para obtener permisos de un rol
 $route['checksParaEditar'] = 'usuarios/C_roles/agregarRolCheckbox';
 $route['roles_actualizar_Permisos'] = 'usuarios/C_roles/actualizar_permisos';//PARA ACTUALIZAR LOS PERMISOS DE UN ROL
-
 //AVATARES
 $route['avatars'] = 'usuarios/C_avatars';// Ruta para la página principal de avatares
 $route['avatars_agregar'] = 'usuarios/C_avatars/agregar';// Ruta para agregar un nuevo avatar (puedes usar POST para este método)
@@ -84,11 +82,16 @@ $route['avatars_eliminar/(:num)'] = 'usuarios/C_avatars/eliminar/$1';// Ruta par
 $route['obtener_avatares'] = 'Welcome/obtener_avatares';
 $route['actualizar_avatar'] = 'Welcome/actualizarAvatar';
 
+
 //EQUIPOS 
 $route['equipos'] = 'equipos/C_equipos';// Ruta para la página principal de EQUIPOS
 $route['equipos_mostrar'] = 'equipos/C_equipos/mostrar_equipos';
-//$route['equipos_mostrar'] = 'equipos/C_equipos';
-//$route['equipos_mostrar'] = 'equipos/C_equipos';
+$route['obtener_ubicaciones_select'] = 'equipos/C_equipos/obtener_ubicaciones_para_select';
+$route['agregar_equipo'] = 'equipos/C_equipos/agregar_equipo';
+$route['editar_equipo'] = 'equipos/C_equipos/editar_equipo';
+$route['eliminar_equipo'] = 'equipos/C_equipos/eliminar_equipo';
+$route['obtener_motivo_eliminacion'] = 'equipos/C_equipos/obtener_motivo_eliminacion';
+
 
 
 
