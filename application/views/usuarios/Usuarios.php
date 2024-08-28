@@ -1,68 +1,11 @@
 <?php $this->load->view('templates/header'); ?>
 
 <style>
-    th,
-    td {
-        border: 1px solid #ddd;
-        padding: 8px;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-
     /* Contenedor de la paginación */
     .pagination {
         display: flex;
         justify-content: center;
         margin: 20px 0;
-    }
-
-    /* Estilo de los enlaces de paginación */
-    .pagination a {
-        color: #404BDF;
-        /* Color del texto */
-        padding: 8px 16px;
-        margin: 0 4px;
-        border: 1px solid #dee2e6;
-        /* Borde del enlace */
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 16px;
-    }
-
-    /* Estilo del enlace activo */
-    .pagination .active a {
-        background-color: #7A7CE5;
-        /* Fondo del enlace activo */
-        color: #fff;
-        /* Color del texto activo */
-        border-color: #7A84E5;
-    }
-
-    /* Estilo de los enlaces deshabilitados */
-    .pagination .disabled a {
-        color: #6c757d;
-        /* Color del texto deshabilitado */
-        border-color: #dee2e6;
-        cursor: not-allowed;
-    }
-
-    /* Estilo de los iconos de navegación */
-    .pagination .disabled a,
-    .pagination .active a {
-        cursor: default;
-    }
-
-    /* Estilo para el primer y último enlace de paginación */
-    .pagination .first,
-    .pagination .last {
-        font-weight: bold;
     }
 </style>
 
@@ -72,7 +15,7 @@
         <div class="col py-3">
             <div class="row">
                 <div class="col-md-6">
-                    <button type="button" style="background-color:#7A84E5; color:#fff" class="btn mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <button type="button" class="btn mb-3 bg-primary text-white" data-bs-toggle="modal" data-bs-target="#addUserModal">
                         <i class="bi bi-person-plus"></i> Agregar Usuario
                     </button>
                 </div>
@@ -155,23 +98,23 @@
                     var paginador = "<ul class='pagination'>";
 
                     if (pagina > 1) {
-                        paginador += "<li><a href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", 1, " + cantidad + ")'>&laquo;</a></li>";
-                        paginador += "<li><a href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina - 1) + ", " + cantidad + ")'>&lsaquo;</a></li>";
+                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", 1, " + cantidad + ")'>Primera</a></li>";
+                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
                     } else {
-                        paginador += "<li class='disabled'><a href='#'>&laquo;</a></li>";
-                        paginador += "<li class='disabled'><a href='#'>&lsaquo;</a></li>";
+                        paginador += "<li class='disabled'><a class='page-link' href='#'>Primera</a></li>";
+                        paginador += "<li class='disabled'><a class='page-link' href='#'>Anterior</a></li>";
                     }
 
                     for (var i = 1; i <= numerolinks; i++) {
-                        paginador += "<li" + (i === pagina ? " class='active'" : "") + "><a href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + i + ", " + cantidad + ")'>" + i + "</a></li>";
+                        paginador += "<li" + (i === pagina ? " class='active'" : "") + "><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + i + ", " + cantidad + ")'>" + i + "</a></li>";
                     }
 
                     if (pagina < numerolinks) {
-                        paginador += "<li><a href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina + 1) + ", " + cantidad + ")'>&rsaquo;</a></li>";
-                        paginador += "<li><a href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + numerolinks + ", " + cantidad + ")'>&raquo;</a></li>";
+                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
+                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + numerolinks + ", " + cantidad + ")'>Ultimo</a></li>";
                     } else {
-                        paginador += "<li class='disabled'><a href='#'>&rsaquo;</a></li>";
-                        paginador += "<li class='disabled'><a href='#'>&raquo;</a></li>";
+                        paginador += "<li class='disabled'><a class='page-link' href='#'>Siguiente</a></li>";
+                        paginador += "<li class='disabled'><a class='page-link' href='#'>Ultimo;</a></li>";
                     }
 
                     paginador += "</ul>";
@@ -190,7 +133,7 @@
     <div class="table table-responsive">
         <h4 class="mb-3">Lista de Usuarios</h4>
         <table class="table table-hover table-bordered table-responsive">
-            <thead style="background-color:#7A7CE5; color:#fff">
+            <thead class="bg-primary text-white">
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>

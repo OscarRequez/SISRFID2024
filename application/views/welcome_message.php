@@ -24,7 +24,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Equipos Registrados</h5>
-                    <p class="card-text"><strong>150</strong></p>
+                  <center> <h3 class="card-text" id="cantidad-equipos"><strong></strong><h3/></center> 
                 </div>
             </div>
         </div>
@@ -121,35 +121,79 @@
         }
     });
 </script>
-
 <script>
-    const ctx2 = document.getElementById('equipmentDistributionChart').getContext('2d');
-    const equipmentDistributionChart = new Chart(ctx2, {
-        type: 'pie', // Tipo de gráfico: 'pie' para gráfico circular
-        data: {
-            labels: ['Operativos', 'En Mantenimiento', 'Dados de Baja'], // Etiquetas de cada sección
-            datasets: [{
-                label: 'Distribución de Equipos',
-                data: [50, 30, 20], // Datos para cada sección
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.5)',
-                    'rgba(255, 159, 64, 0.5)',
-                    'rgba(255, 99, 132, 0.5)'
-                ], // Colores para cada sección
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 159, 64, 1)',
-                    'rgba(255, 99, 132, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true, // El gráfico se ajusta al tamaño del contenedor
-        }
+    $(document).ready(function() {
+        // Realiza la solicitud AJAX para obtener los datos
+        $.ajax({
+            url: '<?php echo site_url('welcome/distribucion_equipos'); ?>',
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                // Organiza los datos
+                let cantidad = [0, 0, 0]; // Inicializa un array para almacenar las cantidades
+
+                data.forEach(function(item) {
+                    if (item.estado == 1) {
+                        cantidad[0] = item.cantidad; // Operativos
+                    } else if (item.estado == 3) {
+                        cantidad[1] = item.cantidad; // En Mantenimiento
+                    } else if (item.estado == 0) {
+                        cantidad[2] = item.cantidad; // Dados de Baja
+                    }
+                });
+
+                // Crear el gráfico con el estilo preferido
+                const ctx2 = document.getElementById('equipmentDistributionChart').getContext('2d');
+                const equipmentDistributionChart = new Chart(ctx2, {
+                    type: 'pie', // Tipo de gráfico: 'pie' para gráfico circular
+                    data: {
+                        labels: ['Operativos', 'En Mantenimiento', 'Dados de Baja'], // Etiquetas de cada sección
+                        datasets: [{
+                            label: 'Distribución de Equipos',
+                            data: cantidad, // Datos dinámicos obtenidos por AJAX
+                            backgroundColor: [
+                                'rgba(60, 69, 255 , 0.8)', // Color para Operativos
+                                'rgba(248, 189, 33, 0.8)', // Color para En Mantenimiento
+                                'rgba(255, 28, 90, 0.8)'  // Color para Dados de Baja
+                            ],
+                            borderColor: [
+                                'rgba(60, 69, 255, 1)',
+                                'rgba(248, 189, 33, 1)',
+                                'rgba(255, 28, 90, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true, // El gráfico se ajusta al tamaño del contenedor
+                    }
+                });
+            },
+            error: function() {
+                console.error('Error al cargar los datos para el gráfico.');
+            }
+        });
     });
 </script>
 
-
+<script>
+    //CANTIDAD DE EQUIPÒS TOTALES EN KLA BASE DE DATOS
+    $(document).ready(function() {
+        // Realiza la solicitud AJAX al cargar la página
+        $.ajax({
+            url: '<?php echo site_url('cantidad_equipos'); ?>', // URL del controlador/método
+            type: 'GET', // Tipo de solicitud
+            dataType: 'json', // Tipo de dato esperado (JSON)
+            success: function(data) {
+                // Actualiza el contenido del elemento con id="cantidad-equipos"
+                $('#cantidad-equipos').text(data.cantidad);
+            },
+            error: function() {
+                // Muestra un mensaje de error en caso de falla
+                $('#cantidad-equipos').text('Error al cargar');
+            }
+        });
+    });
+</script>
 
 <?php $this->load->view('templates/footer'); ?>

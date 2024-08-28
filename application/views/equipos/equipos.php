@@ -6,38 +6,6 @@
         justify-content: center;
         margin: 20px 0;
     }
-
-    .pagination a {
-        color: #404BDF;
-        padding: 8px 16px;
-        margin: 0 4px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 16px;
-    }
-
-    .pagination .active a {
-        background-color: #7A7CE5;
-        color: #fff;
-        border-color: #7A84E5;
-    }
-
-    .pagination .disabled a {
-        color: #6c757d;
-        border-color: #dee2e6;
-        cursor: not-allowed;
-    }
-
-    .pagination .disabled a,
-    .pagination .active a {
-        cursor: default;
-    }
-
-    .pagination .first,
-    .pagination .last {
-        font-weight: bold;
-    }
 </style>
 
 <div class="col py-3">
@@ -179,9 +147,9 @@
                             '<td>' + item.usucre + '</td>' +
                             '<td>' + item.feccre + '</td>' +
                             '<td><center><i class="bi ' +
-                            (item.estado == 1 ? 'fs-4 bi-check-circle' :
-                                item.estado == 3 ? 'fs-4 bi-tools' :
-                                'fs-4 bi-x-circle') +
+                            (item.estado == 1 ? 'fs-4 bi bi-check-circle-fill' :
+                                item.estado == 3 ? 'fs-4 bi bi-wrench-adjustable-circle-fill' :
+                                'fs-4 bi bi-x-circle-fill') +
                             '" data-id="' + item.id + '" data-estado="' + item.estado + '" ' +
                             'style="color: ' +
                             (item.estado == 1 ? 'green' :
@@ -268,7 +236,7 @@
 
 
         $(document).ready(function() {
-            mostrarDatosEquipos('', 1, 5);
+            mostrarDatosEquipos('', 1,7 );
             cargarUbicaciones(); // Cargar ubicaciones al inicio
 
             $(document).on('submit', '#formBusqueda', function(e) {

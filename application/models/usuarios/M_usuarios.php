@@ -32,7 +32,7 @@ class M_usuarios extends CI_Model
             $this->db->or_like('usuarios.email', $buscar);
         }
 
-        // Filtrar por estado 1 o 0
+        // Filtrar por estado 1 o 0 donde 1 activo 0 inactio y 3 es eliminado para que no se muestre en la tabla
         $this->db->where_in('usuarios.estado', [0, 1]);
 
         // Configurar límite y desplazamiento

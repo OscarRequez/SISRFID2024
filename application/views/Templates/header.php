@@ -30,15 +30,16 @@
         * {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 14px;
-            
+
         }
+
+        /* PARA EL TAMAÑO DEL CONTENIDO CENTRAL TOMANDO EL ASIDE*/
         .py-3 {
-        max-width: 80%;
-        overflow-x: hidden;
-    }
-    .bg-primary{
-        background-color: #718528;
-    }
+            max-width: 80%;
+            overflow-x: hidden;
+        }
+
+        /* PARA EL TAMAÑO DEL CONTENIDO CENTRAL TOMANDO EL ASIDE*/
 
         .status-indicator {
             display: inline-block;
@@ -80,11 +81,176 @@
 
 
         /* Efecto hover para los enlaces del menú */
-        #menu a.nav-link:hover {
-            color: #565FDC;
-            /* Color de texto al hacer hover */
+        /* COLORES TEMAS */
+        /* Tema Azul - por defecto */
+        .default-theme .bg-primary,
+        .default-theme .btn-primary {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+        }
+
+        .default-theme .text-primary {
+            color: #007bff !important;
+        }
+
+        .default-theme #menu a.nav-link:hover {
+            color: #0056b3 !important;
+            /* Color del texto al hacer hover en el tema azul */
             transition: background-color 0.3s ease, color 0.3s ease;
             transform: scale(1.1);
+        }
+
+        /* Tema Verde */
+        .green-theme .bg-primary,
+        .green-theme .btn-primary {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        .green-theme .text-primary {
+            color: #28a745 !important;
+        }
+
+        .green-theme #menu a.nav-link:hover {
+            color: #1e7e34 !important;
+            /* Color del texto al hacer hover en el tema verde */
+            /* Color de fondo al hacer hover en el tema verde */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        /* Tema Naranja */
+        .orange-theme .bg-primary,
+        .orange-theme .btn-primary {
+            background-color: #fd7e14 !important;
+            border-color: #fd7e14 !important;
+        }
+
+        .orange-theme .text-primary {
+            color: #fd7e14 !important;
+        }
+
+        .orange-theme #menu a.nav-link:hover {
+            color: #e56b00 !important;
+            /* Color del texto al hacer hover en el tema naranja */
+            /* Color de fondo al hacer hover en el tema naranja */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        /* Tema Morado */
+        .red-theme .bg-primary,
+        .red-theme .btn-primary {
+            background-color: #8747E7 !important;
+            border-color: #8747E7 !important;
+        }
+
+        .red-theme .text-primary {
+            color: #8747E7 !important;
+        }
+
+        .red-theme #menu a.nav-link:hover {
+            color: #8747E7 !important;
+            /* Color de fondo al hacer hover en el tema rojo */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            transform: scale(1.1);
+        }
+
+        /* COLORES TEMAS PAGINACIÓN */
+        /* Tema Azul - por defecto */
+        .default-theme .pagination a {
+            color: #ffffff;
+            /* Texto blanco sobre fondo azul */
+            background-color: #007bff;
+            /* Fondo azul */
+            border: none;
+            /* Sin bordes */
+        }
+
+        .default-theme .pagination .active a {
+            background-color: #0056b3;
+            /* Fondo azul oscuro */
+            color: #ffffff;
+            /* Texto blanco */
+        }
+
+        .default-theme .pagination .disabled a {
+            color: #6c757d;
+            /* Texto gris para deshabilitados */
+            background-color: #e9ecef;
+            /* Fondo gris claro */
+        }
+
+        /* Tema Verde */
+        .green-theme .pagination a {
+            color: #ffffff;
+            /* Texto blanco sobre fondo verde */
+            background-color: #28a745;
+            /* Fondo verde */
+            border: none;
+            /* Sin bordes */
+        }
+
+        .green-theme .pagination .active a {
+            background-color: #1e7e34;
+            /* Fondo verde oscuro */
+            color: #ffffff;
+            /* Texto blanco */
+        }
+
+        .green-theme .pagination .disabled a {
+            color: #6c757d;
+            /* Texto gris para deshabilitados */
+            background-color: #e9ecef;
+            /* Fondo gris claro */
+        }
+
+        /* Tema Naranja */
+        .orange-theme .pagination a {
+            color: #ffffff;
+            /* Texto blanco sobre fondo naranja */
+            background-color: #fd7e14;
+            /* Fondo naranja */
+            border: none;
+            /* Sin bordes */
+        }
+
+        .orange-theme .pagination .active a {
+            background-color: #e56b00;
+            /* Fondo naranja oscuro */
+            color: #ffffff;
+            /* Texto blanco */
+        }
+
+        .orange-theme .pagination .disabled a {
+            color: #6c757d;
+            /* Texto gris para deshabilitados */
+            background-color: #e9ecef;
+            /* Fondo gris claro */
+        }
+
+        /* Tema Rojo */
+        .red-theme .pagination a {
+            color: #ffffff;
+            /* Texto blanco sobre fondo rojo */
+            background-color: #8747E7;
+            /* Fondo rojo */
+            border: none;
+            /* Sin bordes */
+        }
+
+        .red-theme .pagination .active a {
+            background-color: #8747E7;
+            /* Fondo rojo oscuro */
+            color: #ffffff;
+            /* Texto blanco */
+        }
+
+        .red-theme .pagination .disabled a {
+            color: #6c757d;
+            /* Texto gris para deshabilitados */
+            background-color: #AFA7BA;
+            /* Fondo gris claro */
         }
     </style>
 
@@ -112,7 +278,7 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos')): ?>
                                         <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                        <i class="fs-4 bi bi-pc-display-horizontal"></i> <span class="ms-1 d-none d-sm-inline">Equipos Médicos</span>
+                                            <i class="fs-4 bi bi-pc-display-horizontal"></i> <span class="ms-1 d-none d-sm-inline">Equipos Médicos</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'registro')): ?>
@@ -135,7 +301,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'reportes')): ?>
                                                 <li>
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('reportes'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-journal-text"></i>
                                                         <span class="d-none d-sm-inline">Reportes</span>
                                                     </a>
@@ -250,7 +416,7 @@
                                 <li>
                                     <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento')): ?>
                                         <a href="#submenu5" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                         <i class="fs-4 bi bi-wrench-adjustable-circle-fill"></i>
+                                            <i class="fs-4 bi bi-wrench-adjustable-circle-fill"></i>
                                             <span class="ms-1 d-none d-sm-inline">Mantenimiento</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu5" data-bs-parent="#menu">
@@ -294,6 +460,7 @@
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
                                     <li><a class="dropdown-item" href="<?php echo site_url('welcome'); ?>">Perfil</a></li>
                                     <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#avatarModal">Avatars</a></li>
+                                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#themeModal">Cambiar Tema</a></li> <!-- Nueva opción -->
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
@@ -321,19 +488,77 @@
                         </div>
                     </div>
 
-                    <script>
-                        $(document).ready(function() {
-                            // Función para cargar los avatares desde el servidor
-                            function cargarAvatares() {
-                                $.ajax({
-                                    url: '<?php echo site_url('obtener_avatares'); ?>',
-                                    type: 'GET',
-                                    dataType: 'json',
-                                    success: function(data) {
-                                        let avatarGallery = $('#avatarGallery');
-                                        avatarGallery.empty();
-                                        $.each(data, function(index, avatar) {
-                                            avatarGallery.append(`
+                    <!-- Modal para elegir el tema -->
+                    <div class="modal fade" id="themeModal" tabindex="-1" aria-labelledby="themeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="themeModalLabel">Seleccionar Tema</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="themeForm">
+                                        <div class="mb-3">
+                                            <label for="colorThemeSelector" class="form-label">Elige un tema:</label>
+                                            <select id="colorThemeSelector" class="form-select">
+                                                <option value="default">Tema Azul</option>
+                                                <option value="green">Tema Verde</option>
+                                                <option value="orange">Tema Naranja</option>
+                                                <option value="red">Tema Morado</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            
+                            <script>
+                                //tema de fondo o colores de fondo
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    const colorThemeSelector = document.getElementById('colorThemeSelector');
+
+                                    // Aplicar el color guardado (si existe)
+                                    const savedColorTheme = localStorage.getItem('colorTheme');
+                                    if (savedColorTheme) {
+                                        document.body.classList.add(`${savedColorTheme}-theme`);
+                                        colorThemeSelector.value = savedColorTheme;
+                                    }
+
+                                    // Cambiar el color al seleccionar una opción
+                                    colorThemeSelector.addEventListener('change', function() {
+                                        const selectedColorTheme = this.value;
+
+                                        // Eliminar las clases de tema anteriores
+                                        document.body.classList.remove('green-theme', 'orange-theme', 'red-theme');
+
+                                        // Aplicar el nuevo tema
+                                        if (selectedColorTheme !== 'default') {
+                                            document.body.classList.add(`${selectedColorTheme}-theme`);
+                                        }
+
+                                        // Guardar la selección en localStorage
+                                        localStorage.setItem('colorTheme', selectedColorTheme);
+                                    });
+                                });
+                            </script>
+                            <script>
+                                $(document).ready(function() {
+                                    // Función para cargar los avatares desde el servidor
+                                    function cargarAvatares() {
+                                        $.ajax({
+                                            url: '<?php echo site_url('obtener_avatares'); ?>',
+                                            type: 'GET',
+                                            dataType: 'json',
+                                            success: function(data) {
+                                                let avatarGallery = $('#avatarGallery');
+                                                avatarGallery.empty();
+                                                $.each(data, function(index, avatar) {
+                                                    avatarGallery.append(`
                             <div class="col-md-3 mb-3">
                                 <div class="card">
                                     <img src="<?php echo base_url(); ?>${avatar.ruta_imagen}" class="card-img-top img-thumbnail rounded-circle" alt="${avatar.nombre}">
@@ -344,63 +569,63 @@
                                 </div>
                             </div>
                         `);
+                                                });
+                                            }
                                         });
                                     }
+
+                                    // Cargar los avatares cuando se abre el modal
+                                    $('#avatarModal').on('show.bs.modal', function() {
+                                        cargarAvatares();
+                                    });
+
+                                    // Manejar la selección del avatar
+                                    $(document).on('click', '.select-avatar', function() {
+                                        const avatarId = $(this).data('avatar-id');
+                                        const avatarPath = $(this).data('avatar-path');
+
+                                        // Enviar el ID del avatar al controlador para actualizar la base de datos
+                                        $.ajax({
+                                            url: '<?php echo site_url('actualizar_avatar'); ?>',
+                                            type: 'POST',
+                                            data: {
+                                                avatar_id: avatarId
+                                            },
+                                            dataType: 'json',
+                                            success: function(response) {
+                                                if (response.success) {
+                                                    // Actualizar la imagen del avatar en la interfaz
+                                                    $('#userAvatar').attr('src', '<?php echo base_url(); ?>' + avatarPath);
+                                                    alert(response.message);
+                                                } else {
+                                                    alert(response.message);
+                                                }
+                                            }
+                                        });
+
+                                        // Cierra el modal después de seleccionar el avatar
+                                        $('#avatarModal').modal('hide');
+                                    });
                                 });
-                            }
+                            </script>
 
-                            // Cargar los avatares cuando se abre el modal
-                            $('#avatarModal').on('show.bs.modal', function() {
-                                cargarAvatares();
-                            });
+                            <script>
+                                function updateDateTime() {
+                                    const options = {
+                                        timeZone: 'America/La_Paz',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit'
+                                    };
+                                    const now = new Date().toLocaleString('es-ES', options);
+                                    document.getElementById('currentDateTime').textContent = now;
+                                }
 
-                            // Manejar la selección del avatar
-                            $(document).on('click', '.select-avatar', function() {
-                                const avatarId = $(this).data('avatar-id');
-                                const avatarPath = $(this).data('avatar-path');
-
-                                // Enviar el ID del avatar al controlador para actualizar la base de datos
-                                $.ajax({
-                                    url: '<?php echo site_url('actualizar_avatar'); ?>',
-                                    type: 'POST',
-                                    data: {
-                                        avatar_id: avatarId
-                                    },
-                                    dataType: 'json',
-                                    success: function(response) {
-                                        if (response.success) {
-                                            // Actualizar la imagen del avatar en la interfaz
-                                            $('#userAvatar').attr('src', '<?php echo base_url(); ?>' + avatarPath);
-                                            alert(response.message);
-                                        } else {
-                                            alert(response.message);
-                                        }
-                                    }
-                                });
-
-                                // Cierra el modal después de seleccionar el avatar
-                                $('#avatarModal').modal('hide');
-                            });
-                        });
-                    </script>
-
-                    <script>
-                        function updateDateTime() {
-                            const options = {
-                                timeZone: 'America/La_Paz',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit'
-                            };
-                            const now = new Date().toLocaleString('es-ES', options);
-                            document.getElementById('currentDateTime').textContent = now;
-                        }
-
-                        // Actualizar la fecha y hora al cargar la página
-                        updateDateTime();
-                        // Actualizar la fecha y hora cada segundo
-                        setInterval(updateDateTime, 1000);
-                    </script>
+                                // Actualizar la fecha y hora al cargar la página
+                                updateDateTime();
+                                // Actualizar la fecha y hora cada segundo
+                                setInterval(updateDateTime, 1000);
+                            </script>

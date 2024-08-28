@@ -1,67 +1,10 @@
 <?php $this->load->view('templates/header'); ?>
 
 <style>
-
-.chart-container {
-        width: 60%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 80%;
-        position: relative;
-    }
-
-    .col-md-3,
-    .col-md-6,
-    .col-md-4,
-    .col-md-8 {
-        padding: 0.5rem;
-        box-sizing: border-box;
-        max-width: 80%;
-        max-height: 80%;
-    }
-
     .pagination {
         display: flex;
         justify-content: center;
         margin: 20px 0;
-    }
-
-    .pagination a {
-        color: #404BDF;
-        padding: 8px 16px;
-        margin: 0 4px;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        text-decoration: none;
-        font-size: 16px;
-    }
-
-    .pagination .active a {
-        background-color: #7A7CE5;
-        color: #fff;
-        border-color: #7A84E5;
-    }
-
-    .pagination .disabled a {
-        color: #6c757d;
-        border-color: #dee2e6;
-        cursor: not-allowed;
-    }
-
-    .pagination .disabled a,
-    .pagination .active a {
-        cursor: default;
-    }
-
-    .pagination .first,
-    .pagination .last {
-        font-weight: bold;
-    }
-
-    /* Asegúrate de que las imágenes se ajusten al contenedor */
-    .table img {
-        max-width: 100px; /* Ajusta el tamaño según sea necesario */
-        height: auto;
     }
 </style>
 
@@ -104,7 +47,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <!-- Botón para abrir el modal de agregar rol -->
-                    <button type="button" class="btn mb-3" style="background-color:#7A7CE5; color:#fff" data-bs-toggle="modal" data-bs-target="#agregarRolModal">
+                    <button type="button" class="btn mb-3 bg-primary text-white" data-bs-toggle="modal" data-bs-target="#agregarRolModal">
                         <i class="bi bi-plus-circle"></i> Agregar Rol
                     </button>
                 </div>
@@ -179,12 +122,14 @@
         <h1 class="mb-3">Lista de Roles de Usuario</h1>
         <div class="table table-responsive">
             <table class="table table-hover table-bordered table-responsive">
-                <thead style="background-color:#7A7CE5; color:#fff">
+                <thead class="bg-primary text-white">
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th>
+                            <center>Acciones</center>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="tbRoles">
@@ -192,11 +137,11 @@
                 </tbody>
             </table>
 
-            <nav aria-label="Page navigation">
+            <div class="pagination">
                 <ul class="pagination">
                     <!-- Contenido cargado por JavaScript -->
                 </ul>
-            </nav>
+            </div>
 
         </div>
     </div>
@@ -435,10 +380,10 @@
                         '<td id="rolNombre_' + item.id + '">' + item.nombre + '</td>' +
                         '<td id="rolEstado_' + item.id + '">' + (item.estado == 1 ? 'Activo' : 'Inactivo') + '</td>' +
                         '<td>' +
-                        '<button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editarRolModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-estado="' + item.estado + '">' +
+                        '<center><button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editarRolModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-estado="' + item.estado + '">' +
                         'Editar</button>' +
                         ' <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#verPermisosModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" onclick="mostrarPermisos(' + item.id + ', \'' + item.nombre + '\')">' +
-                        '<i class="bi bi-eye"></i> Ver</button>' +
+                        '<i class="bi bi-eye"></i> Ver</button><center>' +
                         '</td>' +
                         '</tr>';
                 });

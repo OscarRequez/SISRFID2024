@@ -59,6 +59,11 @@ $route['welcome'] = 'welcome'; // Ruta de ejemplo para la página de bienvenida
 $route['login_error'] = 'C_login'; // CUANDO DA ERROR
 $route['logout'] = 'C_login/logout'; //CERRAR SESION
 
+//welcome
+$route['cantidad_equipos'] = 'welcome/cantidad_equipos';
+$route['distribucion_equipos'] = 'welcome/distribucion_equipos';  
+
+
 //usuarios
 $route['usuarios'] = 'usuarios/C_usuarios';
 $route['roles'] = 'usuarios/C_roles';
@@ -92,7 +97,14 @@ $route['editar_equipo'] = 'equipos/C_equipos/editar_equipo';
 $route['eliminar_equipo'] = 'equipos/C_equipos/eliminar_equipo';
 $route['obtener_motivo_eliminacion'] = 'equipos/C_equipos/obtener_motivo_eliminacion';
 
+//LISTADO DE EQUIPOS
+$route['listado'] = 'equipos/C_listado_equipos';// Ruta para la página principal de EQUIPOS-LISTADO
+$route['mostrar_equipos'] = 'equipos/C_listado_equipos/mostrar_equipos';
 
+//REPORTES EQUIPOS
+$route['reportes'] = 'equipos/C_reporte_equipos';// Ruta para la página principal de EQUIPOS-REPORTES
+$route['cargar_datos'] = 'equipos/C_reporte_equipos/cargar_datos';
+$route['generar_reporte'] = 'equipos/C_reporte_equipos/generar_reporte';
 
 
 

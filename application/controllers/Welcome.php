@@ -98,4 +98,15 @@ class Welcome extends MY_Controller
         }
     }
 
+    //CONTAR EQUIPOS TOTALES
+    public function cantidad_equipos() {
+        $cantidad = $this->mWelcome->contar_equipos(); // Llama al método para contar equipos
+        echo json_encode(['cantidad' => $cantidad]); // Devuelve la cantidad en formato JSON
+    }
+
+    public function distribucion_equipos() {
+        $data = $this->mWelcome->contar_equipos_por_estado();
+        echo json_encode($data);
+    }
+
 }

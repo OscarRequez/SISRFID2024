@@ -33,4 +33,18 @@ class M_welcome extends CI_Model
         $this->db->where('id', $userId);
         return $this->db->update('usuarios', $data);
     }
+
+    //CANTIDAD TOTAL DE EQUIPOS
+    public function contar_equipos() {
+        return $this->db->count_all('equipos_medicos'); // Reemplaza 'equipos' con el nombre de tu tabla
+    }
+
+    public function contar_equipos_por_estado() {
+        $this->db->select('estado, COUNT(*) as cantidad');
+        $this->db->group_by('estado');
+        $query = $this->db->get('equipos_medicos'); // Reemplaza 'equipos' con el nombre de tu tabla
+
+        $result = $query->result_array();
+        return $result;
+    }
 }
