@@ -106,6 +106,11 @@ $route['reportes'] = 'equipos/C_reporte_equipos';// Ruta para la página princip
 $route['cargar_datos'] = 'equipos/C_reporte_equipos/cargar_datos';
 $route['generar_reporte'] = 'equipos/C_reporte_equipos/generar_reporte';
 
+//MANTENIMIENTO
+//SOLICITUDES
+$route['solicitud'] = 'mantenimiento/C_solicitud';// Ruta para la página principal  DEL HEADER
+$route['solicitudes_obtener'] = 'mantenimiento/C_solicitud/solicitudes_obtener';// Ruta para la página principal de EQUIPOS
+$route['crear_solicitud'] = 'mantenimiento/C_solicitud/crear_solicitud';// Ruta para la página principal de EQUIPOS
 
 
 

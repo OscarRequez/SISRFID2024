@@ -1,15 +1,7 @@
 <?php $this->load->view('templates/header'); ?>
 <style>
 
-    /* Estilo para las tarjetas de avatares */
-    .card {
-        transition: transform 0.3s ease;
-    }
 
-    .card:hover {
-        transform: scale(1.05);
-        /* Agranda la tarjeta al pasar el mouse sobre ella */
-    }
 
     .card-img-top {
 
@@ -27,7 +19,7 @@
 
 </style>
 
-<div class="container py-3">
+<div class="col py-3">
     <h2 class="col py-3">Gestionar Avatares</h2>
     
     <!-- Formulario para agregar un nuevo avatar -->
@@ -50,7 +42,7 @@
     <h4>Avatares Existentes</h4>
     <div class="row">
         <?php foreach ($avatares as $avatar): ?>
-            <div class="col-md-3 ">
+            <div class="col-md-2 ">
                 <div class="card">
                     <img src="<?php echo base_url($avatar['ruta_imagen']); ?>" class="card-img-top img-thumbnail" alt="<?php echo $avatar['nombre']; ?>">
                     <div class="card-body text-center">

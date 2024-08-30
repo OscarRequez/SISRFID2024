@@ -95,8 +95,6 @@
         </div>
     </div>
 </div>
-</div>
-<br>
 
 <script>
     const ctx = document.getElementById('maintenanceChart').getContext('2d');
