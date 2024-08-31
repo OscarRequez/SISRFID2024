@@ -71,7 +71,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="numero_serie_eq" class="form-label">Código del Equipo</label>
-                        <input type="text" class="form-control" id="numero_serie_eq" name="numero_serie_eq" placeholder="Ingrese el Código del equipo" required>
+                        <input type="text" autocomplete="off" class="form-control" id="numero_serie_eq" name="numero_serie_eq" placeholder="Ingrese el Código del equipo" required>
                     </div>
                     <div class="mb-3">
                         <label for="descripcion" class="form-label">Descripción del Problema</label>
@@ -192,7 +192,7 @@
                             'green') + '; cursor: ' +
                         (item.estado == 1 || item.estado == 2 ? 'pointer' : 'default') + ';" ' +
                         'title="' + (item.estado == 1 ? 'Solicitado' :
-                            item.estado == 2 ? 'En Proceso' :
+                            item.estado == 2 ? 'En Mantenimiento' :
                             'Completado') +
                         '"></i></center></td>' +
                         '</tr>';

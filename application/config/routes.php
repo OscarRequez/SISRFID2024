@@ -62,6 +62,11 @@ $route['logout'] = 'C_login/logout'; //CERRAR SESION
 //welcome
 $route['cantidad_equipos'] = 'welcome/cantidad_equipos';
 $route['distribucion_equipos'] = 'welcome/distribucion_equipos';  
+$route['mantenimiento_mostrarSolicitudes'] = 'welcome/mantenimiento_mostrarSolicitudes';
+$route['obtenerDatosGraficoSolicitudes'] = 'welcome/obtenerDatosGraficoSolicitudes';  
+
+
+
 
 
 //usuarios
@@ -111,6 +116,15 @@ $route['generar_reporte'] = 'equipos/C_reporte_equipos/generar_reporte';
 $route['solicitud'] = 'mantenimiento/C_solicitud';// Ruta para la página principal  DEL HEADER
 $route['solicitudes_obtener'] = 'mantenimiento/C_solicitud/solicitudes_obtener';// Ruta para la página principal de EQUIPOS
 $route['crear_solicitud'] = 'mantenimiento/C_solicitud/crear_solicitud';// Ruta para la página principal de EQUIPOS
+
+//PANEL_ADMIN
+$route['panel'] = 'mantenimiento/C_panel_admin';// Ruta para la página principal  DEL HEADER
+$route['solicitudes_obtener'] = 'mantenimiento/C_panel_admin/solicitudes_obtener_Admin';// Ruta para la página principal de EQUIPOS
+$route['obtener_tecnicos'] = 'mantenimiento/C_panel_admin/obtener_tecnicos';//datos para el select de tecnicos
+$route['asignar_tecnico'] = 'mantenimiento/C_panel_admin/asignar_tecnico';// asignar un tecxnico a una solicitud
+
+
+
 
 
 

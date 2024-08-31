@@ -61,33 +61,41 @@ class C_solicitud extends MY_Controller
             $prioridad = $this->input->post('prioridad');
             $ubicacion_solicitud = $this->input->post('unidad');
     
-
+            // Obtener el ID del equipo basado en el número de serie
+            // VALIDAMOS SI EL NUMERO DE SERIE EXISTE (CODIGO O RFID)
             $equipo_id = $this->mSolicitud->obtenerEquipoIdPorNumeroSerie($numero_serie_eq);
     
             if ($equipo_id) {
-                // Preparar los datos para la inserción
-                $data = array(
-                    'numero_serie_eq' => $numero_serie_eq,
-                    'equipo_id' => $equipo_id,
-                    'descripcion' => $descripcion,
-                    'tipo_mantenimiento' => $tipo_mantenimiento,
-                    'prioridad' => $prioridad,
-                    'ubicacion_solicitud' => $ubicacion_solicitud,
-                    'fecha_solicitud' => date('Y-m-d H:i:s'),
-                    'estado' => 1,
-                    'usucre' => $this->session->userdata('email'),
-                    'feccre' => date('Y-m-d H:i:s'),
-                    'fecmod' => date('Y-m-d H:i:s')
-                
-                );
+                // Verificar si el equipo ya tiene un proceso pendiente
+                $proceso_activo = $this->mSolicitud->verificarProcesoActivo($numero_serie_eq);
     
-
-                $insertado = $this->mSolicitud->insertarSolicitud($data);
-    
-                if ($insertado) {
-                    echo json_encode(array('status' => 'success', 'message' => 'Solicitud agregada exitosamente.'));
+                if ($proceso_activo) {
+                    // Si ya existe un proceso activo, enviar un mensaje de error específico
+                    echo json_encode(array('status' => 'error', 'message' => 'El equipo ya tiene un proceso pendiente.'));
                 } else {
-                    echo json_encode(array('status' => 'error', 'message' => 'Error al agregar la solicitud.'));
+                    // Preparar los datos para la inserción
+                    $data = array(
+                        'numero_serie_eq' => $numero_serie_eq,
+                        'equipo_id' => $equipo_id,
+                        'descripcion' => $descripcion,
+                        'tipo_mantenimiento' => $tipo_mantenimiento,
+                        'prioridad' => $prioridad,
+                        'ubicacion_solicitud' => $ubicacion_solicitud,
+                        'fecha_solicitud' => date('Y-m-d H:i:s'),
+                        'estado' => 1,
+                        'usucre' => $this->session->userdata('email'),
+                        'feccre' => date('Y-m-d H:i:s'),
+                        'fecmod' => date('Y-m-d H:i:s')
+                    );
+    
+                    // Insertar la solicitud en la base de datos
+                    $insertado = $this->mSolicitud->insertarSolicitud($data);
+    
+                    if ($insertado) {
+                        echo json_encode(array('status' => 'success', 'message' => 'Solicitud agregada exitosamente.'));
+                    } else {
+                        echo json_encode(array('status' => 'error', 'message' => 'Error al agregar la solicitud.'));
+                    }
                 }
             } else {
                 // Número de serie no encontrado
@@ -97,4 +105,5 @@ class C_solicitud extends MY_Controller
             redirect('solicitud');
         }
     }
+    
 }

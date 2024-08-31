@@ -47,4 +47,52 @@ class M_welcome extends CI_Model
         $result = $query->result_array();
         return $result;
     }
+
+    //datos para la tabla 
+    public function obtenerSolicitudes($limit, $offset) {
+         // Definir el límite y el offset para la paginación
+    $this->db->limit($limit, $offset);
+    
+    // Realizar la unión entre la tabla 'mantenimiento' y 'ubicaciones'
+    $this->db->select('mantenimiento.*, ubicaciones.nombre AS ubicacion_nombre');
+    $this->db->from('mantenimiento');
+    $this->db->join('ubicaciones', 'mantenimiento.ubicacion_solicitud = ubicaciones.id', 'left');
+    
+    // Ordenar por fecha de modificación en orden descendente
+    $this->db->order_by('mantenimiento.fecha_solicitud', 'DESC');
+    
+    // Ejecutar la consulta
+    $query = $this->db->get();
+    
+    // Devolver el resultado como un array
+    return $query->result_array();
+    }
+
+    public function contarSolicitudes() {
+        return $this->db->count_all('mantenimiento');
+    }
+
+
+
+    //PARA EL GRAFICO DE SOLICITUDES POR MES
+    public function obtenerSolicitudesPorMes() {
+        $this->db->select('MONTH(fecha_solicitud) as mes, COUNT(id) as total');
+        $this->db->from('mantenimiento');
+        $this->db->group_by('MONTH(fecha_solicitud)');
+        $this->db->order_by('mes', 'ASC');
+        $query = $this->db->get();
+    
+        $resultados = $query->result_array();
+    
+        // Crear un array con los meses del año inicializados en 0
+        $datos_mensuales = array_fill(1, 12, 0);
+    
+        // Rellenar el array con los datos obtenidos de la consulta
+        foreach ($resultados as $resultado) {
+            $datos_mensuales[$resultado['mes']] = $resultado['total'];
+        }
+    
+        return $datos_mensuales; // Devuelve un array con los 12 meses
+    }
+    
 }

@@ -109,4 +109,30 @@ class Welcome extends MY_Controller
         echo json_encode($data);
     }
 
+    //para la tabla las solicitudes:
+    public function mantenimiento_mostrarSolicitudes() {
+    
+        $pagina = $this->input->post('pagina');
+        $cantidad = $this->input->post('cantidad');
+
+        $offset = ($pagina - 1) * $cantidad;
+
+        $data = $this->mWelcome->obtenerSolicitudes($cantidad, $offset);
+        $total = $this->mWelcome->contarSolicitudes();
+
+        $response = [
+            'solicitudes' => $data,
+            'totalregistros' => $total
+        ];
+
+        echo json_encode($response);
+    }
+
+    //grafico por mes
+    public function obtenerDatosGraficoSolicitudes() {
+        $datos = $this->mWelcome->obtenerSolicitudesPorMes();
+    
+        echo json_encode($datos);
+    }
+
 }

@@ -422,7 +422,7 @@
                                         <ul class="collapse nav flex-column ms-1" id="submenu5" data-bs-parent="#menu">
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento', 'panel')): ?>
                                                 <li class="w-100">
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('panel'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-person-workspace"></i>
                                                         <span class="d-none d-sm-inline">Panel Admin</span>
                                                     </a>
