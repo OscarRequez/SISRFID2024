@@ -16,7 +16,8 @@
         <table class="table table-striped table-responsive">
             <thead class="bg-primary text-white">
                 <tr>
-                    <th>ID Eq | Codigo</th>
+                    <th>ID</th>
+                    <th>ID Equipo | Codigo</th>
                     <th>Descripción</th>
                     <th>Prioridad</th>
                     <th>Tipo</th>
@@ -127,6 +128,7 @@
                 // Crear filas de la tabla a partir de la respuesta
                 $.each(response.solicitudes, function(key, item) {
                     filas += '<tr>' +
+                        '<td>' + item.id + '</td>' +
                         '<td>' + item.equipo_id + ' | ' + item.numero_serie_eq + '</td>' +
                         '<td>' + item.descripcion + '</td>' +
                         '<td>' + item.prioridad + '</td>' +
@@ -266,7 +268,7 @@
             var descripcion = $(this).data("descripcion");
             $("#modalImagen").attr("src", "<?php echo base_url('assets/imagenes/equipos/') ?>" + imagen);
             // Asignar la descripción al elemento <p> en el modal
-            $("#modalDescripcion").text('Descricion: '+ descripcion);
+            $("#modalDescripcion").text('Descricion: ' + descripcion);
             $("#imagenModal").modal('show');
         });
 

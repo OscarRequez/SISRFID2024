@@ -36,7 +36,7 @@
                     </div>
                     <!-- Filtro por Número de Serie/Tag RFID -->
                     <div class="col">
-                        <label for="numero_serie">Número de Serie / Tag RFID</label>
+                        <label for="numero_serie">Código / Tag RFID</label>
                         <input type="text" id="numero_serie" class="form-control" placeholder="Número de Serie / Tag RFID">
                     </div>
                 </div>

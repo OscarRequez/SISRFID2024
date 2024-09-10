@@ -113,15 +113,18 @@ $route['generar_reporte'] = 'equipos/C_reporte_equipos/generar_reporte';
 
 //MANTENIMIENTO
 //SOLICITUDES
-$route['solicitud'] = 'mantenimiento/C_solicitud';// Ruta para la página principal  DEL HEADER
+$route['solicitud'] = 'mantenimiento/C_solicitud';// Ruta para la página principal 
 $route['solicitudes_obtener'] = 'mantenimiento/C_solicitud/solicitudes_obtener';// Ruta para la página principal de EQUIPOS
 $route['crear_solicitud'] = 'mantenimiento/C_solicitud/crear_solicitud';// Ruta para la página principal de EQUIPOS
-
 //PANEL_ADMIN
-$route['panel'] = 'mantenimiento/C_panel_admin';// Ruta para la página principal  DEL HEADER
+$route['panel'] = 'mantenimiento/C_panel_admin';// Ruta para la página principal
 $route['solicitudes_obtener'] = 'mantenimiento/C_panel_admin/solicitudes_obtener_Admin';// Ruta para la página principal de EQUIPOS
 $route['obtener_tecnicos'] = 'mantenimiento/C_panel_admin/obtener_tecnicos';//datos para el select de tecnicos
 $route['asignar_tecnico'] = 'mantenimiento/C_panel_admin/asignar_tecnico';// asignar un tecxnico a una solicitud
+//TECNICOS
+$route['tecnicos'] = 'mantenimiento/C_tecnicos';// Ruta
+$route['obtener_tareas'] = 'mantenimiento/C_tecnicos/obtener_tareas';// Ruta
+$route['marcar_tarea_hecha'] = 'mantenimiento/C_tecnicos/marcar_tarea_hecha';// Ruta
 
 
 

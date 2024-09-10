@@ -440,7 +440,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'mantenimiento', 'soporte')): ?>
                                                 <li class="w-100">
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('tecnicos'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-ui-checks "></i>
                                                         <span class="d-none d-sm-inline">Tecnicos</span>
                                                     </a>
