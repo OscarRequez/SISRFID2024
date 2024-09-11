@@ -193,10 +193,15 @@
                         '" style="color: ' +
                         (item.estado == 1 ? '#1F3BB6' :
                             item.estado == 2 ? '#D93C54' :
+<<<<<<< HEAD
                             item.estado == 3 ? 'green' :
                             item.estado == 4 ? 'red' : // Nuevo color para estado 4
                             'black') + '; cursor: ' +
                         (item.estado == 1 || item.estado == 2 || item.estado == 4 ? 'pointer' : 'default') + ';" ' +
+=======
+                            'green') + '; cursor: ' +
+                        (item.estado == 1 || item.estado == 2 ? 'pointer' : 'default') + ';" ' +
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
                         'title="' + (item.estado == 1 ? 'Solicitado' :
                             item.estado == 2 ? 'En Mantenimiento' :
                             item.estado == 3 ? 'Completado' :

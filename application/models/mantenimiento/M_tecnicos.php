@@ -45,6 +45,7 @@ class M_tecnicos extends CI_Model
         $this->db->where('id', $tarea_id);
         return $this->db->update('mantenimiento', $data);
     }
+<<<<<<< HEAD
 
     public function obtenerDatosTareaPorId($id)
     {
@@ -77,4 +78,6 @@ class M_tecnicos extends CI_Model
             return false; // O maneja el caso en que no se encuentra la tarea
         }
     }
+=======
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
 }

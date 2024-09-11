@@ -121,16 +121,22 @@ $route['panel'] = 'mantenimiento/C_panel_admin';// Ruta para la página principa
 $route['solicitudes_obtener'] = 'mantenimiento/C_panel_admin/solicitudes_obtener_Admin';// Ruta para la página principal de EQUIPOS
 $route['obtener_tecnicos'] = 'mantenimiento/C_panel_admin/obtener_tecnicos';//datos para el select de tecnicos
 $route['asignar_tecnico'] = 'mantenimiento/C_panel_admin/asignar_tecnico';// asignar un tecxnico a una solicitud
+<<<<<<< HEAD
 $route['confirmar_solicitud'] = 'mantenimiento/C_panel_admin/confirmar_solicitud';//
 
+=======
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
 //TECNICOS
 $route['tecnicos'] = 'mantenimiento/C_tecnicos';// Ruta
 $route['obtener_tareas'] = 'mantenimiento/C_tecnicos/obtener_tareas';// Ruta
 $route['marcar_tarea_hecha'] = 'mantenimiento/C_tecnicos/marcar_tarea_hecha';// Ruta
+<<<<<<< HEAD
 $route['generar_reporte_tareas'] = 'mantenimiento/C_tecnicos/generar_reporte_tareas';
 
 
 
+=======
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
 
 
 

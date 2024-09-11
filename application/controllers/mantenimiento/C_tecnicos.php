@@ -10,7 +10,10 @@ class C_tecnicos extends MY_Controller
         $this->load->model('mantenimiento/M_tecnicos', 'mTecnicos');
         $this->load->model('usuarios/M_roles', 'mRoles');
         $this->load->library('form_validation');
+<<<<<<< HEAD
         $this->load->library('pdf_equipos');// para poder usar pdfs
+=======
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
 
         // Verificar si el usuario está autenticado
         if (!$this->session->userdata('user_id')) {
@@ -81,13 +84,21 @@ class C_tecnicos extends MY_Controller
                     'factura' => $facturas[$index],
                     'estado' => 1,
                     'usucre' => $this->session->userdata('email')
+<<<<<<< HEAD
+=======
+
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
                 );
                 $this->mTecnicos->insertar_material($data);
             }
         }
 
         // Actualizar el estado de la tarea
+<<<<<<< HEAD
         $this->mTecnicos->actualizar_mantenimiento($tarea_id, 4, $observaciones); // 4= estado, en proceso de confirmacion
+=======
+        $this->mTecnicos->actualizar_mantenimiento($tarea_id, 4, $observaciones);// 4= estado, en proceso de confirmacion
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
 
         // Finalizar transacción
         $this->db->trans_complete();
@@ -100,6 +111,7 @@ class C_tecnicos extends MY_Controller
             echo json_encode(array('status' => 'success', 'message' => 'Tarea marcada como hecha.'));
         }
     }
+<<<<<<< HEAD
 
     // reporte tarea que se usa tambien para Panel admin
     public function generar_reporte_tareas()
@@ -152,4 +164,6 @@ class C_tecnicos extends MY_Controller
             $this->excel->generate_excel('reporte_tareas.xlsx', $data);
         }
     }
+=======
+>>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
 }
