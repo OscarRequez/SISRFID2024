@@ -45,4 +45,36 @@ class M_tecnicos extends CI_Model
         $this->db->where('id', $tarea_id);
         return $this->db->update('mantenimiento', $data);
     }
+
+    public function obtenerDatosTareaPorId($id)
+    {
+        // Verifica que el ID sea un número válido
+        if (!is_numeric($id)) {
+            return false; // O maneja el error de otra manera
+        }
+
+        // Consulta para obtener los datos de la tarea y los materiales relacionados, incluyendo el nombre del técnico y la ubicación
+        $this->db->select('
+        mantenimiento.id, mantenimiento.numero_serie_eq, mantenimiento.equipo_id, mantenimiento.descripcion,
+        usuarios.nombre AS nombre_tecnico, mantenimiento.tipo_mantenimiento, mantenimiento.prioridad,
+        ubicaciones.nombre AS nombre_ubicacion, mantenimiento.observaciones, mantenimiento.fecha_solicitud,
+        mantenimiento.fecha_asignacion, mantenimiento.fecha_conclusion, mantenimiento.estado,
+        materiales_mant.id AS material_id, materiales_mant.material, materiales_mant.cantidad,
+        materiales_mant.costo_unitario, materiales_mant.costo_total, materiales_mant.factura,
+        materiales_mant.estado AS material_estado
+    ');
+        $this->db->from('mantenimiento');
+        $this->db->join('usuarios', 'usuarios.id = mantenimiento.usu_tecnico', 'left'); // Join con la tabla usuarios
+        $this->db->join('ubicaciones', 'ubicaciones.id = mantenimiento.ubicacion_solicitud', 'left'); // Join con la tabla ubicaciones
+        $this->db->join('materiales_mant', 'materiales_mant.tarea_id = mantenimiento.id', 'left');
+        $this->db->where('mantenimiento.id', $id);
+        $query = $this->db->get();
+
+        // Devuelve los datos de la tarea y los materiales, si existe
+        if ($query->num_rows() > 0) {
+            return $query->result_array(); // Devuelve un array de resultados
+        } else {
+            return false; // O maneja el caso en que no se encuentra la tarea
+        }
+    }
 }

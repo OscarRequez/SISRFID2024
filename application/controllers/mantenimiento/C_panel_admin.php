@@ -61,30 +61,64 @@ class C_panel_Admin extends MY_Controller
         echo json_encode(array('tecnicos' => $tecnicos));
     }
 
-    public function asignar_tecnico() {
+    public function asignar_tecnico()
+    {
         $solicitud_id = $this->input->post('solicitud_id');
         $tecnico_id = $this->input->post('tecnico_id');
-    
+
         // Datos de auditoría
         $usumod = $this->session->userdata('email');
         $fecmod = date('Y-m-d H:i:s');
         $fecAsignacion = date('Y-m-d H:i:s');
-    
+
         // Asignar técnico a la solicitud
         $resultado = $this->mPanelAdmin->asignar_tecnico($solicitud_id, $tecnico_id, $usumod, $fecAsignacion,  $fecmod);
-    
+
         if ($resultado) {
             // Obtener equipo_id asociado a la solicitud
             $equipo_id = $this->mPanelAdmin->equipo_id_para_solicitud($solicitud_id);
-    
+
             // Actualizar estado del equipo
             if ($equipo_id) {
                 $this->mPanelAdmin->update_equipo_estado($equipo_id, $usumod, $fecmod, 3);
             }
-    
+
             echo json_encode(array('status' => 'success', 'message' => 'Técnico asignado exitosamente.'));
         } else {
             echo json_encode(array('status' => 'error', 'message' => 'Error al asignar técnico.'));
+        }
+    }
+
+
+    public function confirmar_solicitud()
+    {
+        // Recibir datos enviados por AJAX
+        $solicitud_id = $this->input->post('solicitud_id');
+        $equipo_id = $this->input->post('equipo_id');
+
+        // Obtener el email del usuario actual desde la sesión
+        $usuario_actual = $this->session->userdata('email');
+        $fecha_confirmacion = date('Y-m-d H:i:s'); // Obtener la fecha actual
+
+        // Validar que los datos fueron recibidos correctamente
+        if ($solicitud_id && $equipo_id) {
+            // Llamar al modelo para obtener el costo total
+            $costo_total = $this->mPanelAdmin->calcular_costo_total($solicitud_id);
+
+            // Llamar al modelo para confirmar la solicitud y actualizar los estados y campos adicionales
+            $resultado = $this->mPanelAdmin->confirmar_solicitud($solicitud_id, $equipo_id, $usuario_actual, $fecha_confirmacion, $costo_total);
+
+            // Verificar si la actualización fue exitosa
+            if ($resultado) {
+                // Responder con un mensaje de éxito
+                echo json_encode(['status' => 'success', 'message' => 'Confirmación exitosa.']);
+            } else {
+                // Responder con un mensaje de error
+                echo json_encode(['status' => 'error', 'message' => 'Error al confirmar la solicitud.']);
+            }
+        } else {
+            // Responder con un error si no se enviaron los datos necesarios
+            echo json_encode(['status' => 'error', 'message' => 'Datos incompletos.']);
         }
     }
 }

@@ -76,19 +76,24 @@
                         <div id="materialesContainer">
                             <div class="row mb-3 material-row">
                                 <div class="col-12 col-md-3 mb-2 mb-md-0">
-                                    <input type="text" class="form-control" name="material[]" placeholder="Material" required>
+                                    <input type="text" class="form-control" name="material[]" placeholder="Material"
+                                        required>
                                 </div>
                                 <div class="col-12 col-md-2 mb-2 mb-md-0">
-                                    <input type="number" class="form-control cantidad" name="cantidad[]" placeholder="Cantidad" required>
+                                    <input type="number" class="form-control cantidad" name="cantidad[]"
+                                        placeholder="Cantidad" required>
                                 </div>
                                 <div class="col-12 col-md-2 mb-2 mb-md-0">
-                                    <input type="number" class="form-control costo_unitario" name="costo_unitario[]" placeholder="Costo Unitario" step="0.01" required>
+                                    <input type="number" class="form-control costo_unitario" name="costo_unitario[]"
+                                        placeholder="Costo Unitario" step="0.01" required>
                                 </div>
                                 <div class="col-12 col-md-2 mb-2 mb-md-0">
-                                    <input type="number" class="form-control costo_total" name="costo_total[]" placeholder="Costo Total" step="0.01" readonly>
+                                    <input type="number" class="form-control costo_total" name="costo_total[]"
+                                        placeholder="Costo Total" step="0.01" readonly>
                                 </div>
                                 <div class="col-12 col-md-2 mb-2 mb-md-0">
-                                    <input type="text" class="form-control" name="factura[]" placeholder="Nro Factura" required>
+                                    <input type="text" class="form-control" name="factura[]" placeholder="Nro Factura"
+                                        required>
                                 </div>
                                 <div class="col-12 col-md-1 d-flex align-items-end justify-content-center mb-2 mb-md-0">
                                     <button type="button" class="btn btn-danger btn-sm removeMaterial">
@@ -103,7 +108,8 @@
                     <!-- Total de materiales -->
                     <div class="mb-3">
                         <label for="totalMateriales" class="form-label">Total de Materiales</label>
-                        <input type="number" class="form-control" id="totalMateriales" name="total_materiales" placeholder="Total Materiales" step="0.01" readonly>
+                        <input type="number" class="form-control" id="totalMateriales" name="total_materiales"
+                            placeholder="Total Materiales" step="0.01" readonly>
                     </div>
 
                     <!-- Observaciones -->
@@ -176,14 +182,14 @@
                             (tarea.estado == 3 || tarea.estado == 4 ? '' : 'disabled') + '" ' +
                             'data-id="' + tarea.id + '">' +
                             '<i class="bi bi-file-earmark-pdf"></i>' +
-                            '</button>' + 
+                            '</button>' +
                             // Botón Hecho
                             '<button class="btn btn-primary btn-hecho ms-2 ' +
                             (tarea.estado == 4 ? 'disabled' : '') + '" ' +
                             'data-bs-toggle="modal" data-bs-target="#hechoModal" ' +
                             'data-id="' + tarea.id + '">' +
-                            (tarea.estado == 4 ? 'Por Confirmar' : 'Hecho') +
-                            '</button>' +                          
+                            (tarea.estado == 4 ? 'Hecho' : 'Hecho') +
+                            '</button>' +
                             '</div></td>' +
                             '</tr>';
 
@@ -401,7 +407,7 @@
 
 <script>
     $(document).on('click', '.reportePDF', function() {
-        var tareaId = $(this).data('id');
+        var tareaId = $(this).data('id'); // Capturar el ID de la tarea
 
         // SweetAlert de confirmación
         Swal.fire({
@@ -415,9 +421,11 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Aquí pones la lógica para generar el PDF
-                // Puedes hacer una redirección o una llamada AJAX
-                window.location.href = '/ruta/a/tu/controlador/generar_pdf/' + tareaId;
+                // Construir la URL solo con el ID de la tarea
+                var url = '<?php echo site_url('generar_reporte_tareas'); ?>' + '?tareaId=' + tareaId;
+
+                // Abrir el reporte en una nueva pestaña
+                window.open(url, '_blank');
             }
         });
     });

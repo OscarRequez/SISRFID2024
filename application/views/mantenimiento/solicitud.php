@@ -187,18 +187,25 @@
                         '<td><center><i class="bi ' +
                         (item.estado == 1 ? 'fs-4 bi bi-send-check-fill ' :
                             item.estado == 2 ? 'fs-4 bi bi-wrench-adjustable' :
-                            'fs-4 bi-check-circle-fill') +
+                            item.estado == 3 ? 'fs-4 bi bi-check-circle-fill' :
+                            item.estado == 4 ? 'fs-4 bi-check-circle' : // Nuevo ícono para estado 4
+                            '') +
                         '" style="color: ' +
                         (item.estado == 1 ? '#1F3BB6' :
                             item.estado == 2 ? '#D93C54' :
-                            'green') + '; cursor: ' +
-                        (item.estado == 1 || item.estado == 2 ? 'pointer' : 'default') + ';" ' +
+                            item.estado == 3 ? 'green' :
+                            item.estado == 4 ? 'red' : // Nuevo color para estado 4
+                            'black') + '; cursor: ' +
+                        (item.estado == 1 || item.estado == 2 || item.estado == 4 ? 'pointer' : 'default') + ';" ' +
                         'title="' + (item.estado == 1 ? 'Solicitado' :
                             item.estado == 2 ? 'En Mantenimiento' :
-                            'Completado') +
+                            item.estado == 3 ? 'Completado' :
+                            item.estado == 4 ? 'Por Confirmar' : // Nuevo título para estado 4
+                            'Desconocido') +
                         '"></i></center></td>' +
                         '</tr>';
                 });
+
                 $("#solicitudesTableBody").html(filas);
 
                 // Paginación

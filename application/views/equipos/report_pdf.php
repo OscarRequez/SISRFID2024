@@ -7,18 +7,9 @@
     <style>
         body {
             font-family: Georgia, 'Times New Roman', Times, serif;
-            font-size: 9px;
-        }
-
-        th {
-            border: 1px rgb(36, 158, 75, 0.6);
-
-        }
-
-        td {
-            border: 1px rgb(36, 158, 75, 0.6);
-            padding: 8px;
-            text-align: left;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
         }
 
         .header {
@@ -27,58 +18,82 @@
         }
 
         .header h2 {
-            /* Elimina padding del título */
             text-align: center;
             text-transform: uppercase;
-            font-size: 12px;
+            font-size: 14px;
+            margin: 0;
+        }
 
+        .header p {
+            text-align: center;
+            margin: 5px 0;
         }
 
         @media print {
             .header {
-
+                display: block;
                 background: white;
                 padding: 10px;
                 margin-bottom: 20px;
-                /* Espacio debajo de la cabecera */
                 page-break-after: avoid;
-                /* Evitar el salto de página después de la cabecera */
+                border-bottom: 1px solid #000;
+
             }
 
             table {
-                margin-top: 100px;
+                margin-top: 60px;
                 /* Espacio suficiente para la cabecera en la primera página */
             }
 
             .page-break {
                 page-break-before: always;
-                /* Forzar salto de página antes de la tabla si es necesario */
             }
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #C5C7C8;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #223361;
+            color: white;
+        }
+
         .small-column {
-            width: 20px;
+            width: 18;
         }
 
         .small-column_nombre {
-            width: 130px;
+            width: 100px;
         }
 
         .small-column_ubicacion {
-            width: 70px;
+            width: 90px;
         }
 
         .small-column_RFID {
-            width: 60px;
+            width: 70px;
         }
 
         .small-column_estado {
-            width: 50px;
+            width: 70px;
         }
 
-        /*footer*/
         .footer {
             border-top: 1px solid #000;
+            margin-top: 20px;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -86,7 +101,7 @@
 <body>
     <!-- Cabecera que se mostrará solo en la primera página -->
     <div class="header">
-        <h2>Reporte de los equipos</h2>
+        <h2>Reporte de los Equipos</h2>
         <p>
             <strong><?php echo $reporte_info['empresa']; ?></strong><br>
             <strong>Fecha:</strong> <?php echo $reporte_info['fecha']; ?><br>
@@ -103,14 +118,14 @@
         <table>
             <thead>
                 <tr>
-                    <th style="background-color:#223361; color:white" class="small-column">#</th>
-                    <th style="background-color:#223361; color:white" class="small-column">ID</th>
-                    <th style="background-color:#223361; color:white" class="small-column_nombre">NOMBRE</th>
-                    <th style="background-color:#223361; color:white" class="small-column_nombre">DESCRIPCION</th>
-                    <th style="background-color:#223361; color:white" class="small-column_ubicacion">UBICACION</th>
-                    <th style="background-color:#223361; color:white" class="small-column_estado">ESTADO</th>
-                    <th style="background-color:#223361; color:white" class="small-column_RFID">CODIGO</th>
-                    <th style="background-color:#223361; color:white" class="small-column_RFID">RFID</th>
+                    <th class="small-column">#</th>
+                    <th class="small-column">ID</th>
+                    <th class="small-column_nombre">Nombre</th>
+                    <th class="small-column_nombre">Descripción</th>
+                    <th class="small-column_ubicacion">Ubicación</th>
+                    <th class="small-column_estado">Estado</th>
+                    <th class="small-column_RFID">Codigo Eq.</th>
+                    <th class="small-column_RFID">RFID</th>
                 </tr>
             </thead>
             <tbody>
@@ -136,7 +151,7 @@
                                         echo 'Inactivo';
                                         break;
                                     case 3:
-                                        echo 'Mant.';
+                                        echo 'Mantenimiento';
                                         break;
                                     default:
                                         echo 'Desconocido';
@@ -150,13 +165,17 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="7">No se encontraron datos.</td>
+                        <td colspan="8">No se encontraron datos.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 
+    <!-- Pie de página -->
+    <div class="footer">
+        <p>Reporte generado por el sistema de informacion de equipos.</p>
+    </div>
 </body>
 
 </html>

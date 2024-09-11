@@ -79,7 +79,9 @@
                                     <th>Equipo</th>
                                     <th>Area</th>
                                     <th>Fecha Solicitud</th>
-                                    <th><center>Estado</center></th>
+                                    <th>
+                                        <center>Estado</center>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="solicitudesMantenimiento">
@@ -112,17 +114,21 @@
                             '<td><center><i class="bi ' +
                             (item.estado == 1 ? 'fs-4 bi bi-send-check-fill ' :
                                 item.estado == 2 ? 'fs-4 bi bi-wrench-adjustable' :
+                                item.estado == 4 ? 'fs-4 bi-check-circle' :// Icono para estado 4
                                 'fs-4 bi-check-circle-fill') +
                             '" style="color: ' +
-                            (item.estado == 1 ? 'red' :
-                                item.estado == 2 ? 'blue' :
+                            (item.estado == 1 ? '#1F3BB6' :
+                                item.estado == 2 ? '#4691F7' :
+                                item.estado == 4 ? '#05A01A' :
                                 'green') + '; cursor: ' +
-                            (item.estado == 1 || item.estado == 2 ? 'pointer' : 'default') + ';" ' +
+                            (item.estado == 1 || item.estado == 2 || item.estado == 4 ? 'pointer' : 'default') + ';" ' +
                             'title="' + (item.estado == 1 ? 'Solicitado' :
                                 item.estado == 2 ? 'En Proceso' :
+                                item.estado == 4 ? 'Por Confirmar' : // Título para estado 4
                                 'Completado') +
                             '"></i></center></td>' +
                             '</tr>';
+
                     });
 
                     $("#solicitudesMantenimiento").html(filas);
@@ -166,56 +172,56 @@
         });
     </script>
 
-<script>
-    function cargarDatosGrafico() {
-        $.ajax({
-            url: "<?php echo site_url('obtenerDatosGraficoSolicitudes'); ?>",
-            type: "GET",
-            dataType: "json",
-            success: function(response) {
-                // Transformar el objeto en un array y asegurarse de que los valores sean numéricos
-                const data = Object.keys(response).map(key => Number(response[key]));
+    <script>
+        function cargarDatosGrafico() {
+            $.ajax({
+                url: "<?php echo site_url('obtenerDatosGraficoSolicitudes'); ?>",
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    // Transformar el objeto en un array y asegurarse de que los valores sean numéricos
+                    const data = Object.keys(response).map(key => Number(response[key]));
 
-                const ctx = document.getElementById('maintenanceChart').getContext('2d');
-                const maintenanceChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                        datasets: [{
-                            label: 'Solicitudes de Mantenimiento',
-                            data: data, // Datos transformados desde el controlador
-                            backgroundColor: 'rgba(106, 222, 90, 0.5)',
-                            borderColor: 'rgba(123, 225, 217 , 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    // Configura los ticks para que sean enteros
-                                    stepSize: 1,
-                                    callback: function(value) {
-                                        return Number.isInteger(value) ? value : '';
+                    const ctx = document.getElementById('maintenanceChart').getContext('2d');
+                    const maintenanceChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                            datasets: [{
+                                label: 'Solicitudes de Mantenimiento',
+                                data: data, // Datos transformados desde el controlador
+                                backgroundColor: 'rgba(106, 222, 90, 0.5)',
+                                borderColor: 'rgba(123, 225, 217 , 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        // Configura los ticks para que sean enteros
+                                        stepSize: 1,
+                                        callback: function(value) {
+                                            return Number.isInteger(value) ? value : '';
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error al cargar los datos del gráfico: ' + error);
-            }
-        });
-    }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar los datos del gráfico: ' + error);
+                }
+            });
+        }
 
-    // Cargar los datos del gráfico al cargar la página
-    $(document).ready(function() {
-        cargarDatosGrafico();
-    });
-</script>
+        // Cargar los datos del gráfico al cargar la página
+        $(document).ready(function() {
+            cargarDatosGrafico();
+        });
+    </script>
 
     <script>
         $(document).ready(function() {

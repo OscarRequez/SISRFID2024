@@ -10,6 +10,7 @@ class C_tecnicos extends MY_Controller
         $this->load->model('mantenimiento/M_tecnicos', 'mTecnicos');
         $this->load->model('usuarios/M_roles', 'mRoles');
         $this->load->library('form_validation');
+        $this->load->library('pdf_equipos');// para poder usar pdfs
 
         // Verificar si el usuario está autenticado
         if (!$this->session->userdata('user_id')) {
@@ -80,14 +81,13 @@ class C_tecnicos extends MY_Controller
                     'factura' => $facturas[$index],
                     'estado' => 1,
                     'usucre' => $this->session->userdata('email')
-
                 );
                 $this->mTecnicos->insertar_material($data);
             }
         }
 
         // Actualizar el estado de la tarea
-        $this->mTecnicos->actualizar_mantenimiento($tarea_id, 4, $observaciones);// 4= estado, en proceso de confirmacion
+        $this->mTecnicos->actualizar_mantenimiento($tarea_id, 4, $observaciones); // 4= estado, en proceso de confirmacion
 
         // Finalizar transacción
         $this->db->trans_complete();
@@ -98,6 +98,58 @@ class C_tecnicos extends MY_Controller
         } else {
             // Éxito
             echo json_encode(array('status' => 'success', 'message' => 'Tarea marcada como hecha.'));
+        }
+    }
+
+    // reporte tarea que se usa tambien para Panel admin
+    public function generar_reporte_tareas()
+    {
+        // Obtener el ID de la tarea desde los parámetros de la solicitud
+        $tareaId = $this->input->get('tareaId');
+        $format = $this->input->get('format') ?: 'pdf'; // PDF por defecto
+
+        // Llamar al modelo para obtener los datos de la tarea según su ID
+        $data = $this->mTecnicos->obtenerDatosTareaPorId($tareaId);
+
+        // Datos adicionales para el reporte
+        $reporte_info = [
+            'fecha' => date('d/m/Y'),
+            'empresa' => 'Hospital de Clínicas',
+            'direccion' => 'Av. Saavedra, La Paz, Bolivia',
+            'contacto' => '+519 73716289 - mamanioscar509@gmail.com',
+            'elaborado_por' => $this->session->userdata('username'),
+            'puesto' => $this->session->userdata('rol_name')
+        ];
+
+        if ($format == 'pdf') {
+            // Verificar si TCPDF está cargado
+            if (!class_exists('TCPDF')) {
+                show_error('La clase TCPDF no está disponible. Por favor, asegúrate de que la biblioteca esté instalada y cargada.');
+                return;
+            }
+
+            // Crear una nueva instancia de TCPDF
+            $pdf = new TCPDF();
+
+            // Establecer el título del documento
+            $pdf->SetTitle('Reporte de la Tarea');
+
+            // Añadir una página
+            $pdf->AddPage();
+            $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
+            $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+            // Generar HTML del reporte con los datos y la información adicional
+            $html = $this->load->view('mantenimiento/report_pdf', ['data' => $data, 'reporte_info' => $reporte_info], TRUE);
+            $pdf->writeHTML($html);
+
+            // Enviar el PDF al navegador
+            $pdf->Output('report_tareas.pdf', 'I'); // 'I' para mostrar en el navegador
+
+        } else if ($format == 'excel') {
+            // Si es Excel, cargar la biblioteca correspondiente
+            $this->load->library('excel');
+            $this->excel->generate_excel('reporte_tareas.xlsx', $data);
         }
     }
 }

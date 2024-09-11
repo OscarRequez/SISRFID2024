@@ -47,7 +47,8 @@ class M_panel_Admin extends CI_Model
     }
 
     // Actualizar la solicitud y asignar técnico con datos de auditoría
-    public function asignar_tecnico($solicitud_id, $tecnico_id, $usumod,  $fecAsignacion, $fecmod) {
+    public function asignar_tecnico($solicitud_id, $tecnico_id, $usumod,  $fecAsignacion, $fecmod)
+    {
         // Datos a actualizar: técnico, estado, usumod, y fecmod
         $data = array(
             'usu_tecnico' => $tecnico_id,
@@ -76,8 +77,9 @@ class M_panel_Admin extends CI_Model
         }
     }
 
-    // Actualizar el estado del equipo
-     public function update_equipo_estado($equipo_id, $usumod, $fecmod, $estado) {
+    // Actualizar el estado del equipo para asignar tecnico
+    public function update_equipo_estado($equipo_id, $usumod, $fecmod, $estado)
+    {
         // Datos a actualizar: estado, usumod, y fecmod
         $data = array(
             'estado' => $estado,
@@ -88,5 +90,59 @@ class M_panel_Admin extends CI_Model
         // Ejecutar la actualización
         $this->db->where('id', $equipo_id);
         return $this->db->update('equipos_medicos', $data);
+    }
+
+    //confirmar la reparacion
+    // Método para calcular el costo total
+    public function calcular_costo_total($solicitud_id)
+    {
+        $this->db->select_sum('costo_total');
+        $this->db->where('tarea_id', $solicitud_id);
+        $query = $this->db->get('materiales_mant');
+
+        $resultado = $query->row();
+        return $resultado->costo_total ? $resultado->costo_total : 0.00;
+    }
+
+    public function confirmar_solicitud($solicitud_id, $equipo_id, $usuario_actual, $fecha_actual, $costo_total)
+    {
+        // Iniciar una transacción
+        $this->db->trans_begin();
+
+        // Datos a actualizar en la tabla "mantenimiento"
+        $data_mantenimiento = [
+            'estado' => 3,                 // Estado confirmado
+            'fecmod' => $fecha_actual,     // Fecha de modificación
+            'fecha_conclusion' => $fecha_actual,     // Fecha de modificación
+            'usuconf' => $usuario_actual,   // Usuario que modificó
+            'usumod' => $usuario_actual,   // Usuario que modificó
+            'costoTotal' => $costo_total    // Costo total calculado
+        ];
+
+        // Actualizar el estado y campos de auditoría en la tabla "mantenimiento"
+        $this->db->where('id', $solicitud_id);
+        $this->db->update('mantenimiento', $data_mantenimiento);
+
+        // Datos a actualizar en la tabla "equipos_medicos"
+        $data_equipos = [
+            'estado' => 1,                 // Estado activo
+            'fecmod' => $fecha_actual,     // Fecha de modificación
+            'usumod' => $usuario_actual    // Usuario que modificó
+        ];
+
+        // Actualizar el estado y campos de auditoría en la tabla "equipos_medicos"
+        $this->db->where('id', $equipo_id);
+        $this->db->update('equipos_medicos', $data_equipos);
+
+        // Verificar si ambas actualizaciones fueron exitosas
+        if ($this->db->trans_status() === FALSE) {
+            // Si algo falla, hacer rollback
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            // Si todo está bien, hacer commit
+            $this->db->trans_commit();
+            return true;
+        }
     }
 }

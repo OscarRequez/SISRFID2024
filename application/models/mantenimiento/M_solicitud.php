@@ -36,7 +36,7 @@ class M_solicitud extends CI_Model
     public function verificarProcesoActivo($numero_serie_eq)
     {
         $this->db->where('numero_serie_eq', $numero_serie_eq);
-        $this->db->where_in('estado', array(1, 2)); // Estado 1 o 2 indica proceso activo
+        $this->db->where_in('estado', array(1, 2, 4)); // Estado 1 o 2 indica proceso activo
         $query = $this->db->get('mantenimiento');
 
         return $query->num_rows() > 0;
