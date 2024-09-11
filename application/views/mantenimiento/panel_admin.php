@@ -128,7 +128,6 @@
                 var filas = "";
 
                 $.each(response.solicitudes, function(key, item) {
-<<<<<<< HEAD
                     // Si el estado es 4, marcamos que hay registros pendientes
                     if (item.estado == 4) {
                         hayPendientes = true;
@@ -138,9 +137,6 @@
                     var estiloFila = (item.estado == 4) ? 'style="background-color: #E7EDFF; font-weight: bold; "' : '';
 
                     filas += '<tr ' + estiloFila + '>' +
-=======
-                    filas += '<tr>' +
->>>>>>> 67684c6a8174cde41beb7ad36074a1796d6d3059
                         '<td>' + item.id + '</td>' +
                         '<td>' + item.equipo_id + ' | ' + item.numero_serie_eq + '</td>' +
                         '<td>' + item.descripcion + '</td>' +
