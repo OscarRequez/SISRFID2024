@@ -53,7 +53,7 @@
             <div class="modal-body text-center">
                 <img id="modalImagen" src="" alt="Imagen del equipo" width="300px" class="img-fluid">
             </div>
-            <p id="modalDescripcion"><strong>Descricion:</strong> </p>
+            <p id="modalDescripcion"><strong>Descripcion:</strong> </p>
         </div>
     </div>
 </div>
@@ -279,7 +279,9 @@
 
 
 
-    // Manejar el envío del formulario
+    // Manejar el envío del formulario que se complementa con el script 
+    //de mas abajo que tambien llma a marcar tarea como hecha, ambos son
+    // importantes.
     $('#formHecho').submit(function(e) {
         e.preventDefault();
 
@@ -376,8 +378,9 @@
         }
     });
 
-    //enviar los datos del formulario
-    // Manejar el envío del formulario
+    // Manejar el envío del formulario que se complementa con el script 
+    //de mas arriba que tambien llma a marcar tarea como hecha, ambos son
+    // importantes.
     $('#formHecho').submit(function(e) {
         e.preventDefault();
 
@@ -392,7 +395,7 @@
                 var jsonResponse = JSON.parse(response);
                 if (jsonResponse.status === 'success') {
                     $('#hechoModal').modal('hide');
-                    alert(jsonResponse.message);
+                    
                     // Aquí podrías agregar más lógica para actualizar la interfaz
                 } else {
                     alert(jsonResponse.message);

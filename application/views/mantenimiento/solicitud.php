@@ -68,6 +68,7 @@
                         <select id="tipo_mantenimiento" name="tipo_mantenimiento" class="form-control" required>
                             <option value="Preventivo">Preventivo</option>
                             <option value="Correctivo">Correctivo</option>
+                            <option value="Operativo">Operativo</option>
                         </select>
                     </div>
                     <div class="mb-3">

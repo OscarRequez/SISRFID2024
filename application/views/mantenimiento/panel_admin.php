@@ -10,7 +10,25 @@
 
 <div class="col py-3">
     <h2>Panel de Mantenimiento</h2>
-    <br>
+
+    <!-- Formulario de filtro por fecha -->
+    <form id="filtroFechasMantenimiento" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                <input type="date" class="form-control" id="fechaInicio" name="fecha_inicio" required>
+            </div>
+            <div class="col-md-3">
+                <label for="fechaFin" class="form-label">Fecha Fin</label>
+                <input type="date" class="form-control" id="fechaFin" name="fecha_fin" required>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-file-earmark-pdf"></i> Generar Reporte</button>
+            </div>
+        </div>
+    </form>
+
+
     <!-- Tabla para mostrar las solicitudes -->
     <div class="table-responsive">
         <table class="table table-striped table-responsive">
@@ -83,7 +101,7 @@
             <div class="modal-body text-center">
                 <img id="modalImagen" src="" alt="Imagen del equipo" width="300px" class="img-fluid">
             </div>
-            <p id="modalDescripcion"><strong>Descricion:</strong> </p>
+            <p id="modalDescripcion"><strong>Descripcion:</strong> </p>
         </div>
     </div>
 </div>
@@ -184,7 +202,7 @@
                         'data-id="' + item.id + '">' +
                         '<i class="bi bi-file-earmark-pdf"></i>' +
                         '</button>' +
-                        '<button class="btn btn-warning btn-sm confirmar ' +
+                        '<button class="btn btn-primary btn-sm confirmar ' +
                         (item.estado == 4 ? '' : 'disabled') + '" ' +
                         'title="Confirmar" data-id="' + item.id + '" data-equipo-id="' + item.equipo_id + '">' +
                         '<i class="bi bi-check-circle"></i>' +
@@ -286,11 +304,24 @@
                 dataType: "json", // Tipo de datos esperado en la respuesta
                 success: function(response) {
                     if (response.status === 'success') {
-                        alert(response.message); // Mostrar mensaje de éxito
-                        $('#nuevaAsignacion').modal('hide'); // Cerrar el modal
-                        cargarSolicitudes(paginaActual); // Recargar la lista de solicitudes
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                $('#nuevaAsignacion').modal('hide'); // Cerrar el modal
+                                cargarSolicitudes(paginaActual); // Recargar la lista de solicitudes
+                            }
+                        });
                     } else {
-                        alert(response.message); // Mostrar mensaje de error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        });
                     }
                 },
                 error: function(xhr, status, error) {
@@ -395,6 +426,46 @@
             if (result.isConfirmed) {
                 // Construir la URL solo con el ID de la tarea
                 var url = '<?php echo site_url('generar_reporte_tareas'); ?>' + '?tareaId=' + tareaId;
+
+                // Abrir el reporte en una nueva pestaña
+                window.open(url, '_blank');
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#filtroFechasMantenimiento').on('submit', function(event) {
+        event.preventDefault(); // Previene el envío del formulario por defecto
+
+        // Captura las fechas
+        var fechaInicio = $('#fechaInicio').val();
+        var fechaFin = $('#fechaFin').val();
+
+        // Verifica que las fechas no estén vacías
+        if (fechaInicio === '' || fechaFin === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, selecciona ambas fechas para generar el reporte.'
+            });
+            return;
+        }
+
+        // SweetAlert de confirmación
+        Swal.fire({
+            title: 'Confirmar Reporte',
+            text: "¿Deseas generar el reporte PDF?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, generar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Construir la URL correctamente con los parámetros
+                var url = '<?php echo site_url('mantenimiento_reporte_fechas'); ?>?fechaInicio=' + encodeURIComponent(fechaInicio) + '&fechaFin=' + encodeURIComponent(fechaFin);
 
                 // Abrir el reporte en una nueva pestaña
                 window.open(url, '_blank');

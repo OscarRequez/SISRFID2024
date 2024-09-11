@@ -145,4 +145,68 @@ class M_panel_Admin extends CI_Model
             return true;
         }
     }
+
+    // Obtener datos de mantenimiento en el rango de fechas dado
+    public function obtenerDatosPorFechas($fecha_inicio_formulario, $fecha_fin_formulario)
+    {
+        // Seleccionar los mantenimientos y datos relacionados
+        $this->db->select('mantenimiento.id, mantenimiento.numero_serie_eq, mantenimiento.descripcion, 
+                      mantenimiento.usu_tecnico, usuarios.nombre as tecnico_nombre, 
+                      mantenimiento.fecha_solicitud, mantenimiento.fecha_conclusion, 
+                      mantenimiento.estado, mantenimiento.costoTotal,
+                      mantenimiento.observaciones, 
+                      SUM(materiales_mant.cantidad * materiales_mant.costo_unitario) AS total_materiales')
+            ->from('mantenimiento')
+            ->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id') // Relación con la tabla de usuarios
+            ->join('materiales_mant', 'mantenimiento.id = materiales_mant.tarea_id', 'left') // Relación con la tabla de materiales
+            ->where('mantenimiento.fecha_solicitud >=', $fecha_inicio_formulario)
+            ->where('mantenimiento.fecha_conclusion <=', $fecha_fin_formulario)
+            ->group_by('mantenimiento.id'); // Agrupar por mantenimiento
+
+        $query = $this->db->get();
+        return $query->result_array(); // Retornar los resultados en forma de array
+    }
+    // Obtener el técnico que más mantenimientos realizó en el rango de fechas
+    public function obtenerTecnicoConMasMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario)
+    {
+        $this->db->select('mantenimiento.usu_tecnico, usuarios.nombre as tecnico_nombre, COUNT(mantenimiento.id) as cantidad_mantenimientos')
+            ->from('mantenimiento')
+            ->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id')
+            ->where('mantenimiento.fecha_solicitud >=', $fecha_inicio_formulario)
+            ->where('mantenimiento.fecha_conclusion <=', $fecha_fin_formulario)
+            ->group_by('mantenimiento.usu_tecnico')
+            ->order_by('cantidad_mantenimientos', 'DESC')
+            ->limit(1); // Obtener solo el técnico con más mantenimientos
+
+        $query = $this->db->get();
+        return $query->row_array(); // Retornar el resultado como un solo registro
+    }
+
+    // Obtener la lista de todos los técnicos y la cantidad de mantenimientos realizados
+    public function obtenerTecnicosConMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario)
+    {
+        $this->db->select('mantenimiento.usu_tecnico, usuarios.nombre as tecnico_nombre, COUNT(mantenimiento.id) as cantidad_mantenimientos')
+            ->from('mantenimiento')
+            ->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id')
+            ->where('mantenimiento.fecha_solicitud >=', $fecha_inicio_formulario)
+            ->where('mantenimiento.fecha_conclusion <=', $fecha_fin_formulario)
+            ->group_by('mantenimiento.usu_tecnico')
+            ->order_by('cantidad_mantenimientos', 'DESC'); // Ordenar por cantidad de mantenimientos, descendente
+
+        $query = $this->db->get();
+        return $query->result_array(); // Retornar todos los técnicos con sus mantenimientos
+    }
+
+    // Obtener el gasto total por mes en el año actual
+    public function obtenerGastosPorMes()
+    {
+        $this->db->select('MONTH(fecha_conclusion) as mes, SUM(costoTotal) as total_gastos')
+            ->from('mantenimiento')
+            ->where('YEAR(fecha_conclusion)', date('Y')) // Filtrar por el año actual
+            ->group_by('MONTH(fecha_conclusion)') // Agrupar por mes
+            ->order_by('mes', 'ASC'); // Ordenar por mes de manera ascendente
+
+        $query = $this->db->get();
+        return $query->result_array(); // Retornar los resultados en forma de array
+    }
 }

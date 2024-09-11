@@ -9,6 +9,8 @@ class C_panel_Admin extends MY_Controller
         $this->load->model('M_permisos');
         $this->load->model('mantenimiento/M_panel_Admin', 'mPanelAdmin');
         $this->load->model('usuarios/M_roles', 'mRoles');
+        $this->load->library('pdf_equipos'); // para poder usar pdfs
+
 
         // Verificar si el usuario está autenticado
         if (!$this->session->userdata('user_id')) {
@@ -119,6 +121,88 @@ class C_panel_Admin extends MY_Controller
         } else {
             // Responder con un error si no se enviaron los datos necesarios
             echo json_encode(['status' => 'error', 'message' => 'Datos incompletos.']);
+        }
+    }
+    public function mantenimiento_reporte_fechas()
+    {
+        // Recibir fechas desde la URL (GET request)
+        $fecha_inicio_formulario = $this->input->get('fechaInicio');
+        $fecha_fin_formulario = $this->input->get('fechaFin');
+
+        // Validar si las fechas fueron proporcionadas
+        if ($fecha_inicio_formulario && $fecha_fin_formulario) {
+
+            // Convertir las fechas al formato que utiliza la base de datos
+            $fecha_inicio_formulario = date('Y-m-d', strtotime($fecha_inicio_formulario)) . ' 00:00:00';
+            $fecha_fin_formulario = date('Y-m-d', strtotime($fecha_fin_formulario)) . ' 23:59:59';
+
+            // Obtener datos entre las fechas dadas
+            $datos_reporte = $this->mPanelAdmin->obtenerDatosPorFechas($fecha_inicio_formulario, $fecha_fin_formulario);
+
+            // Obtener el técnico con más mantenimientos
+            $tecnico_mas = $this->mPanelAdmin->obtenerTecnicoConMasMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario);
+
+            // Obtener todos los técnicos con sus mantenimientos
+            $tecnicos_mantenimientos = $this->mPanelAdmin->obtenerTecnicosConMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario);
+
+            // Obtener el total de gastos por mes en el año actual
+            $gastos_mes = $this->mPanelAdmin->obtenerGastosPorMes(date('Y'));
+
+            // Verificar si hay datos
+            if (!empty($datos_reporte)) {
+                // Cargar la biblioteca TCPDF
+                $this->load->library('tcpdf');
+
+                // Crear una nueva instancia de TCPDF
+                $pdf = new TCPDF();
+
+                // Establecer el título del documento
+                $pdf->SetTitle('Reporte de Mantenimiento');
+
+                // Añadir una página
+                $pdf->AddPage();
+
+                // Establecer encabezado y pie de página
+                $pdf->SetHeaderData('', 0, 'Reporte de Mantenimiento', 'Generado por: ' . $this->session->userdata('username'));
+                $pdf->SetFooterData('', 0, 'Página: {PAGENO}');
+
+                // Establecer márgenes
+                $pdf->SetMargins(10, 10, 10);
+                $pdf->SetHeaderMargin(15);
+                $pdf->SetFooterMargin(15);
+
+                // Definir la fuente
+                $pdf->SetFont('helvetica', '', 12);
+
+                // Generar HTML del reporte con los datos obtenidos
+                $reporte_info = [
+                    'fecha' => date('d/m/Y'),
+                    'empresa' => 'Hospital de Clínicas',
+                    'direccion' => 'Av. Saavedra, La Paz, Bolivia',
+                    'contacto' => '+519 73716289 - mamanioscar509@gmail.com',
+                    'elaborado_por' => $this->session->userdata('username'),
+                    'puesto' => $this->session->userdata('rol_name')
+                ];
+
+                // Cargar la vista del reporte con los datos
+                $html = $this->load->view('mantenimiento/report_fecha_mant_pdf', [
+                    'datos_reporte' => $datos_reporte,
+                    'reporte_info' => $reporte_info,
+                    'tecnico_mas' => $tecnico_mas,
+                    'gastos_mes' => $gastos_mes,
+                    'tecnicos_mantenimientos' => $tecnicos_mantenimientos // Pasar la lista de técnicos al reporte
+                ], TRUE);
+
+                // Escribir el HTML en el PDF
+                $pdf->writeHTML($html);
+
+                // Enviar el PDF al navegador
+                $pdf->Output('reporte_mantenimiento.pdf', 'I');
+            } else {
+                echo json_encode(['error' => 'No se encontraron datos para el rango de fechas especificado.']);
+            }
+        } else {
+            echo json_encode(['error' => 'Fechas inválidas']);
         }
     }
 }

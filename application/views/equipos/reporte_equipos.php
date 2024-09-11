@@ -2,11 +2,11 @@
 
 <div class="container py-3">
     <div class="row">
-        <h4 class="mb-3">Reporte de Equipos Médicos</h4>
+        <h2 class="mb-3">Reporte de Equipos Médicos</h2>
 
         <!-- Filtros de Búsqueda -->
         <div class="mb-4">
-            <h2>Filtros de Búsqueda</h2>
+            <h4>Filtros de Búsqueda</h4>
             <form id="reportFiltersForm">
                 <div class="row">
                     <!-- Filtro por Ubicación -->

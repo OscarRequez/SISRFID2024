@@ -122,6 +122,8 @@ $route['solicitudes_obtener'] = 'mantenimiento/C_panel_admin/solicitudes_obtener
 $route['obtener_tecnicos'] = 'mantenimiento/C_panel_admin/obtener_tecnicos';//datos para el select de tecnicos
 $route['asignar_tecnico'] = 'mantenimiento/C_panel_admin/asignar_tecnico';// asignar un tecxnico a una solicitud
 $route['confirmar_solicitud'] = 'mantenimiento/C_panel_admin/confirmar_solicitud';//
+$route['mantenimiento_reporte_fechas'] = 'mantenimiento/C_panel_admin/mantenimiento_reporte_fechas';//
+
 
 //TECNICOS
 $route['tecnicos'] = 'mantenimiento/C_tecnicos';// Ruta
