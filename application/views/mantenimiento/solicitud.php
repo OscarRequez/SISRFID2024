@@ -24,7 +24,8 @@
         <table class="table table-striped table-responsive">
             <thead class="bg-primary text-white">
                 <tr>
-                    <th>ID Eq | Codigo</th>
+                    <th>ID</th>
+                    <th>ID Equipo Eq | Codigo</th>
                     <th>Descripción</th>
                     <th>Prioridad</th>
                     <th>Tipo</th>
@@ -176,6 +177,7 @@
                 var filas = "";
                 $.each(response.solicitudes, function(key, item) {
                     filas += '<tr>' +
+                        '<td>' + item.id + '</td>' +
                         '<td>' + item.equipo_id + ' | ' + item.numero_serie_eq + '</td>' +
                         '<td>' + item.descripcion + '</td>' +
                         '<td>' + item.prioridad + '</td>' +
@@ -187,8 +189,8 @@
                             item.estado == 2 ? 'fs-4 bi bi-wrench-adjustable' :
                             'fs-4 bi-check-circle-fill') +
                         '" style="color: ' +
-                        (item.estado == 1 ? 'red' :
-                            item.estado == 2 ? 'blue' :
+                        (item.estado == 1 ? '#1F3BB6' :
+                            item.estado == 2 ? '#D93C54' :
                             'green') + '; cursor: ' +
                         (item.estado == 1 || item.estado == 2 ? 'pointer' : 'default') + ';" ' +
                         'title="' + (item.estado == 1 ? 'Solicitado' :
