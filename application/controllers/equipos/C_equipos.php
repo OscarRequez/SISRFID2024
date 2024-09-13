@@ -155,7 +155,8 @@ class C_equipos extends MY_Controller
 
     public function editar_equipo()
     {
-        $id = $this->input->post('id'); // Asegúrate de recibir el ID
+        $id = $this->input->post('id'); // ID del equipo
+        // Validaciones de formulario
         $this->form_validation->set_rules('nombre', 'Nombre', 'required');
         $this->form_validation->set_rules('Descripcion', 'Descripción', 'required');
         $this->form_validation->set_rules('Codigo', 'Código', 'required');
@@ -166,27 +167,6 @@ class C_equipos extends MY_Controller
             $response = array(
                 'status' => 'error',
                 'message' => validation_errors()
-            );
-            echo json_encode($response);
-            return;
-        }
-
-        $numero_serie = $this->input->post('Codigo');
-        $tag_rfid_id = $this->input->post('RFID');
-
-        if ($this->mEquipos->existsNumeroSerie($numero_serie, $id)) {
-            $response = array(
-                'status' => 'error',
-                'message' => 'El Codigo del equipo ya existe.'
-            );
-            echo json_encode($response);
-            return;
-        }
-
-        if ($this->mEquipos->existsTagRfidId($tag_rfid_id, $id)) {
-            $response = array(
-                'status' => 'error',
-                'message' => 'El Codigo RFID ya esta asignado a otro equipo.'
             );
             echo json_encode($response);
             return;
@@ -211,12 +191,30 @@ class C_equipos extends MY_Controller
         if ($this->input->post('RFID') !== $equipo->tag_rfid_id) {
             $data['tag_rfid_id'] = $this->input->post('RFID');
         }
+
+        // Verificar si la ubicación ha cambiado
         if ($this->input->post('ubicacion') !== $equipo->ubicacion_id) {
+            // Guardar la nueva ubicación
             $data['ubicacion_id'] = $this->input->post('ubicacion');
+
+            // Crear registro en la tabla mov_equipos para el historial
+            $historial_data = array(
+                'equipo_medico_id' => $id, // ID del equipo médico
+                'ubicacion_anterior_id' => $equipo->ubicacion_id, // Ubicación anterior
+                'ubicacion_nueva_id' => $this->input->post('ubicacion'), // Nueva ubicación
+                'fecha_movimiento' => date('Y-m-d H:i:s'), // Fecha y hora del movimiento
+                'usuario_id' => $this->session->userdata('user_id'), // ID del usuario que realizó el cambio
+                'estado' => 1, // Estado del registro
+                'usucre' => $this->session->userdata('email'), // Usuario que creó el registro
+                'feccre' => date('Y-m-d H:i:s'), // Fecha de creación del registro
+            );
+
+            // Insertar el historial en la base de datos
+            $this->mEquipos->insertar_movimiento_equipo($historial_data);
         }
 
         // Siempre actualizar el estado, usuario y fecha de modificación
-        $data['estado'] = 1;
+        //$data['estado'] = 1;
         $data['usumod'] = $this->session->userdata('email');
         $data['fecmod'] = date('Y-m-d H:i:s');
 
@@ -237,7 +235,7 @@ class C_equipos extends MY_Controller
                 echo json_encode($response);
                 return;
             } else {
-                // Elimina la imagen anterior si existe
+                // Eliminar la imagen anterior si existe
                 if (!empty($equipo->imagen)) {
                     $path = './assets/imagenes/equipos/' . $equipo->imagen;
                     if (file_exists($path)) {
@@ -266,14 +264,13 @@ class C_equipos extends MY_Controller
         echo json_encode($response);
     }
 
-
     // Método para eliminar un equipo médico
     public function eliminar_equipo()
     {
         $id = $this->input->post('id'); // Recibe el ID del equipo a eliminar
         $motivo = $this->input->post('motivo'); // Recibe el motivo de la inactivación
         $usr_inactivador = $this->session->userdata('email'); // Obtiene el usuario que está haciendo la inactivación
-    
+
         if (empty($id) || empty($motivo)) {
             $response = array(
                 'status' => 'error',
@@ -282,10 +279,10 @@ class C_equipos extends MY_Controller
             echo json_encode($response);
             return;
         }
-    
+
         // Llama al modelo para obtener los datos del equipo antes de inactivarlo
         $equipo = $this->mEquipos->obtener_equipo_por_id($id);
-    
+
         if (!$equipo) {
             $response = array(
                 'status' => 'error',
@@ -294,14 +291,14 @@ class C_equipos extends MY_Controller
             echo json_encode($response);
             return;
         }
-    
+
         // Inserta en la tabla equipos_eliminados
         $eliminacion_result = $this->mEquipos->insertar_equipo_eliminado($id, $equipo, $motivo, $usr_inactivador);
-    
+
         if ($eliminacion_result) {
             // Llama al modelo para actualizar el estado del equipo a inactivo (0)
             $result = $this->mEquipos->eliminar_equipo($id);
-    
+
             if ($result) {
                 $response = array(
                     'status' => 'success',
@@ -319,11 +316,12 @@ class C_equipos extends MY_Controller
                 'message' => 'No se pudo registrar la inactivación en la tabla de eliminados.'
             );
         }
-    
-        echo json_encode($response); 
+
+        echo json_encode($response);
     }
 
-    public function obtener_motivo_eliminacion() {
+    public function obtener_motivo_eliminacion()
+    {
         $id = $this->input->post('id'); // Obtener el ID del equipo enviado en la solicitud POST
 
         if (empty($id)) {
@@ -346,7 +344,7 @@ class C_equipos extends MY_Controller
                     'motivo' => $eliminacion_info->motivo,
                     'usr_inactivador' => $eliminacion_info->usr_inactivador,
                     'fecha_inactivacion' => $eliminacion_info->fecha_inactivacion,
-                    'numero_serie' =>$eliminacion_info->numero_serie
+                    'numero_serie' => $eliminacion_info->numero_serie
                 )
             );
         } else {
@@ -358,5 +356,4 @@ class C_equipos extends MY_Controller
 
         echo json_encode($response);
     }
-    
 }

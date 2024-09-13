@@ -108,6 +108,12 @@ class M_equipos extends CI_Model
         return $query->row();
     }
 
+    //para almacenar el historial de un equipo que cambia de ubicacion
+    public function insertar_movimiento_equipo($data)
+    {
+        $this->db->insert('mov_equipos', $data);
+    }
+
 
     // Función para eliminar un equipo (cambiar su estado a inactivo)
     public function eliminar_equipo($id)
@@ -139,14 +145,15 @@ class M_equipos extends CI_Model
     }
 
     // Función para obtener la información de eliminación del equipo
-    public function get_eliminacion_info($id) {
+    public function get_eliminacion_info($id)
+    {
         $this->db->where('equipo_id', $id);
         $query = $this->db->get('equipos_eliminados');
-        
+
         if ($query->num_rows() > 0) {
             return $query->row(); // Devuelve la primera fila del resultado con todos los campos
         }
-        
+
         return false; // No se encontró información
     }
 }

@@ -110,6 +110,7 @@ $route['mostrar_equipos'] = 'equipos/C_listado_equipos/mostrar_equipos';
 $route['reportes'] = 'equipos/C_reporte_equipos';// Ruta para la página principal de EQUIPOS-REPORTES
 $route['cargar_datos'] = 'equipos/C_reporte_equipos/cargar_datos';
 $route['generar_reporte'] = 'equipos/C_reporte_equipos/generar_reporte';
+$route['reporte_historial_equipo'] = 'equipos/C_reporte_equipos/reporte_historial_equipo';
 
 //MANTENIMIENTO
 //SOLICITUDES

@@ -1,5 +1,11 @@
 <?php $this->load->view('templates/header'); ?>
-
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+</style>
 <div class="container py-3">
     <div class="row">
         <h2 class="mb-3">Reporte de Equipos Médicos</h2>
@@ -48,20 +54,23 @@
         <!-- Resultados del Reporte -->
         <div class="mb-4">
             <h2>Resultados del Reporte</h2>
-            <div id="reportTableContainer">
+            <div class="table-responsive" id="reportTableContainer">
                 <!-- Aquí se cargará la tabla de resultados por AJAX -->
-                <table class="table table-striped">
+                <table class="table table-striped table-responsive">
                     <thead>
                         <tr>
                             <th>Nombre</th>
-                            <th>Codigo de equipo</th>
+                            <th>Código de Equipo</th>
                             <th>Tag RFID</th>
                             <th>Ubicación</th>
                             <th>Estado</th>
+                            <th>Historial</th>
                         </tr>
                     </thead>
                     <tbody id="tbequipos">
-                        <!-- Aquí se cargan los datos mediante AJAX -->
+                        <tr>
+                            <td colspan="6" class="text-center"><strong>Genere una consulta</strong></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -130,7 +139,9 @@
                             '<td>' + item.tag_rfid_id + '</td>' +
                             '<td>' + item.ubicacion_nombre + '</td>' +
                             '<td>' + (item.estado == 1 ? 'Activo' : item.estado == 0 ? 'Inactivo' : 'Mantenimiento') + '</td>' +
-                            '</tr>';
+                            // Columna para el botón de historial
+                            '<td><a href="#" class="btn btn-danger" data-id="' + item.id + '" onclick="reporte_historial_equipo(' + item.id + '); return false;"><i class="bi bi-file-pdf-fill"></i></a></td>'
+                        '</tr>';
                     });
                     $("#tbequipos").html(filas);
 
@@ -195,6 +206,36 @@
 
     });
 </script>
+<script>
+    function reporte_historial_equipo(id) {
+        console.log("ID del equipo:", id); // Imprime el ID en la consola
+
+        var Id = (id); // Capturar el ID de la tarea
+
+        // Confirmar la acción con SweetAlert
+        Swal.fire({
+            title: 'Confirmar Reporte',
+            text: "¿Deseas generar el reporte para este equipo?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, generar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                // Construir la URL solo con el ID de la tarea
+                var url = '<?php echo site_url('reporte_historial_equipo'); ?>' + '?Id=' + Id;
+                // Abrir el reporte en una nueva pestaña
+                window.open(url, '_blank');
+            }
+
+
+        });
+    }
+</script>
+
 
 
 <?php $this->load->view('templates/footer'); ?>

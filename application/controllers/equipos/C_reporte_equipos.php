@@ -57,17 +57,17 @@ class C_reporte_equipos extends MY_Controller
         ];
 
         if ($format == 'pdf') {
-            
+
             // Crear una nueva instancia de TCPDF
             $pdf = new TCPDF();
 
             // Establecer el título del documento
             $pdf->SetTitle('Reporte de los Equipos');
-            
+
 
             // Añadir una página
             $pdf->AddPage();
-            $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 001', PDF_HEADER_STRING, array(0,64,255), array(0,64,128));
+            $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
             $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
             // Generar HTML del reporte con datos adicionales
@@ -92,5 +92,63 @@ class C_reporte_equipos extends MY_Controller
 
         // Devuelve los datos como JSON
         echo json_encode($data);
+    }
+
+    public function reporte_historial_equipo()
+    {
+        // Obtener el ID del equipo desde los parámetros de la solicitud
+        $equipoId = $this->input->get('Id'); // Cambiar a `input->get`
+        // Obtener el ID de la tarea desde los parámetros de la solicitud
+        $format = $this->input->get('format') ?: 'pdf'; // PDF por defecto
+
+        if ($equipoId === null) {
+            show_error('ID del equipo es requerido.');
+        }
+
+        // Llamar al modelo para obtener los datos del equipo
+        $dataEquipo = $this->mREquipos->obtenerDatosEquipoPorId($equipoId);
+        // Llamar al modelo para obtener el historial de mantenimiento
+        $dataMantenimiento = $this->mREquipos->obtenerHistorialMantenimientosPorEquipoId($equipoId);
+
+        // Datos adicionales para el reporte
+        $reporte_info = [
+            'fecha' => date('d/m/Y'),
+            'empresa' => 'Hospital de Clínicas',
+            'direccion' => 'Av. Saavedra, La Paz, Bolivia',
+            'contacto' => '+519 73716289 - mamanioscar509@gmail.com',
+            'elaborado_por' => $this->session->userdata('username'),
+            'puesto' => $this->session->userdata('rol_name')
+        ];
+
+        if ($format == 'pdf') {
+            // Verificar si TCPDF está cargado
+            if (!class_exists('TCPDF')) {
+                show_error('La clase TCPDF no está disponible. Por favor, asegúrate de que la biblioteca esté instalada y cargada.');
+                return;
+            }
+
+            // Crear una nueva instancia de TCPDF
+            $pdf = new TCPDF();
+
+            // Establecer el título del documento
+            $pdf->SetTitle('Historial del Equipo');
+
+            // Añadir una página
+            $pdf->AddPage();
+            $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
+            $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+            // Generar HTML del reporte con los datos y la información adicional
+            $html = $this->load->view('equipos/historial_equipo_pdf', ['dataEquipo' => $dataEquipo, 'dataMantenimiento' => $dataMantenimiento, 'reporte_info' => $reporte_info], TRUE);
+            $pdf->writeHTML($html);
+
+            // Enviar el PDF al navegador
+            $pdf->Output('historial_equipo_' . $equipoId . '.pdf', 'I'); // 'I' para mostrar en el navegador
+
+        } else if ($format == 'excel') {
+            // Si es Excel, cargar la biblioteca correspondiente
+            $this->load->library('excel');
+            $this->excel->generate_excel('reporte_tareas.xlsx', $data);
+        }
     }
 }
