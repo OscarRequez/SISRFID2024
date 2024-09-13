@@ -156,6 +156,8 @@ class C_equipos extends MY_Controller
     public function editar_equipo()
     {
         $id = $this->input->post('id'); // ID del equipo
+        $motivo = $this->input->post('motivo'); // Motivo del cambio de ubicación
+
         // Validaciones de formulario
         $this->form_validation->set_rules('nombre', 'Nombre', 'required');
         $this->form_validation->set_rules('Descripcion', 'Descripción', 'required');
@@ -207,6 +209,7 @@ class C_equipos extends MY_Controller
                 'estado' => 1, // Estado del registro
                 'usucre' => $this->session->userdata('email'), // Usuario que creó el registro
                 'feccre' => date('Y-m-d H:i:s'), // Fecha de creación del registro
+                'motivo' => $motivo // Agregar el motivo del cambio
             );
 
             // Insertar el historial en la base de datos
@@ -263,6 +266,7 @@ class C_equipos extends MY_Controller
 
         echo json_encode($response);
     }
+
 
     // Método para eliminar un equipo médico
     public function eliminar_equipo()

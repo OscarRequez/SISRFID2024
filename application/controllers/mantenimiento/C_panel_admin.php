@@ -199,7 +199,7 @@ class C_panel_Admin extends MY_Controller
                 // Enviar el PDF al navegador
                 $pdf->Output('reporte_mantenimiento.pdf', 'I');
             } else {
-                echo json_encode(['error' => 'No se encontraron datos para el rango de fechas especificado.']);
+                echo json_encode(['error' => 'No se encontraron mantenimientos finalizados para el rango de fechas especificado.']);
             }
         } else {
             echo json_encode(['error' => 'Fechas inválidas']);

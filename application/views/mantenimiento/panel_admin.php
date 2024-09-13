@@ -8,6 +8,14 @@
     }
 </style>
 
+<script>
+    $(document).ready(function() {
+        // Establecer la fecha actual como valor predeterminado en el campo de fecha fin
+        let today = new Date().toISOString().split('T')[0];
+        $('#fechaFin').attr('max', today); // Limitar la fecha máxima a hoy
+        $('#fechaFin').val(today); // Establecer la fecha fin predeterminada como hoy
+    });
+</script>
 <div class="col py-3">
     <h2>Panel de Mantenimiento</h2>
 
@@ -442,12 +450,22 @@
         var fechaInicio = $('#fechaInicio').val();
         var fechaFin = $('#fechaFin').val();
 
-        // Verifica que las fechas no estén vacías
+        // Verificar que las fechas no estén vacías
         if (fechaInicio === '' || fechaFin === '') {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: 'Por favor, selecciona ambas fechas para generar el reporte.'
+            });
+            return;
+        }
+
+        // Validar que la fecha de fin no sea anterior a la fecha de inicio
+        if (fechaFin < fechaInicio) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'La fecha de fin no puede ser anterior a la fecha de inicio.'
             });
             return;
         }
@@ -464,11 +482,41 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Construir la URL correctamente con los parámetros
-                var url = '<?php echo site_url('mantenimiento_reporte_fechas'); ?>?fechaInicio=' + encodeURIComponent(fechaInicio) + '&fechaFin=' + encodeURIComponent(fechaFin);
-
-                // Abrir el reporte en una nueva pestaña
-                window.open(url, '_blank');
+                // Realizar petición AJAX para verificar si hay datos antes de abrir el PDF
+                $.ajax({
+                    url: '<?php echo site_url('mantenimiento_reporte_fechas'); ?>',
+                    method: 'GET',
+                    data: {
+                        fechaInicio: fechaInicio,
+                        fechaFin: fechaFin
+                    },
+                    success: function(response) {
+                        try {
+                            var jsonResponse = JSON.parse(response);
+                            if (jsonResponse.error) {
+                                // Mostrar SweetAlert si no hay datos
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: jsonResponse.error
+                                });
+                            } else {
+                                // Abrir el reporte en una nueva pestaña si no hay errores
+                                var url = '<?php echo site_url('mantenimiento_reporte_fechas'); ?>?fechaInicio=' + encodeURIComponent(fechaInicio) + '&fechaFin=' + encodeURIComponent(fechaFin);
+                                window.open(url, '_blank');
+                            }
+                        } catch (e) {
+                            console.error("Error en la respuesta del servidor: ", e);
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al generar el reporte. Inténtalo nuevamente.'
+                        });
+                    }
+                });
             }
         });
     });

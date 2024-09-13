@@ -153,8 +153,9 @@ class M_reporte_equipos extends CI_Model
 
         // Obtener el historial de movimientos del equipo, incluyendo el nombre del usuario que hizo el movimiento
         $this->db->select('m.id, m.ubicacion_anterior_id, ua.nombre as ubicacion_anterior_nombre, 
-                           m.ubicacion_nueva_id, un.nombre as ubicacion_nueva_nombre, 
-                           m.fecha_movimiento, m.usuario_id, u.nombre as nombre_usuario');
+                            m.ubicacion_nueva_id, un.nombre as ubicacion_nueva_nombre, 
+                            m.fecha_movimiento, m.usuario_id, u.nombre as nombre_usuario, 
+                            m.motivo'); // Agrega el campo motivo aquí
         $this->db->from('mov_equipos m');
         $this->db->join('ubicaciones ua', 'm.ubicacion_anterior_id = ua.id', 'left');
         $this->db->join('ubicaciones un', 'm.ubicacion_nueva_id = un.id', 'left');

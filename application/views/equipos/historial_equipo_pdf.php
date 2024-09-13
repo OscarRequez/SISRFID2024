@@ -45,11 +45,12 @@
         <table>
             <thead>
                 <tr>
-                    <th>#</th> <!-- Nueva columna para numeración -->
-                    <th>Fecha de Movimiento</th>
-                    <th>Ubicación Anterior</th>
-                    <th>Ubicación Nueva</th>
-                    <th>Uusario de Movimiento</th>
+                    <th width="25px">#</th> <!-- Nueva columna para numeración -->
+                    <th width="85px">Fecha de Movimiento</th>
+                    <th width="85px">Ubicación Anterior</th>
+                    <th width="85px">Ubicación Nueva</th>
+                    <th width="85px">Usario que Cambio</th>
+                    <th width="200px">Motivo</th>
                 </tr>
             </thead>
             <tbody>
@@ -57,11 +58,12 @@
                 ?>
                 <?php foreach ($dataEquipo['historialMovimientos'] as $historial): ?>
                     <tr>
-                        <td><?php echo $contador++; ?></td>
-                        <td><?php echo date('d/m/Y', strtotime($historial['fecha_movimiento'])); ?></td>
-                        <td><?php echo htmlspecialchars($historial['ubicacion_anterior_nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($historial['ubicacion_nueva_nombre']); ?></td>
-                        <td><?php echo htmlspecialchars($historial['nombre_usuario']); ?></td>
+                        <td width="25px"><?php echo $contador++; ?></td>
+                        <td width="85px"><?php echo date('d/m/Y', strtotime($historial['fecha_movimiento'])); ?></td>
+                        <td width="85px"><?php echo htmlspecialchars($historial['ubicacion_anterior_nombre']); ?></td>
+                        <td width="85px"><?php echo htmlspecialchars($historial['ubicacion_nueva_nombre']); ?></td>
+                        <td width="85px"><?php echo htmlspecialchars($historial['nombre_usuario']); ?></td>
+                        <td width="200px"><?php echo htmlspecialchars($historial['motivo']); ?></td>
 
                     </tr>
                 <?php endforeach; ?>
@@ -77,29 +79,31 @@
         <table>
             <thead>
                 <tr>
-                    <th>#</th> <!-- Nueva columna para numeración -->
-                    <th>Id Mant.</th>
-                    <th>Técnico</th>
-                    <th>Tipo</th>
-                    <th>Área de Solicitud</th>
-                    <th>Fecha de Solicitud</th>
-                    <th>Fecha de Conclusión</th>
-                    <th>Costo de Mant</th>
-                    <th>Estado</th>
+                    <th width="30px">#</th> <!-- Nueva columna para numeración -->
+                    <th width="45px">ID</th>
+                    <th width="70px">Técnico</th>
+                    <th width="60px">Tipo</th>
+                    <th width="90px">Área de Solicitud</th>
+                    <th width="70px">F.Solicitud</th>
+                    <th width="70px">F.Conclusión</th>
+                    <th width="65px">Costo Total</th>
+                    <th width="60px">Estado</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $contador = 1; // Inicializar contador 
+                <?php
+                $contador = 1; // Inicializar contador 
+                $sumaCostoTotal = 0; // Inicializar la suma de los costos
                 ?>
                 <?php foreach ($dataMantenimiento as $mantenimiento): ?>
                     <tr>
-                        <td><?php echo $contador++; ?></td>
-                        <td><?php echo htmlspecialchars($mantenimiento['id']); ?></td>
-                        <td><?php echo htmlspecialchars($mantenimiento['nombre_tecnico']); ?></td>
-                        <td><?php echo htmlspecialchars($mantenimiento['tipo_mantenimiento']); ?></td>
-                        <td style="font-size:7px;"><?php echo htmlspecialchars($mantenimiento['nombre_ubicacion']); ?></td>
-                        <td><?php echo date('d/m/Y', strtotime($mantenimiento['fecha_solicitud'])); ?></td>
-                        <td>
+                        <td width="30px"><?php echo $contador++; ?></td>
+                        <td width="45px"><?php echo htmlspecialchars($mantenimiento['id']); ?></td>
+                        <td width="70px"><?php echo htmlspecialchars($mantenimiento['nombre_tecnico']); ?></td>
+                        <td width="60px"><?php echo htmlspecialchars($mantenimiento['tipo_mantenimiento']); ?></td>
+                        <td width="90px" style="font-size:7px;"><?php echo htmlspecialchars($mantenimiento['nombre_ubicacion']); ?></td>
+                        <td width="70px"><?php echo date('d/m/Y', strtotime($mantenimiento['fecha_solicitud'])); ?></td>
+                        <td width="70px">
                             <?php
                             // Mostrar la fecha de conclusión solo si no es null o vacía
                             if (empty($mantenimiento['fecha_conclusion'])) {
@@ -109,8 +113,8 @@
                             }
                             ?>
                         </td>
-                        <td><?php echo number_format($mantenimiento['costoTotal'], 2); ?> Bs.</td>
-                        <td>
+                        <td width="65px"><?php echo number_format($mantenimiento['costoTotal'], 2); ?> Bs.</td>
+                        <td width="60px" style="font-size:7px;">
                             <?php
                             switch ($mantenimiento['estado']) {
                                 case 1:
@@ -132,12 +136,22 @@
                             ?>
                         </td>
                     </tr>
+                    <?php
+                    // Sumar el costo total de cada mantenimiento
+                    $sumaCostoTotal += $mantenimiento['costoTotal'];
+                    ?>
                 <?php endforeach; ?>
+                <!-- Fila para el total de la inversión -->
+                <tr>
+                    <td colspan="7" style="text-align: right;"><strong>Total Inversión en Mantenimiento:</strong></td>
+                    <td colspan="2"><strong><?php echo number_format($sumaCostoTotal, 2); ?> Bs.</strong></td>
+                </tr>
             </tbody>
         </table>
     <?php else: ?>
         <p>No hay registros de mantenimiento para este equipo.</p>
     <?php endif; ?>
+
 
 </body>
 

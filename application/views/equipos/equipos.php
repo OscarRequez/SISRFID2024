@@ -62,7 +62,6 @@
 </div>
 
 <!-- Modal para agregar y editar equipos -->
-
 <div class="modal fade" id="modalEquipo" tabindex="-1" role="dialog" aria-labelledby="modalEquipoLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -105,6 +104,11 @@
                         <label for="imagen">Actualizar Imagen</label>
                         <input type="file" class="form-control" id="imagen" name="imagen">
                     </div>
+                    <!-- Área de texto para el motivo, inicialmente oculta -->
+                    <div class="form-group" id="motivoContainer" style="display: none;">
+                        <label for="motivo">Motivo del cambio de ubicación</label>
+                        <textarea class="form-control" id="motivo" name="motivo" placeholder="Escribe el motivo aquí..."></textarea>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -122,6 +126,7 @@
     $(document).ready(function() {
         // Variable para indicar el modo del modal (agregar o editar)
         var modoModal = 'agregar'; // Puede ser 'agregar' o 'editar'
+        var ubicacionOriginal; // Variable para guardar la ubicación original del equipo
 
         // Función para mostrar datos de equipos
         function mostrarDatosEquipos(valorBuscar, pagina, cantidad) {
@@ -236,7 +241,7 @@
 
 
         $(document).ready(function() {
-            mostrarDatosEquipos('', 1,7 );
+            mostrarDatosEquipos('', 1, 7);
             cargarUbicaciones(); // Cargar ubicaciones al inicio
 
             $(document).on('submit', '#formBusqueda', function(e) {
@@ -302,32 +307,78 @@
             });
 
 
-            // FUNCION PARA AGREGAR O EDITAR EQUIPO NUEVO
             $('#formEquipo').on('submit', function(e) {
                 e.preventDefault();
-                var formData = new FormData(this);
-                var url = (modoModal === 'agregar') ? "<?php echo site_url('agregar_equipo'); ?>" : "<?php echo site_url('editar_equipo'); ?>";
+                var nuevaUbicacion = $('#ubicacion').val();
+                var motivoField = $('#motivoContainer');
+                var motivo = $('#motivo').val();
 
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(response) {
-                        $('#modalEquipo').modal('hide');
-                        mostrarDatosEquipos('', 1, 5);
+                // Verificar si la ubicación ha cambiado
+                if (modoModal === 'editar' && nuevaUbicacion !== ubicacionOriginal) {
+                    motivoField.show(); // Mostrar el área de texto para el motivo
 
-                        // Mostrar SweetAlert basado en la respuesta
-                        if (response.status === 'success') {
-                            Swal.fire('¡Éxito!', response.message, 'success');
-                        } else {
-                            Swal.fire('Error', response.message, 'error');
+                    // Esperar a que el usuario ingrese el motivo
+                    $('#btnGuardar').off('click').on('click', function() {
+                        if (!$('#motivo').val()) {
+                            alert('¡Necesitas escribir un motivo!');
+                            return;
                         }
-                    }
-                });
+
+                        var formData = new FormData($('#formEquipo')[0]);
+                        formData.append('motivo', $('#motivo').val()); // Agregar el motivo al FormData
+                        var url = "<?php echo site_url('editar_equipo'); ?>";
+
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                $('#modalEquipo').modal('hide');
+                                mostrarDatosEquipos('', 1, 5);
+
+                                // Mostrar SweetAlert basado en la respuesta
+                                if (response.status === 'success') {
+                                    Swal.fire('¡Éxito!', response.message, 'success');
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    var formData = new FormData($('#formEquipo')[0]);
+                    var url = (modoModal === 'agregar') ? "<?php echo site_url('agregar_equipo'); ?>" : "<?php echo site_url('editar_equipo'); ?>";
+
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            $('#modalEquipo').modal('hide');
+                            mostrarDatosEquipos('', 1, 5);
+
+                            // Mostrar SweetAlert basado en la respuesta
+                            if (response.status === 'success') {
+                                Swal.fire('¡Éxito!', response.message, 'success');
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        }
+                    });
+                }
             });
+            // Ocultar el campo motivo cuando se cierra el modal
+            $('#modalEquipo').on('hidden.bs.modal', function() {
+                $('#motivoContainer').hide(); // Ocultar el campo motivo
+                $('#motivo').val(''); // Limpiar el campo motivo
+            });
+
         });
     });
 </script>

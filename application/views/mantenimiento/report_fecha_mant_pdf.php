@@ -5,11 +5,13 @@
     <style>
         body {
             font-family: Georgia, 'Times New Roman', Times, serif;
-            font-size: 10px;
+            font-size: 9px;
             margin: 0;
             padding: 0;
         }
-
+        h2 {
+            text-align: center;
+        }
         /* Estilos CSS personalizados para la tabla del PDF */
         table {
             width: 100%;
@@ -35,38 +37,31 @@
             margin: 0 0 10px 0;
 
         }
-
-        .small-column {
-            width: 18;
-        }
-
-        .small-column-obs {
-            width: 118;
-        }
     </style>
 </head>
 
 <body>
     <h2>Reporte de Mantenimiento</h2>
-    <p><strong>Fecha del Reporte:</strong> <?php echo $reporte_info['fecha']; ?></p>
-    <p><strong>Empresa:</strong> <?php echo $reporte_info['empresa']; ?></p>
-    <p><strong>Dirección:</strong> <?php echo $reporte_info['direccion']; ?></p>
-    <p><strong>Contacto:</strong> <?php echo $reporte_info['contacto']; ?></p>
-    <p><strong>Elaborado por:</strong> <?php echo $reporte_info['elaborado_por']; ?>, <?php echo $reporte_info['puesto']; ?></p>
-    <!-- Pie de página -->
-
+    <p>
+        <strong>Fecha del Reporte:</strong> <?php echo $reporte_info['fecha']; ?><br>
+        <strong>Empresa:</strong> <?php echo $reporte_info['empresa']; ?><br>
+        <strong>Dirección:</strong> <?php echo $reporte_info['direccion']; ?><br>
+        <strong>Contacto:</strong> <?php echo $reporte_info['contacto']; ?><br>
+        <strong>Elaborado por:</strong> <?php echo $reporte_info['elaborado_por']; ?>, <?php echo $reporte_info['puesto']; ?>
+    </p>
+    <hr>
     <h4>Mantenimientos Realizados</h4>
     <table>
         <thead>
             <tr>
-                <th class="small-column">#</th> <!-- Nueva columna para numeración -->
-                <th>ID Mantenimiento</th>
-                <th>Equipo</th>
-                <th>Técnico Encargado</th>
-                <th>Fecha Solicitud</th>
-                <th>Fecha Conclusión</th>
-                <th>Costo Total de Materiales</th>
-                <th class="small-column-obs">Observaciones</th>
+                <th width="20px">#</th> <!-- Nueva columna para numeración -->
+                <th width="40px">ID</th>
+                <th width="60px">Cod. Equipo</th>
+                <th width="70px">Técnico</th>
+                <th width="70px">F. Solicitud</th>
+                <th width="80px">F. Conclusión</th>
+                <th width="65px">Costo Total(Bs)</th>
+                <th width="160px">Observaciones</th>
             </tr>
         </thead>
         <tbody>
@@ -74,19 +69,20 @@
             ?>
             <?php foreach ($datos_reporte as $dato): ?>
                 <tr>
-                    <td class="small-column"><?php echo $numero++; ?></td> <!-- Numeración automática -->
-                    <td><?php echo $dato['id']; ?></td>
-                    <td><?php echo $dato['numero_serie_eq']; ?></td>
-                    <td><?php echo $dato['tecnico_nombre']; ?></td>
-                    <td><?php echo date('d/m/Y', strtotime($dato['fecha_solicitud'])); ?></td>
-                    <td><?php echo date('d/m/Y', strtotime($dato['fecha_conclusion'])); ?></td>
-                    <td><?php echo number_format($dato['total_materiales'], 2); ?></td>
-                    <td class="small-column-obs"><?php echo $dato['observaciones']; ?></td>
+                    <td width="20px"><?php echo $numero++; ?></td> <!-- Numeración automática -->
+                    <td width="40px"><?php echo $dato['id']; ?></td>
+                    <td width="60px"><?php echo $dato['numero_serie_eq']; ?></td>
+                    <td width="70px"><?php echo $dato['tecnico_nombre']; ?></td>
+                    <td width="70px"><?php echo date('d/m/Y', strtotime($dato['fecha_solicitud'])); ?></td>
+                    <td width="80px"><?php echo date('d/m/Y', strtotime($dato['fecha_conclusion'])); ?></td>
+                    <td width="65px"><?php echo number_format($dato['total_materiales'], 2); ?></td>
+                    <td width="160px"><?php echo $dato['observaciones']; ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-
+    <br>
+<hr>
     <h4>Técnico con Más Mantenimientos</h4>
     <table>
         <thead>

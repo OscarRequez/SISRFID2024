@@ -603,9 +603,20 @@
                                         if (response.success) {
                                             // Actualizar la imagen del avatar en la interfaz
                                             $('#userAvatar').attr('src', '<?php echo base_url(); ?>' + avatarPath);
-                                            alert(response.message);
+
+                                            // SweetAlert success
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: '¡Éxito!',
+                                                text: response.message
+                                            });
                                         } else {
-                                            alert(response.message);
+                                            // SweetAlert error
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: response.message
+                                            });
                                         }
                                     }
                                 });
@@ -615,6 +626,7 @@
                             });
                         });
                     </script>
+
 
                     <script>
                         function updateDateTime() {

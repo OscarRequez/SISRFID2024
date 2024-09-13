@@ -82,10 +82,7 @@
                 <td><strong>Unidad de la Solicitud:</strong></td>
                 <td><?php echo $data[0]['nombre_ubicacion']; ?></td>
             </tr>
-            <tr>
-                <td><strong>Observaciones:</strong></td>
-                <td><?php echo $data[0]['observaciones']; ?></td>
-            </tr>
+
             <tr>
                 <td><strong>Fecha Solicitud:</strong></td>
                 <td><?php echo $data[0]['fecha_solicitud']; ?></td>
@@ -174,14 +171,19 @@
     </table>
 
     <br>
-    <div class="section-title">Resumen de Gastos</div>
+    <div class="section-title">Resumen</div>
     <br>
     <table>
         <tbody>
             <tr>
+                <td><strong>Observaciones:</strong></td>
+                <td><?php echo $data[0]['observaciones']; ?></td>
+            </tr>
+            <tr>
                 <td><strong>Total Gasto:</strong></td>
                 <td><?php echo number_format($total_gasto, 2); ?> Bs</td>
             </tr>
+
         </tbody>
     </table>
 </body>
