@@ -209,4 +209,9 @@ class M_panel_Admin extends CI_Model
         $query = $this->db->get();
         return $query->result_array(); // Retornar los resultados en forma de array
     }
+
+    //notificaion
+    public function nueva_notificacion($data) {
+        return $this->db->insert('notificaciones', $data);
+    }
 }

@@ -60,74 +60,105 @@
 
 
     <script>
-        function mostrarDatos(valorBuscar, pagina, cantidad) {
-            $.ajax({
-                url: "<?php echo site_url('usuarios/mostrar'); ?>",
-                type: "POST",
-                data: {
-                    buscar: valorBuscar,
-                    nropagina: pagina,
-                    cantidad: cantidad
-                },
-                dataType: "json",
-                success: function(response) {
-                    var filas = "";
-                    $.each(response.usuarios, function(key, item) {
-                        filas += '<tr>' +
-                            '<td>' + item.id + '</td>' +
-                            '<td>' + item.nombre + '</td>' +
-                            '<td>' + item.email + '</td>' +
-                            '<td>' + item.rol_nombre + '</td>' +
-                            '<td>' + item.usucre + '</td>' +
-                            '<td>' + item.feccre + '</td>' +
-                            '<td><center><i class="bi ' +
-                            (item.estado == 1 ? ' fs-4 bi bi-person-circle' : ' fs-4 bi bi-person-circle') +
-                            ' icon-toggle" data-id="' + item.id + '" data-estado="' + item.estado + '" style="color: ' +
-                            (item.estado == 1 ? 'green' : 'red') + '; cursor: pointer;"></i></center></td>' +
-                            '<td><center><button class="btn btn-sm editModal" style="background-color:#527E99; color:#DBE4DB" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-email="' + item.email + '" data-rol="' + item.rol_nombre + '">Editar</button>' + ' | ' +
-                            '<a href="<?php echo site_url('eliminar_estado_usuario/'); ?>' + item.id + '" class="btn btn-sm" style="background-color:#F82A46; color:#DBE4DB"  onclick="return confirm(\'¿Estás seguro de que deseas eliminar este usuario?\');">Eliminar</a></center></td>' +
-                            '</tr>';
-                    });
-
-                    $("#tbclientes").html(filas);
-
-                    // Paginación
-                    var totalregistros = response.totalregistros;
-                    var cantidadregistros = response.cantidad;
-                    var numerolinks = Math.ceil(totalregistros / cantidadregistros);
-                    var paginador = "<ul class='pagination'>";
-
-                    if (pagina > 1) {
-                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", 1, " + cantidad + ")'>Primera</a></li>";
-                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
-                    } else {
-                        paginador += "<li class='disabled'><a class='page-link' href='#'>Primera</a></li>";
-                        paginador += "<li class='disabled'><a class='page-link' href='#'>Anterior</a></li>";
-                    }
-
-                    for (var i = 1; i <= numerolinks; i++) {
-                        paginador += "<li" + (i === pagina ? " class='active'" : "") + "><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + i + ", " + cantidad + ")'>" + i + "</a></li>";
-                    }
-
-                    if (pagina < numerolinks) {
-                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
-                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + numerolinks + ", " + cantidad + ")'>Ultimo</a></li>";
-                    } else {
-                        paginador += "<li class='disabled'><a class='page-link' href='#'>Siguiente</a></li>";
-                        paginador += "<li class='disabled'><a class='page-link' href='#'>Ultimo;</a></li>";
-                    }
-
-                    paginador += "</ul>";
-                    $(".paginacion").html(paginador);
-                }
-            });
-        }
-
-        // Inicializa la tabla con los datos iniciales
         $(document).ready(function() {
-            mostrarDatos("", 1, 5); // Inicializa con página 1 y 10 registros por página
+            // Función para mostrar datos de usuarios
+            function mostrarDatos(valorBuscar, pagina, cantidad) {
+                $.ajax({
+                    url: "<?php echo site_url('usuarios/mostrar'); ?>",
+                    type: "POST",
+                    data: {
+                        buscar: valorBuscar,
+                        nropagina: pagina,
+                        cantidad: cantidad
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        var filas = "";
+                        $.each(response.usuarios, function(key, item) {
+                            filas += '<tr>' +
+                                '<td>' + item.id + '</td>' +
+                                '<td>' + item.nombre + '</td>' +
+                                '<td>' + item.email + '</td>' +
+                                '<td>' + item.rol_nombre + '</td>' +
+                                '<td>' + item.usucre + '</td>' +
+                                '<td>' + item.feccre + '</td>' +
+                                '<td><center><i class="bi ' +
+                                (item.estado == 1 ? 'fs-4 bi-person-circle' : 'fs-4 bi-person-circle') +
+                                ' icon-toggle" data-id="' + item.id + '" data-estado="' + item.estado + '" style="color: ' +
+                                (item.estado == 1 ? 'green' : 'red') + '; cursor: pointer;"></i></center></td>' +
+                                '<td><center>' +
+                                '<button class="btn btn-sm editModal" style="background-color:#527E99; color:#DBE4DB" ' +
+                                'data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-email="' + item.email + '" ' +
+                                'data-rol="' + item.rol_nombre + '">Editar</button> | ' +
+                                '<a href="<?php echo site_url('eliminar_estado_usuario/'); ?>' + item.id + '" ' +
+                                'class="btn btn-sm" style="background-color:#F82A46; color:#DBE4DB" ' +
+                                'onclick="return confirm(\'¿Estás seguro de que deseas eliminar este usuario?\');">Eliminar</a>' +
+                                '</center></td>' +
+                                '</tr>';
+                        });
+
+                        $("#tbclientes").html(filas);
+
+                        // Manejo de la paginación
+                        var totalRegistros = response.totalregistros;
+                        var cantidadRegistros = response.cantidad;
+                        var numeroLinks = Math.ceil(totalRegistros / cantidadRegistros);
+                        var paginador = "<ul class='pagination'>";
+
+                        // Botones "Primera" y "Anterior"
+                        if (pagina > 1) {
+                            paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", 1, " + cantidad + ")'>Primera</a></li>";
+                            paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
+                        } else {
+                            paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Primera</a></li>";
+                            paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Anterior</a></li>";
+                        }
+
+                        // Botones de números de página
+                        var startPage = Math.max(1, pagina - 2);
+                        var endPage = Math.min(numeroLinks, pagina + 2);
+
+                        if (startPage > 1) {
+                            paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", 1, " + cantidad + ")'>1</a></li>";
+                            if (startPage > 2) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                        }
+
+                        for (var i = startPage; i <= endPage; i++) {
+                            if (i == pagina) {
+                                paginador += "<li class='page-item active'><a class='page-link' href='javascript:void(0)'>" + i + "</a></li>";
+                            } else {
+                                paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + i + ", " + cantidad + ")'>" + i + "</a></li>";
+                            }
+                        }
+
+                        if (endPage < numeroLinks) {
+                            if (endPage < numeroLinks - 1) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                            paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + numeroLinks + ", " + cantidad + ")'>" + numeroLinks + "</a></li>";
+                        }
+
+                        // Botones "Siguiente" y "Última"
+                        if (pagina < numeroLinks) {
+                            paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
+                            paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarDatos(\"" + valorBuscar + "\", " + numeroLinks + ", " + cantidad + ")'>Última</a></li>";
+                        } else {
+                            paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Siguiente</a></li>";
+                            paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Última</a></li>";
+                        }
+
+                        paginador += "</ul>";
+                        $(".paginacion").html(paginador);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al cargar los datos: " + error);
+                    }
+                });
+            }
+
+            // Inicializa la tabla con los datos iniciales
+            mostrarDatos("", 1, 6); // Inicializa con página 1 y 5 registros por página
         });
     </script>
+
 
     <!-- HTML para la tabla y la paginación -->
     <div class="table table-responsive">

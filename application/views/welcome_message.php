@@ -16,24 +16,69 @@
         justify-content: center;
         margin: 20px 0;
     }
+
+    /*notificacione*/
+    @keyframes pulse {
+        0% {
+            background-color: #f8d7da;
+        }
+
+        50% {
+            background-color: #f5c6cb;
+        }
+
+        100% {
+            background-color: #f8d7da;
+        }
+    }
+
+    /* Aplica el borde y el efecto de pulso solo a la tarjeta de notificaciones */
+    .card.notificaciones-alert {
+        border: 2px solid red;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        animation: pulse 1s infinite;
+    }
+
+    .notificaciones-wrapper {
+        max-height: 300px;
+        /* Ajusta la altura según lo necesites */
+        overflow-y: auto;
+        /* Añade una barra de desplazamiento si hay demasiadas notificaciones */
+    }
+
+    .list-group-item {
+        cursor: pointer;
+    }
+
+    .notificaciones-wrapper .badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+    }
 </style>
 </head>
 <!-- welcome.php -->
 
 <div class="col py-3">
     <div class="row">
-        <!-- Estadísticas Generales -->
+        <!-- Notificaciones -->
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body ">
-                    <h5 class="card-title">Equipos Registrados</h5>
-                    <center>
-                        <h3 class="card-text" id="cantidad-equipos"><strong></strong>
-                            <h3 />
-                    </center>
+            <div class="card notificaciones-card">
+                <div class="card-body bg-primary text-white">
+                    <h5 class="card-title">
+                        Notificaciones
+                        <span id="notificacionesCount" class="badge rounded-pill bg-danger" style="display: none;"></span>
+                    </h5>
+                    <ul class="list-group notificaciones-wrapper" id="notificacionesList">
+                        <!-- Aquí se llenarán las notificaciones -->
+                    </ul>
+                    <button id="showMoreBtn" class="btn mt-2 bg-dark text-white">Mostrar más</button>
                 </div>
             </div>
         </div>
+
 
         <!-- Gráfico de Solicitudes de Mantenimiento -->
         <div class="col-md-6">
@@ -44,18 +89,22 @@
             </div>
         </div>
 
-        <!-- Notificaciones -->
+        <!-- Estadísticas Generales -->
         <div class="col-md-3">
             <div class="card">
-                <div class="card-body bg-primary text-white">
-                    <h5 class="card-title">Notificaciones</h5>
-                    <ul class="list-group">
-                        <li class="list-group-item">Equipo X necesita mantenimiento</li>
-                        <li class="list-group-item">Solicitud Y completada</li>
-                    </ul>
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title">Equipos Registrados</h5>
+                </div>
+                <div class="card-body">
+                    <center>
+                        <h3 class="card-text" id="cantidad-equipos"><strong></strong>
+                        </h3>
+                    </center>
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <div class="row mt-4">
@@ -94,6 +143,119 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalNotificacion" tabindex="-1" aria-labelledby="modalNotificacionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNotificacionLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalNotificacionMensaje"></p>
+                    <p id="modalNotificacionFecha" class="text-muted"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function cargarNotificaciones() {
+            $.ajax({
+                url: "<?php echo site_url('obtener_notificaciones'); ?>",
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    let notificacionesHtml = '';
+                    let tieneNotificacionesSinLeer = false;
+                    let conteoNotificacionesSinLeer = 0;
+
+                    // Muestra solo las primeras 5 notificaciones
+                    const cantidadVisible = 2;
+
+                    $.each(response, function(key, notificacion) {
+                        let itemClass = notificacion.leida == 0 ? 'list-group-item list-group-item-action list-group-item-danger' : 'list-group-item';
+                        notificacionesHtml += `
+                    <li class="${itemClass}" data-id="${notificacion.id}" data-mensaje="${notificacion.mensaje}" data-fecha="${notificacion.feccre}">
+                        <strong>${notificacion.titulo}</strong>
+                    </li>
+                `;
+                        if (notificacion.leida == 0) {
+                            tieneNotificacionesSinLeer = true;
+                            conteoNotificacionesSinLeer++;
+                        }
+                    });
+
+                    $('#notificacionesList').html(notificacionesHtml);
+
+                    // Muestra solo un número limitado de notificaciones
+                    if ($('#notificacionesList .list-group-item').length > cantidadVisible) {
+                        $('#notificacionesList .list-group-item').slice(cantidadVisible).hide();
+                        $('#showMoreBtn').show();
+                    } else {
+                        $('#showMoreBtn').hide();
+                    }
+
+                    if (tieneNotificacionesSinLeer) {
+                        $('.notificaciones-card').addClass('notificaciones-alert');
+                        $('#notificacionesCount').text(conteoNotificacionesSinLeer).show();
+                    } else {
+                        $('.notificaciones-card').removeClass('notificaciones-alert');
+                        $('#notificacionesCount').hide();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar notificaciones:", status, error);
+                }
+            });
+        }
+
+        // Muestra más notificaciones al hacer clic en el botón
+        $(document).on('click', '#showMoreBtn', function() {
+            $('#notificacionesList .list-group-item').slice(2).show(); // Muestra las notificaciones ocultas
+            $(this).hide(); // Oculta el botón "Mostrar más" cuando ya no haya más notificaciones ocultas
+        });
+
+        $(document).ready(function() {
+            cargarNotificaciones();
+        });
+
+        // Manejar el clic en una notificación
+        $(document).on('click', '.list-group-item', function() {
+            var id = $(this).data('id');
+            var mensaje = $(this).data('mensaje');
+            var titulo = $(this).find('strong').text();
+            var fecha = $(this).data('fecha');
+
+            $('#modalNotificacion .modal-title').text(titulo);
+            $('#modalNotificacionMensaje').text(mensaje);
+            $('#modalNotificacionFecha').text('Fecha: ' + fecha);
+
+            // Marcar la notificación como leída
+            $.ajax({
+                url: "<?php echo site_url('marcar_notificacion_leida'); ?>",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function(response) {
+                    cargarNotificaciones(); // Volver a cargar las notificaciones para actualizar la vista
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al marcar notificación como leída:", status, error);
+                }
+            });
+
+            $('#modalNotificacion').modal('show');
+        });
+    </script>
+
     <script>
         function cargarSolicitudesMantenimiento(pagina, cantidad) {
             $.ajax({
@@ -114,7 +276,7 @@
                             '<td><center><i class="bi ' +
                             (item.estado == 1 ? 'fs-4 bi bi-send-check-fill ' :
                                 item.estado == 2 ? 'fs-4 bi bi-wrench-adjustable' :
-                                item.estado == 4 ? 'fs-4 bi-check-circle' :// Icono para estado 4
+                                item.estado == 4 ? 'fs-4 bi-check-circle' : // Icono para estado 4
                                 'fs-4 bi-check-circle-fill') +
                             '" style="color: ' +
                             (item.estado == 1 ? '#1F3BB6' :
@@ -128,7 +290,6 @@
                                 'Completado') +
                             '"></i></center></td>' +
                             '</tr>';
-
                     });
 
                     $("#solicitudesMantenimiento").html(filas);
@@ -138,6 +299,7 @@
                     var numerolinks = Math.ceil(totalregistros / cantidad);
                     var paginador = "<ul class='pagination'>";
 
+                    // Primera y Anterior
                     if (pagina > 1) {
                         paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(1, " + cantidad + ")'>Primera</a></li>";
                         paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(" + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
@@ -146,10 +308,30 @@
                         paginador += "<li class='disabled'><a class='page-link' href='#'>Anterior</a></li>";
                     }
 
-                    for (var i = 1; i <= numerolinks; i++) {
+                    // Páginas Centrales
+                    var rango = 2; // Cantidad de páginas a mostrar antes y después de la página actual
+                    var startPage = Math.max(1, pagina - rango);
+                    var endPage = Math.min(numerolinks, pagina + rango);
+
+                    if (startPage > 1) {
+                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(1, " + cantidad + ")'>1</a></li>";
+                        if (startPage > 2) {
+                            paginador += "<li class='disabled'><a class='page-link' href='#'>...</a></li>";
+                        }
+                    }
+
+                    for (var i = startPage; i <= endPage; i++) {
                         paginador += "<li" + (i === pagina ? " class='active'" : "") + "><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(" + i + ", " + cantidad + ")'>" + i + "</a></li>";
                     }
 
+                    if (endPage < numerolinks) {
+                        if (endPage < numerolinks - 1) {
+                            paginador += "<li class='disabled'><a class='page-link' href='#'>...</a></li>";
+                        }
+                        paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(" + numerolinks + ", " + cantidad + ")'>" + numerolinks + "</a></li>";
+                    }
+
+                    // Siguiente y Última
                     if (pagina < numerolinks) {
                         paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(" + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
                         paginador += "<li><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudesMantenimiento(" + numerolinks + ", " + cantidad + ")'>Última</a></li>";
@@ -168,7 +350,7 @@
         }
 
         $(document).ready(function() {
-            cargarSolicitudesMantenimiento(1, 3); // Cargar la primera página con 5 registros
+            cargarSolicitudesMantenimiento(1, 3); // Cargar la primera página con 3 registros
         });
     </script>
 
@@ -293,6 +475,50 @@
                 error: function() {
                     // Muestra un mensaje de error en caso de falla
                     $('#cantidad-equipos').text('Error al cargar');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '#notificationsList .list-group-item', function() {
+            var notificacionId = $(this).data('id');
+
+            // Obtener los detalles de la notificación
+            $.ajax({
+                url: "<?php echo site_url('obtener_detalle_notificacion'); ?>",
+                type: "POST",
+                data: {
+                    id: notificacionId
+                },
+                dataType: "json",
+                success: function(response) {
+                    $('#modalTitle').text(response.notificacion.titulo);
+                    $('#modalMessage').text(response.notificacion.mensaje);
+
+                    // Mostrar el modal
+                    $('#notificationModal').modal('show');
+
+                    // Marcar la notificación como leída
+                    if (!response.notificacion.leida) {
+                        $.ajax({
+                            url: "<?php echo site_url('marcar_notificacion_leida'); ?>",
+                            type: "POST",
+                            data: {
+                                id: notificacionId
+                            },
+                            success: function() {
+                                // Actualizar la vista para marcar la notificación como leída
+                                $(`#notificationsList .list-group-item[data-id="${notificacionId}"]`).removeClass('bg-warning');
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error al marcar notificación como leída:", status, error);
+                            }
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al obtener detalle de la notificación:", status, error);
                 }
             });
         });

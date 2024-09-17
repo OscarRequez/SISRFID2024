@@ -4,8 +4,8 @@
 <head>
     <style>
         body {
-            font-family: Georgia, 'Times New Roman', Times, serif;
-            font-size: 9px;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size: 10px;
             margin: 0;
             padding: 0;
         }
@@ -22,7 +22,7 @@
 
         th,
         td {
-            border: 1px solid #C5C7C8;
+            border: 1px solid #E5EBFF;
             padding: 8px;
             text-align: left;
         }

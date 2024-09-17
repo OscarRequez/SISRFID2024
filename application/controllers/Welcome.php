@@ -99,19 +99,22 @@ class Welcome extends MY_Controller
     }
 
     //CONTAR EQUIPOS TOTALES
-    public function cantidad_equipos() {
+    public function cantidad_equipos()
+    {
         $cantidad = $this->mWelcome->contar_equipos(); // Llama al método para contar equipos
         echo json_encode(['cantidad' => $cantidad]); // Devuelve la cantidad en formato JSON
     }
 
-    public function distribucion_equipos() {
+    public function distribucion_equipos()
+    {
         $data = $this->mWelcome->contar_equipos_por_estado();
         echo json_encode($data);
     }
 
     //para la tabla las solicitudes:
-    public function mantenimiento_mostrarSolicitudes() {
-    
+    public function mantenimiento_mostrarSolicitudes()
+    {
+
         $pagina = $this->input->post('pagina');
         $cantidad = $this->input->post('cantidad');
 
@@ -129,10 +132,36 @@ class Welcome extends MY_Controller
     }
 
     //grafico por mes
-    public function obtenerDatosGraficoSolicitudes() {
+    public function obtenerDatosGraficoSolicitudes()
+    {
         $datos = $this->mWelcome->obtenerSolicitudesPorMes();
-    
+
         echo json_encode($datos);
     }
 
+    public function obtener_notificaciones()
+    {
+        $usuario_id = $this->session->userdata('user_id'); // Obtener el ID del usuario actual
+        $rol_usuario = $this->session->userdata('role'); // Obtener el rol del usuario actual
+
+        // Cargar el modelo necesario si aún no lo has hecho
+        $this->load->model('mWelcome');
+
+        // Obtener notificaciones desde el modelo
+        $notificaciones = $this->mWelcome->get_notificaciones($usuario_id, $rol_usuario);
+
+        // Enviar las notificaciones en formato JSON
+        echo json_encode($notificaciones);
+    }
+
+    public function marcar_notificacion_leida()
+    {
+        $id = $this->input->post('id');
+
+        if ($id) {
+            // Actualizar la notificación como leída
+            $this->db->where('id', $id);
+            $this->db->update('notificaciones', array('leida' => 1));
+        }
+    }
 }

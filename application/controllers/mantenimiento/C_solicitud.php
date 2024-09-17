@@ -52,7 +52,8 @@ class C_solicitud extends MY_Controller
     }
 
 
-    public function crear_solicitud() {
+    public function crear_solicitud()
+    {
         if ($this->input->is_ajax_request()) {
             // Obtener los datos del formulario
             $numero_serie_eq = $this->input->post('numero_serie_eq');
@@ -60,15 +61,14 @@ class C_solicitud extends MY_Controller
             $tipo_mantenimiento = $this->input->post('tipo_mantenimiento');
             $prioridad = $this->input->post('prioridad');
             $ubicacion_solicitud = $this->input->post('unidad');
-    
+
             // Obtener el ID del equipo basado en el número de serie
-            // VALIDAMOS SI EL NUMERO DE SERIE EXISTE (CODIGO O RFID)
             $equipo_id = $this->mSolicitud->obtenerEquipoIdPorNumeroSerie($numero_serie_eq);
-    
+
             if ($equipo_id) {
                 // Verificar si el equipo ya tiene un proceso pendiente
                 $proceso_activo = $this->mSolicitud->verificarProcesoActivo($numero_serie_eq);
-    
+
                 if ($proceso_activo) {
                     // Si ya existe un proceso activo, enviar un mensaje de error específico
                     echo json_encode(array('status' => 'error', 'message' => 'El equipo ya tiene un proceso pendiente.'));
@@ -87,14 +87,26 @@ class C_solicitud extends MY_Controller
                         'feccre' => date('Y-m-d H:i:s'),
                         'fecmod' => date('Y-m-d H:i:s')
                     );
-    
+
                     // Insertar la solicitud en la base de datos
-                    $insertado = $this->mSolicitud->insertarSolicitud($data);
-    
-                    if ($insertado) {
+                    $solicitud_insertada = $this->mSolicitud->insertarSolicitud($data);
+
+                    // Preparar los datos para la notificación
+                    $notificacion = array(
+                        'titulo' => 'Nueva Solicitud',
+                        'mensaje' => 'El equipo ' . $numero_serie_eq . ' tiene una nueva solicitud de mantenimiento de tipo ' . $tipo_mantenimiento,
+                        'tipo' => 'info',
+                        'rol' => 1, // 1 = admin
+                        'feccre' => date('Y-m-d H:i:s'),
+                    );
+
+                    // Insertar la notificación en la base de datos
+                    $notificacion_insertada = $this->mSolicitud->nueva_notificacion($notificacion);
+
+                    if ($solicitud_insertada && $notificacion_insertada) {
                         echo json_encode(array('status' => 'success', 'message' => 'Solicitud agregada exitosamente.'));
                     } else {
-                        echo json_encode(array('status' => 'error', 'message' => 'Error al agregar la solicitud.'));
+                        echo json_encode(array('status' => 'error', 'message' => 'Error al agregar la solicitud o notificación.'));
                     }
                 }
             } else {
@@ -105,5 +117,4 @@ class C_solicitud extends MY_Controller
             redirect('solicitud');
         }
     }
-    
 }

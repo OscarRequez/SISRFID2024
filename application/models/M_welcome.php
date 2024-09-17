@@ -94,5 +94,18 @@ class M_welcome extends CI_Model
     
         return $datos_mensuales; // Devuelve un array con los 12 meses
     }
+
+    public function get_notificaciones($usuario_id, $rol_usuario) {
+        $this->db->select('*');
+        $this->db->from('notificaciones');
+        $this->db->group_start();
+        $this->db->where('usuario_id', $usuario_id);
+        $this->db->or_where('rol', $rol_usuario);
+        $this->db->group_end();
+        $this->db->order_by('feccre', 'DESC');
+        
+        $query = $this->db->get();
+        return $query->result_array();
+    }
     
 }

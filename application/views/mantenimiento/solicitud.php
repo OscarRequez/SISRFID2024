@@ -166,12 +166,14 @@
 
     // Definir la función cargarSolicitudes fuera del $(document).ready para acceso global
     function cargarSolicitudes(pagina) {
+        var cantidadPorPagina = 5; // Definir una variable para la cantidad de registros por página
+
         $.ajax({
             url: "<?php echo site_url('solicitudes_obtener'); ?>",
             type: "POST",
             data: {
                 pagina: pagina,
-                cantidad: 5 // Número de registros por página
+                cantidad: cantidadPorPagina // Usar la variable definida aquí
             },
             dataType: "json",
             success: function(response) {
@@ -189,19 +191,19 @@
                         (item.estado == 1 ? 'fs-4 bi bi-send-check-fill ' :
                             item.estado == 2 ? 'fs-4 bi bi-wrench-adjustable' :
                             item.estado == 3 ? 'fs-4 bi bi-check-circle-fill' :
-                            item.estado == 4 ? 'fs-4 bi-check-circle' : // Nuevo ícono para estado 4
+                            item.estado == 4 ? 'fs-4 bi-check-circle' :
                             '') +
                         '" style="color: ' +
                         (item.estado == 1 ? '#1F3BB6' :
                             item.estado == 2 ? '#D93C54' :
                             item.estado == 3 ? 'green' :
-                            item.estado == 4 ? 'red' : // Nuevo color para estado 4
+                            item.estado == 4 ? 'red' :
                             'black') + '; cursor: ' +
                         (item.estado == 1 || item.estado == 2 || item.estado == 4 ? 'pointer' : 'default') + ';" ' +
                         'title="' + (item.estado == 1 ? 'Solicitado' :
                             item.estado == 2 ? 'En Mantenimiento' :
                             item.estado == 3 ? 'Completado' :
-                            item.estado == 4 ? 'Por Confirmar' : // Nuevo título para estado 4
+                            item.estado == 4 ? 'Por Confirmar' :
                             'Desconocido') +
                         '"></i></center></td>' +
                         '</tr>';
@@ -211,9 +213,11 @@
 
                 // Paginación
                 var totalregistros = response.totalregistros;
-                var numerolinks = Math.ceil(totalregistros / 5);
+                var numerolinks = Math.ceil(totalregistros / cantidadPorPagina); // Usar la misma variable aquí
+
                 var paginador = "<ul class='pagination'>";
 
+                // Botón "Primera" y "Anterior"
                 if (pagina > 1) {
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>Primera</a></li>";
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina - 1) + "'>Anterior</a></li>";
@@ -222,7 +226,21 @@
                     paginador += "<li class='page-item disabled'><a class='page-link'>Anterior</a></li>";
                 }
 
-                for (var i = 1; i <= numerolinks; i++) {
+                // Rango de páginas a mostrar
+                var maxLinksVisible = 5;
+                var startPage = Math.max(1, pagina - Math.floor(maxLinksVisible / 2));
+                var endPage = Math.min(numerolinks, pagina + Math.floor(maxLinksVisible / 2));
+
+                // Añadir "..." si es necesario antes del primer enlace visible
+                if (startPage > 1) {
+                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>1</a></li>";
+                    if (startPage > 2) {
+                        paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    }
+                }
+
+                // Enlaces de páginas visibles
+                for (var i = startPage; i <= endPage; i++) {
                     if (i == pagina) {
                         paginador += "<li class='page-item active'><a class='page-link' href='#'>" + i + "</a></li>";
                     } else {
@@ -230,6 +248,15 @@
                     }
                 }
 
+                // Añadir "..." si es necesario después del último enlace visible
+                if (endPage < numerolinks) {
+                    if (endPage < numerolinks - 1) {
+                        paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    }
+                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numerolinks + "'>" + numerolinks + "</a></li>";
+                }
+
+                // Botón "Siguiente" y "Última"
                 if (pagina < numerolinks) {
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina + 1) + "'>Siguiente</a></li>";
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numerolinks + "'>Última</a></li>";
@@ -240,12 +267,23 @@
 
                 paginador += "</ul>";
                 $("#paginacion").html(paginador);
+
+                // Delegar eventos para los enlaces de paginación
+                $("#paginacion").off("click", "a.page-link").on("click", "a.page-link", function(e) {
+                    e.preventDefault();
+                    var newPage = $(this).data("pagina");
+                    if (newPage) {
+                        cargarSolicitudes(newPage); // Cargar la nueva página
+                    }
+                });
             },
             error: function(xhr, status, error) {
                 console.error("Error en la solicitud:", status, error);
             }
         });
     }
+
+
 
     $(document).ready(function() {
         // Cargar ubicaciones cuando se abre el modal

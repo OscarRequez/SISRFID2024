@@ -140,13 +140,13 @@
     }
 
     // Función para cargar las solicitudes desde el servidor
-    function cargarSolicitudes(pagina) {
+    function cargarSolicitudes(pagina = 1, cantidad = 5) {
         $.ajax({
             url: "<?php echo site_url('solicitudes_obtener'); ?>", // URL del endpoint para obtener solicitudes
             type: "POST", // Método HTTP POST
             data: {
                 pagina: pagina,
-                cantidad: 5 // Número de registros por página
+                cantidad: cantidad // Número de registros por página
             },
             dataType: "json", // Tipo de datos esperado en la respuesta
             success: function(response) {
@@ -220,7 +220,7 @@
                         '</tr>';
                 });
 
-                // Después de recorrer todas las filas, si hay registros pendientes, mostramos la alerta
+                // Mostrar la alerta si hay registros pendientes
                 if (hayPendientes) {
                     Swal.fire({
                         title: 'Pendientes de Confirmación',
@@ -234,32 +234,47 @@
 
                 // Manejar la paginación
                 var totalregistros = response.totalregistros;
-                var numerolinks = Math.ceil(totalregistros / 5);
+                var numerolinks = Math.ceil(totalregistros / cantidad);
                 var paginador = "<ul class='pagination'>";
 
-                // Agregar enlaces de paginación
+                // Botones "Primera" y "Anterior"
                 if (pagina > 1) {
-                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>Primera</a></li>";
-                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina - 1) + "'>Anterior</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(1, " + cantidad + ")'>Primera</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(" + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
                 } else {
-                    paginador += "<li class='page-item disabled'><a class='page-link'>Primera</a></li>";
-                    paginador += "<li class='page-item disabled'><a class='page-link'>Anterior</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Primera</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Anterior</a></li>";
                 }
 
-                for (var i = 1; i <= numerolinks; i++) {
+                // Botones de números de página
+                var startPage = Math.max(1, pagina - 2); // Mostramos hasta 2 páginas antes de la actual
+                var endPage = Math.min(numerolinks, pagina + 2); // Mostramos hasta 2 páginas después de la actual
+
+                if (startPage > 1) {
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(1, " + cantidad + ")'>1</a></li>";
+                    if (startPage > 2) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                }
+
+                for (var i = startPage; i <= endPage; i++) {
                     if (i == pagina) {
-                        paginador += "<li class='page-item active'><a class='page-link' href='#'>" + i + "</a></li>";
+                        paginador += "<li class='page-item active'><a class='page-link' href='javascript:void(0)'>" + i + "</a></li>";
                     } else {
-                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + i + "'>" + i + "</a></li>";
+                        paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(" + i + ", " + cantidad + ")'>" + i + "</a></li>";
                     }
                 }
 
+                if (endPage < numerolinks) {
+                    if (endPage < numerolinks - 1) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(" + numerolinks + ", " + cantidad + ")'>" + numerolinks + "</a></li>";
+                }
+
+                // Botones "Siguiente" y "Última"
                 if (pagina < numerolinks) {
-                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina + 1) + "'>Siguiente</a></li>";
-                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numerolinks + "'>Última</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(" + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='cargarSolicitudes(" + numerolinks + ", " + cantidad + ")'>Última</a></li>";
                 } else {
-                    paginador += "<li class='page-item disabled'><a class='page-link'>Siguiente</a></li>";
-                    paginador += "<li class='page-item disabled'><a class='page-link'>Última</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Siguiente</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Última</a></li>";
                 }
 
                 paginador += "</ul>";
@@ -270,6 +285,7 @@
             }
         });
     }
+
 
     $(document).ready(function() {
         // Manejar clic en el botón "Asignar" en la tabla de solicitudes
@@ -446,30 +462,6 @@
     $('#filtroFechasMantenimiento').on('submit', function(event) {
         event.preventDefault(); // Previene el envío del formulario por defecto
 
-        // Captura las fechas
-        var fechaInicio = $('#fechaInicio').val();
-        var fechaFin = $('#fechaFin').val();
-
-        // Verificar que las fechas no estén vacías
-        if (fechaInicio === '' || fechaFin === '') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Por favor, selecciona ambas fechas para generar el reporte.'
-            });
-            return;
-        }
-
-        // Validar que la fecha de fin no sea anterior a la fecha de inicio
-        if (fechaFin < fechaInicio) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'La fecha de fin no puede ser anterior a la fecha de inicio.'
-            });
-            return;
-        }
-
         // SweetAlert de confirmación
         Swal.fire({
             title: 'Confirmar Reporte',
@@ -482,13 +474,38 @@
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Captura las fechas (capturarlas aquí, después de la confirmación)
+                var fechaInicio = $('#fechaInicio').val();
+                var fechaFin = $('#fechaFin').val();
+
+                // Verificar que las fechas no estén vacías
+                if (fechaInicio === '' || fechaFin === '') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Por favor, selecciona ambas fechas para generar el reporte.'
+                    });
+                    return;
+                }
+
+                // Validar que la fecha de fin no sea anterior a la fecha de inicio
+                if (fechaFin < fechaInicio) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'La fecha de fin no puede ser anterior a la fecha de inicio.'
+                    });
+                    return;
+                }
+
                 // Realizar petición AJAX para verificar si hay datos antes de abrir el PDF
                 $.ajax({
                     url: '<?php echo site_url('mantenimiento_reporte_fechas'); ?>',
                     method: 'GET',
                     data: {
                         fechaInicio: fechaInicio,
-                        fechaFin: fechaFin
+                        fechaFin: fechaFin,
+                        check: true // Agregar bandera para verificar que es una verificacion de si hay datos en esas fechas
                     },
                     success: function(response) {
                         try {

@@ -10,7 +10,7 @@ class C_tecnicos extends MY_Controller
         $this->load->model('mantenimiento/M_tecnicos', 'mTecnicos');
         $this->load->model('usuarios/M_roles', 'mRoles');
         $this->load->library('form_validation');
-        $this->load->library('pdf_equipos');// para poder usar pdfs
+        $this->load->library('pdf_equipos'); // para poder usar pdfs
 
         // Verificar si el usuario está autenticado
         if (!$this->session->userdata('user_id')) {
@@ -92,11 +92,23 @@ class C_tecnicos extends MY_Controller
         // Finalizar transacción
         $this->db->trans_complete();
 
+
         if ($this->db->trans_status() === FALSE) {
             // Si ocurre un error
             echo json_encode(array('status' => 'error', 'message' => 'Error al marcar la tarea como hecha.'));
         } else {
             // Éxito
+            //INSERTAR LA NOTIFICACION
+            $notificacion = array(
+                'titulo' => 'Tareas por confirmar',
+                'mensaje' => 'Existen trabajos de mantenimiento por confirmar',
+                'tipo' => 'info',
+                'rol' => 1, // 1 = admin
+                'feccre' => date('Y-m-d H:i:s'),
+            );
+
+            // Insertar la notificación en la base de datos
+            $notificacion_insertada = $this->mTecnicos->nueva_notificacion($notificacion);
             echo json_encode(array('status' => 'success', 'message' => 'Tarea marcada como hecha.'));
         }
     }

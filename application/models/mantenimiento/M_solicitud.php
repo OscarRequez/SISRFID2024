@@ -61,4 +61,8 @@ class M_solicitud extends CI_Model
     {
         return $this->db->insert('mantenimiento', $data);
     }
+
+    public function nueva_notificacion($data) {
+        return $this->db->insert('notificaciones', $data);
+    }
 }

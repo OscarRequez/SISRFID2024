@@ -130,12 +130,14 @@
     let paginaActual = 1;
 
     function cargarTareas(pagina) {
+        let cantidadPorPagina = 5; // Definir una variable para la cantidad de registros por página
+
         $.ajax({
             url: "<?php echo site_url('obtener_tareas'); ?>",
             type: "POST",
             data: {
                 pagina: pagina,
-                cantidad: 5 // Número de registros por página
+                cantidad: cantidadPorPagina // Usar la variable cantidadPorPagina
             },
             dataType: "json",
             success: function(response) {
@@ -143,7 +145,7 @@
 
                 // Verificar si hay tareas
                 if (response.tareas.length === 0) {
-                    filas = '<tr><td colspan="9" class="text-center">Sin tareas asignadas</td></tr>';
+                    filas = '<tr><td colspan="11" class="text-center">Sin tareas asignadas</td></tr>'; // Ajusta el colspan según el número de columnas
                 } else {
                     // Si hay tareas, construir las filas de la tabla
                     $.each(response.tareas, function(key, tarea) {
@@ -173,12 +175,12 @@
                             '"></i></center></td>' +
                             '<td><center>' +
                             (tarea.Imagen ?
-                                '<button class="btn btn-primary btn-sm  verImagen" data-imagen="' + tarea.Imagen + '" data-descripcion="' + tarea.descripcion + '"><i class="bi bi-eye"></i></button>' :
+                                '<button class="btn btn-primary btn-sm verImagen" data-imagen="' + tarea.Imagen + '" data-descripcion="' + tarea.descripcion + '"><i class="bi bi-eye"></i></button>' :
                                 '<button class="btn btn-secondary btn-sm disabled"><i class="bi bi-eye"></i></button>') +
                             '</center></td>' +
                             '<td><div class="d-flex justify-content-center">' +
                             // Botón Reporte PDF
-                            '<button class="btn btn-danger btn-sm  reportePDF ' +
+                            '<button class="btn btn-danger btn-sm reportePDF ' +
                             (tarea.estado == 3 || tarea.estado == 4 ? '' : 'disabled') + '" ' +
                             'data-id="' + tarea.id + '">' +
                             '<i class="bi bi-file-earmark-pdf"></i>' +
@@ -192,8 +194,6 @@
                             '</button>' +
                             '</div></td>' +
                             '</tr>';
-
-
                     });
                 }
 
@@ -202,9 +202,10 @@
 
                 // Paginación
                 let totalregistros = response.totalregistros;
-                let numerolinks = Math.ceil(totalregistros / 5);
+                let numerolinks = Math.ceil(totalregistros / cantidadPorPagina); // Usar la variable cantidadPorPagina
                 let paginador = "<ul class='pagination'>";
 
+                // Botón "Primera" y "Anterior"
                 if (pagina > 1) {
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>Primera</a></li>";
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina - 1) + "'>Anterior</a></li>";
@@ -213,7 +214,18 @@
                     paginador += "<li class='page-item disabled'><a class='page-link'>Anterior</a></li>";
                 }
 
-                for (let i = 1; i <= numerolinks; i++) {
+                // Rango de páginas a mostrar (máximo 5)
+                let startPage = Math.max(1, pagina - 2);
+                let endPage = Math.min(numerolinks, pagina + 2);
+
+                if (startPage > 1) {
+                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>1</a></li>";
+                    if (startPage > 2) {
+                        paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
                     if (i == pagina) {
                         paginador += "<li class='page-item active'><a class='page-link' href='#'>" + i + "</a></li>";
                     } else {
@@ -221,6 +233,14 @@
                     }
                 }
 
+                if (endPage < numerolinks) {
+                    if (endPage < numerolinks - 1) {
+                        paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    }
+                    paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numerolinks + "'>" + numerolinks + "</a></li>";
+                }
+
+                // Botón "Siguiente" y "Última"
                 if (pagina < numerolinks) {
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina + 1) + "'>Siguiente</a></li>";
                     paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numerolinks + "'>Última</a></li>";
@@ -237,6 +257,7 @@
             }
         });
     }
+
 
     // Manejo del botón de ver imagen
     $("#TrabajosTableBody").on("click", ".verImagen", function() {
@@ -265,6 +286,7 @@
 </script>
 
 <script>
+    // PARA MARCAR LA TAREA COMO HECHA
     //abrir mnodal
     $(document).on('click', '.btn-hecho', function() {
         // Obtener el ID de la tarea desde el atributo data-id del botón
@@ -278,36 +300,31 @@
     });
 
 
-
-    // Manejar el envío del formulario que se complementa con el script 
-    //de mas abajo que tambien llma a marcar tarea como hecha, ambos son
-    // importantes.
     $('#formHecho').submit(function(e) {
         e.preventDefault();
 
-        var tareaId = $('#tareaId').val();
-        var comentarios = $('#comentarios').val();
+        var formData = $(this).serialize();
+        console.log("Datos del formulario:", formData);
 
         $.ajax({
-            url: "<?php echo site_url('marcar_tarea_hecha'); ?>", // Cambia esta URL al endpoint correcto
+            url: "<?php echo site_url('marcar_tarea_hecha'); ?>",
             type: "POST",
-            data: {
-                tarea_id: tareaId,
-                comentarios: comentarios
-            },
+            data: formData,
             success: function(response) {
                 $('#hechoModal').modal('hide');
                 Swal.fire({
                     title: "Exito",
                     text: " Tarea completada!",
                     icon: "success"
+                }).then(() => {
+                    // Recargar la tabla
+                    cargarTareas(paginaActual);
                 });
-                // Aquí puedes recargar la tabla o hacer otras acciones
-                cargarTareas(paginaActual);
             },
             error: function(xhr, status, error) {
                 console.error("Error al marcar tarea:", status, error);
-            }
+            },
+
         });
     });
 </script>
@@ -376,35 +393,6 @@
             });
             document.getElementById('totalMateriales').value = total.toFixed(2);
         }
-    });
-
-    // Manejar el envío del formulario que se complementa con el script 
-    //de mas arriba que tambien llma a marcar tarea como hecha, ambos son
-    // importantes.
-    $('#formHecho').submit(function(e) {
-        e.preventDefault();
-
-        var formData = $(this).serialize();
-        console.log("Datos del formulario:", formData);
-
-        $.ajax({
-            url: "<?php echo site_url('marcar_tarea_hecha'); ?>",
-            type: "POST",
-            data: formData,
-            success: function(response) {
-                var jsonResponse = JSON.parse(response);
-                if (jsonResponse.status === 'success') {
-                    $('#hechoModal').modal('hide');
-                    
-                    // Aquí podrías agregar más lógica para actualizar la interfaz
-                } else {
-                    alert(jsonResponse.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al marcar tarea:", status, error);
-            }
-        });
     });
 </script>
 

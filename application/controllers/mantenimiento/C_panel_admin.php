@@ -85,6 +85,19 @@ class C_panel_Admin extends MY_Controller
                 $this->mPanelAdmin->update_equipo_estado($equipo_id, $usumod, $fecmod, 3);
             }
 
+            //INSERTAR LA NOTIFICACION
+            $notificacion = array(
+                'titulo' => 'Nueva Asignacion',
+                'mensaje' => 'Usted tiene un nuevo trabajo de mantenimiento asignado',
+                'tipo' => 'info',
+                'usuario_id' => $tecnico_id, //  = tecnico especifico
+                'feccre' => date('Y-m-d H:i:s'),
+            );
+
+            // Insertar la notificación en la base de datos
+            $notificacion_insertada = $this->mPanelAdmin->nueva_notificacion($notificacion);
+
+
             echo json_encode(array('status' => 'success', 'message' => 'Técnico asignado exitosamente.'));
         } else {
             echo json_encode(array('status' => 'error', 'message' => 'Error al asignar técnico.'));
@@ -112,6 +125,18 @@ class C_panel_Admin extends MY_Controller
 
             // Verificar si la actualización fue exitosa
             if ($resultado) {
+                // Preparar los datos para la notificación
+                $notificacion = array(
+                    'titulo' => 'Proceso Completado',
+                    'mensaje' => 'El proceso de mantenimiento del equipo  ' . $equipo_id . ', fue completado y confirmado.',
+                    'tipo' => 'info',
+                    'rol' => 3, // 3 = tecnico de soporte
+                    'feccre' => date('Y-m-d H:i:s'),
+                );
+
+                // Insertar la notificación en la base de datos
+                $notificacion_insertada = $this->mPanelAdmin->nueva_notificacion($notificacion);
+
                 // Responder con un mensaje de éxito
                 echo json_encode(['status' => 'success', 'message' => 'Confirmación exitosa.']);
             } else {
@@ -123,11 +148,14 @@ class C_panel_Admin extends MY_Controller
             echo json_encode(['status' => 'error', 'message' => 'Datos incompletos.']);
         }
     }
+
+
     public function mantenimiento_reporte_fechas()
     {
         // Recibir fechas desde la URL (GET request)
         $fecha_inicio_formulario = $this->input->get('fechaInicio');
         $fecha_fin_formulario = $this->input->get('fechaFin');
+        $check_only = $this->input->get('check'); // Recibir el parámetro 'check' para verificar si es solo una comprobación
 
         // Validar si las fechas fueron proporcionadas
         if ($fecha_inicio_formulario && $fecha_fin_formulario) {
@@ -139,17 +167,23 @@ class C_panel_Admin extends MY_Controller
             // Obtener datos entre las fechas dadas
             $datos_reporte = $this->mPanelAdmin->obtenerDatosPorFechas($fecha_inicio_formulario, $fecha_fin_formulario);
 
-            // Obtener el técnico con más mantenimientos
-            $tecnico_mas = $this->mPanelAdmin->obtenerTecnicoConMasMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario);
-
-            // Obtener todos los técnicos con sus mantenimientos
-            $tecnicos_mantenimientos = $this->mPanelAdmin->obtenerTecnicosConMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario);
-
-            // Obtener el total de gastos por mes en el año actual
-            $gastos_mes = $this->mPanelAdmin->obtenerGastosPorMes(date('Y'));
-
-            // Verificar si hay datos
+            // Verificar si hay datos antes de proceder
             if (!empty($datos_reporte)) {
+                // Si la petición es solo para verificar los datos (check_only == true), responder con un JSON
+                if ($check_only) {
+                    echo json_encode(['hay_datos' => true]);
+                    return;
+                }
+
+                // Obtener el técnico con más mantenimientos
+                $tecnico_mas = $this->mPanelAdmin->obtenerTecnicoConMasMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario);
+
+                // Obtener todos los técnicos con sus mantenimientos
+                $tecnicos_mantenimientos = $this->mPanelAdmin->obtenerTecnicosConMantenimientos($fecha_inicio_formulario, $fecha_fin_formulario);
+
+                // Obtener el total de gastos por mes en el año actual
+                $gastos_mes = $this->mPanelAdmin->obtenerGastosPorMes(date('Y'));
+
                 // Cargar la biblioteca TCPDF
                 $this->load->library('tcpdf');
 
@@ -199,7 +233,12 @@ class C_panel_Admin extends MY_Controller
                 // Enviar el PDF al navegador
                 $pdf->Output('reporte_mantenimiento.pdf', 'I');
             } else {
-                echo json_encode(['error' => 'No se encontraron mantenimientos finalizados para el rango de fechas especificado.']);
+                // Si no hay datos, devolver un error JSON
+                if ($check_only) {
+                    echo json_encode(['hay_datos' => false, 'error' => 'No se encontraron mantenimientos finalizados para el rango de fechas especificado.']);
+                } else {
+                    echo json_encode(['error' => 'No se encontraron mantenimientos finalizados para el rango de fechas especificado.']);
+                }
             }
         } else {
             echo json_encode(['error' => 'Fechas inválidas']);

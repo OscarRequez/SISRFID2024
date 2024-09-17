@@ -137,7 +137,7 @@
                 </tbody>
             </table>
 
-            <div class="pagination">
+            <div class="paginacion">
                 <ul class="pagination">
                     <!-- Contenido cargado por JavaScript -->
                 </ul>
@@ -361,9 +361,8 @@
 </script>
 
 
-
 <script>
-    function mostrarRoles(pagina = 1, cantidad = 5) {
+    function mostrarRoles(pagina = 1, cantidad = 6) {
         $.ajax({
             url: "<?php echo site_url('usuarios/mostrarRoles'); ?>",
             type: "POST",
@@ -380,10 +379,13 @@
                         '<td id="rolNombre_' + item.id + '">' + item.nombre + '</td>' +
                         '<td id="rolEstado_' + item.id + '">' + (item.estado == 1 ? 'Activo' : 'Inactivo') + '</td>' +
                         '<td>' +
-                        '<center><button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editarRolModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-estado="' + item.estado + '">' +
-                        'Editar</button>' +
-                        ' <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#verPermisosModal" data-id="' + item.id + '" data-nombre="' + item.nombre + '" onclick="mostrarPermisos(' + item.id + ', \'' + item.nombre + '\')">' +
-                        '<i class="bi bi-eye"></i> Ver</button><center>' +
+                        '<center>' +
+                        '<button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editarRolModal" ' +
+                        'data-id="' + item.id + '" data-nombre="' + item.nombre + '" data-estado="' + item.estado + '">Editar</button>' +
+                        ' <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#verPermisosModal" ' +
+                        'data-id="' + item.id + '" data-nombre="' + item.nombre + '" onclick="mostrarPermisos(' + item.id + ', \'' + item.nombre + '\')">' +
+                        '<i class="bi bi-eye"></i> Ver</button>' +
+                        '</center>' +
                         '</td>' +
                         '</tr>';
                 });
@@ -391,10 +393,11 @@
                 $("#tbRoles").html(filas);
 
                 // Paginación
-                var totalregistros = response.totalregistros;
-                var numerolinks = Math.ceil(totalregistros / cantidad);
-                var paginador = "";
+                var totalRegistros = response.totalregistros;
+                var numeroLinks = Math.ceil(totalRegistros / cantidad);
+                var paginador = "<ul class='pagination'>";
 
+                // Botones "Primero" y "Anterior"
                 if (pagina > 1) {
                     paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(1, " + cantidad + ")'>Primero</a></li>";
                     paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + (pagina - 1) + ", " + cantidad + ")'>Anterior</a></li>";
@@ -403,19 +406,45 @@
                     paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Anterior</a></li>";
                 }
 
-                for (var i = 1; i <= numerolinks; i++) {
-                    paginador += "<li class='page-item" + (i === pagina ? " active" : "") + "'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + i + ", " + cantidad + ")'>" + i + "</a></li>";
+                // Botones de números de página
+                var startPage = Math.max(1, pagina - 2); // Mostramos hasta 2 páginas antes de la actual
+                var endPage = Math.min(numeroLinks, pagina + 2); // Mostramos hasta 2 páginas después de la actual
+
+                // Elipsis al principio si es necesario
+                if (startPage > 1) {
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(1, " + cantidad + ")'>1</a></li>";
+                    if (startPage > 2) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
                 }
 
-                if (pagina < numerolinks) {
+                // Generamos los números de página
+                for (var i = startPage; i <= endPage; i++) {
+                    if (i == pagina) {
+                        paginador += "<li class='page-item active'><a class='page-link' href='javascript:void(0)'>" + i + "</a></li>";
+                    } else {
+                        paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + i + ", " + cantidad + ")'>" + i + "</a></li>";
+                    }
+                }
+
+                // Elipsis al final si es necesario
+                if (endPage < numeroLinks) {
+                    if (endPage < numeroLinks - 1) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + numeroLinks + ", " + cantidad + ")'>" + numeroLinks + "</a></li>";
+                }
+
+                // Botones "Siguiente" y "Último"
+                if (pagina < numeroLinks) {
                     paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + (pagina + 1) + ", " + cantidad + ")'>Siguiente</a></li>";
-                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + numerolinks + ", " + cantidad + ")'>Ultimo</a></li>";
+                    paginador += "<li class='page-item'><a class='page-link' href='javascript:void(0)' onclick='mostrarRoles(" + numeroLinks + ", " + cantidad + ")'>Último</a></li>";
                 } else {
                     paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Siguiente</a></li>";
-                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Ultimo</a></li>";
+                    paginador += "<li class='page-item disabled'><a class='page-link' href='#'>Último</a></li>";
                 }
 
+                paginador += "</ul>";
                 $(".pagination").html(paginador);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error al cargar los roles: " + error);
             }
         });
     }

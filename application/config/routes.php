@@ -63,10 +63,9 @@ $route['logout'] = 'C_login/logout'; //CERRAR SESION
 $route['cantidad_equipos'] = 'welcome/cantidad_equipos';
 $route['distribucion_equipos'] = 'welcome/distribucion_equipos';  
 $route['mantenimiento_mostrarSolicitudes'] = 'welcome/mantenimiento_mostrarSolicitudes';
-$route['obtenerDatosGraficoSolicitudes'] = 'welcome/obtenerDatosGraficoSolicitudes';  
-
-
-
+$route['obtenerDatosGraficoSolicitudes'] = 'welcome/obtenerDatosGraficoSolicitudes';
+$route['obtener_notificaciones'] = 'welcome/obtener_notificaciones';
+$route['marcar_notificacion_leida'] = 'welcome/marcar_notificacion_leida';
 
 
 //usuarios

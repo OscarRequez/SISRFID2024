@@ -139,8 +139,7 @@
                             '<td>' + item.tag_rfid_id + '</td>' +
                             '<td>' + item.ubicacion_nombre + '</td>' +
                             '<td>' + (item.estado == 1 ? 'Activo' : item.estado == 0 ? 'Inactivo' : 'Mantenimiento') + '</td>' +
-                            // Columna para el botón de historial
-                            '<td><a href="#" class="btn btn-danger" data-id="' + item.id + '" onclick="reporte_historial_equipo(' + item.id + '); return false;"><i class="bi bi-file-pdf-fill"></i></a></td>'
+                            '<td><a href="#" class="btn btn-danger" data-id="' + item.id + '" onclick="reporte_historial_equipo(' + item.id + '); return false;"><i class="bi bi-file-pdf-fill"></i></a></td>' +
                         '</tr>';
                     });
                     $("#tbequipos").html(filas);
@@ -151,6 +150,7 @@
                     var numeroLinks = Math.ceil(totalRegistros / cantidadRegistros);
                     var paginador = "<ul class='pagination'>";
 
+                    // Botón "Primera" y "Anterior"
                     if (pagina > 1) {
                         paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>Primera</a></li>";
                         paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina - 1) + "'>Anterior</a></li>";
@@ -159,7 +159,16 @@
                         paginador += "<li class='page-item disabled'><a class='page-link'>Anterior</a></li>";
                     }
 
-                    for (var i = 1; i <= numeroLinks; i++) {
+                    // Botones de números de página con puntos suspensivos
+                    var startPage = Math.max(1, pagina - 2);
+                    var endPage = Math.min(numeroLinks, pagina + 2);
+
+                    if (startPage > 1) {
+                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>1</a></li>";
+                        if (startPage > 2) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    }
+
+                    for (var i = startPage; i <= endPage; i++) {
                         if (i == pagina) {
                             paginador += "<li class='page-item active'><a class='page-link' href='#'>" + i + "</a></li>";
                         } else {
@@ -167,6 +176,12 @@
                         }
                     }
 
+                    if (endPage < numeroLinks) {
+                        if (endPage < numeroLinks - 1) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numeroLinks + "'>" + numeroLinks + "</a></li>";
+                    }
+
+                    // Botón "Siguiente" y "Última"
                     if (pagina < numeroLinks) {
                         paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina + 1) + "'>Siguiente</a></li>";
                         paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numeroLinks + "'>Última</a></li>";
@@ -177,6 +192,9 @@
 
                     paginador += "</ul>";
                     $("#paginationControls").html(paginador);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar los datos: " + error);
                 }
             });
         }
@@ -190,22 +208,28 @@
         $(document).on('click', '.page-link', function(e) {
             e.preventDefault();
             var pagina = $(this).data('pagina');
-            cargarDatosEquipos(pagina);
+            if (pagina) {
+                cargarDatosEquipos(pagina);
+            }
         });
 
         // Generar reporte en PDF o Excel
         $('#generateReport').click(function() {
-            var ubicacion = $('#ubicacion').val();
-            var estado = $('#estado').val();
-            var search = $('#search').val();
-            var numero_serie = $('#numero_serie').val();
-            var url = '<?php echo site_url('generar_reporte'); ?>' + '?ubicacion=' + ubicacion + '&estado=' + estado + '&search=' + search + '&numero_serie=' + numero_serie;
+            var filtros = {
+                ubicacion: $('#ubicacion').val(),
+                estado: $('#estado').val(),
+                search: $('#search').val(),
+                numero_serie: $('#numero_serie').val()
+            };
+            var queryString = $.param(filtros);
+            var url = '<?php echo site_url('generar_reporte'); ?>' + '?' + queryString;
             // Abrir el reporte en una nueva pestaña
             window.open(url, '_blank');
         });
 
     });
 </script>
+
 <script>
     function reporte_historial_equipo(id) {
         console.log("ID del equipo:", id); // Imprime el ID en la consola

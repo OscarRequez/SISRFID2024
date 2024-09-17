@@ -77,4 +77,9 @@ class M_tecnicos extends CI_Model
             return false; // O maneja el caso en que no se encuentra la tarea
         }
     }
+
+    //notificaion
+    public function nueva_notificacion($data) {
+        return $this->db->insert('notificaciones', $data);
+    }
 }

@@ -152,9 +152,9 @@
                             '<td>' + item.usucre + '</td>' +
                             '<td>' + item.feccre + '</td>' +
                             '<td><center><i class="bi ' +
-                            (item.estado == 1 ? 'fs-4 bi bi-check-circle-fill' :
-                                item.estado == 3 ? 'fs-4 bi bi-wrench-adjustable-circle-fill' :
-                                'fs-4 bi bi-x-circle-fill') +
+                            (item.estado == 1 ? 'fs-4 bi-check-circle-fill' :
+                                item.estado == 3 ? 'fs-4 bi-wrench-adjustable-circle-fill' :
+                                'fs-4 bi-x-circle-fill') +
                             '" data-id="' + item.id + '" data-estado="' + item.estado + '" ' +
                             'style="color: ' +
                             (item.estado == 1 ? 'green' :
@@ -182,25 +182,34 @@
                             '</div>' +
                             '</td>' +
                             '</tr>';
-
-
                     });
                     $("#tbequipos").html(filas);
-                    // Paginación
-                    var totalregistros = response.totalregistros;
-                    var cantidadregistros = response.cantidad;
-                    var numerolinks = Math.ceil(totalregistros / cantidadregistros);
+
+                    // Manejo de la paginación
+                    var totalRegistros = response.totalregistros;
+                    var cantidadRegistros = response.cantidad;
+                    var numeroLinks = Math.ceil(totalRegistros / cantidadRegistros);
                     var paginador = "<ul class='pagination'>";
 
+                    // Botones "Primera" y "Anterior"
                     if (pagina > 1) {
-                        paginador += "<li class='page-item'><a class='page-link first' href='#' data-pagina='1'>Primera</a></li>";
+                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>Primera</a></li>";
                         paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina - 1) + "'>Anterior</a></li>";
                     } else {
                         paginador += "<li class='page-item disabled'><a class='page-link'>Primera</a></li>";
                         paginador += "<li class='page-item disabled'><a class='page-link'>Anterior</a></li>";
                     }
 
-                    for (var i = 1; i <= numerolinks; i++) {
+                    // Botones de números de página
+                    var startPage = Math.max(1, pagina - 2);
+                    var endPage = Math.min(numeroLinks, pagina + 2);
+
+                    if (startPage > 1) {
+                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='1'>1</a></li>";
+                        if (startPage > 2) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                    }
+
+                    for (var i = startPage; i <= endPage; i++) {
                         if (i == pagina) {
                             paginador += "<li class='page-item active'><a class='page-link' href='#'>" + i + "</a></li>";
                         } else {
@@ -208,9 +217,15 @@
                         }
                     }
 
-                    if (pagina < numerolinks) {
+                    if (endPage < numeroLinks) {
+                        if (endPage < numeroLinks - 1) paginador += "<li class='page-item disabled'><a class='page-link'>...</a></li>";
+                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numeroLinks + "'>" + numeroLinks + "</a></li>";
+                    }
+
+                    // Botones "Siguiente" y "Última"
+                    if (pagina < numeroLinks) {
                         paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + (pagina + 1) + "'>Siguiente</a></li>";
-                        paginador += "<li class='page-item'><a class='page-link last' href='#' data-pagina='" + numerolinks + "'>Última</a></li>";
+                        paginador += "<li class='page-item'><a class='page-link' href='#' data-pagina='" + numeroLinks + "'>Última</a></li>";
                     } else {
                         paginador += "<li class='page-item disabled'><a class='page-link'>Siguiente</a></li>";
                         paginador += "<li class='page-item disabled'><a class='page-link'>Última</a></li>";
@@ -218,6 +233,9 @@
 
                     paginador += "</ul>";
                     $(".paginacion").html(paginador);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al cargar los datos: " + error);
                 }
             });
         }
@@ -241,7 +259,7 @@
 
 
         $(document).ready(function() {
-            mostrarDatosEquipos('', 1, 7);
+            mostrarDatosEquipos('', 1, 5); //cantidad de equipos el numero 5
             cargarUbicaciones(); // Cargar ubicaciones al inicio
 
             $(document).on('submit', '#formBusqueda', function(e) {
