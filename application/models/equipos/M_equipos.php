@@ -65,6 +65,14 @@ class M_equipos extends CI_Model
         return $query->result_array();
     }
 
+     // Obtener tipos  para select
+     public function tipos_equipo_select()
+     {
+         $query = $this->db->get('tipo_equipo');
+         return $query->result_array();
+     }
+ 
+
     // Verificación de número de serie que sea único
     public function existsNumeroSerie($numero_serie, $exclude_id = NULL)
     {

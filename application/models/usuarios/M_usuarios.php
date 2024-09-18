@@ -24,12 +24,12 @@ class M_usuarios extends CI_Model
     }
 
     // ROLES DE USUARIO PARA CONTADOR Y PAGINACION
-    public function get_users($limit, $start, $buscar = '')
+    public function buscar_usuarios($limit, $start, $buscar = '')
     {
         // Filtrar por búsqueda si se proporciona
         if (!empty($buscar)) {
             $this->db->like('usuarios.nombre', $buscar);
-            $this->db->or_like('usuarios.email', $buscar);
+            $this->db->or_like('usuarios.ci', $buscar);
         }
 
         // Filtrar por estado 1 o 0 donde 1 activo 0 inactio y 3 es eliminado para que no se muestre en la tabla
@@ -39,7 +39,7 @@ class M_usuarios extends CI_Model
         $this->db->limit($limit, $start);
 
         // Seleccionar campos necesarios y hacer la consulta
-        $this->db->select('usuarios.id, usuarios.nombre, usuarios.email, roles.nombre AS rol_nombre, usuarios.estado, usuarios.usucre, usuarios.feccre');
+        $this->db->select('usuarios.id, usuarios.nombre, usuarios.cedula, usuarios.email, roles.nombre AS rol_nombre, usuarios.estado, usuarios.usucre, usuarios.feccre');
         $this->db->from('usuarios');
         $this->db->join('roles', 'usuarios.rol_id = roles.id');
 
@@ -48,7 +48,17 @@ class M_usuarios extends CI_Model
         return $query->result_array();
     }
 
-
+    // Verificar si la cédula ya existe
+    public function obtener_usuario_por_cedula($cedula)
+    {
+        $this->db->where('cedula', $cedula);
+        $query = $this->db->get('usuarios'); // Cambia 'usuarios' por el nombre real de tu tabla
+        if ($query->num_rows() > 0) {
+            return $query->row(); // Retorna el usuario si existe
+        } else {
+            return false; // Retorna false si no existe
+        }
+    }
 
     public function get_usuarios_con_roles()
     {

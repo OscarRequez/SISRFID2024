@@ -73,22 +73,30 @@ class C_avatars extends MY_Controller
         }
     }
 
-    public function eliminar($id)
+    public function eliminar()
     {
+        $id = $this->input->post('id');
+
+        if (!is_numeric($id)) {
+            echo json_encode(['status' => 'error', 'message' => 'ID inválido']);
+            return;
+        }
+
         // Obtener el avatar para eliminar el archivo
         $avatar = $this->mAvatars->get_avatar_by_id($id);
 
         if ($avatar) {
             // Eliminar el archivo de imagen
-            unlink('./' . $avatar['ruta_imagen']);
+            if (file_exists('./' . $avatar['ruta_imagen'])) {
+                unlink('./' . $avatar['ruta_imagen']);
+            }
 
             // Eliminar el registro en la base de datos
             $this->mAvatars->delete_avatar($id);
+
+            echo json_encode(['status' => 'success', 'message' => 'Avatar eliminado']);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Avatar no encontrado']);
         }
-
-        redirect('c_avatars');
     }
-
-
 }
-

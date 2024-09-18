@@ -25,17 +25,17 @@ class M_reporte_equipos extends CI_Model
         $this->db->join('ubicaciones', 'equipos_medicos.ubicacion_id = ubicaciones.id', 'left');
 
         // Filtrar por estado si está presente
-        if ($estado) {
+        if ($estado !== null && $estado !== '') {
             $this->db->where('equipos_medicos.estado', $estado);
         }
 
         // Filtrar por ubicación si está presente
-        if ($ubicacion) {
+        if ($ubicacion !== null && $ubicacion !== '') {
             $this->db->where('equipos_medicos.ubicacion_id', $ubicacion);
         }
 
         // Filtrar por búsqueda en nombre y descripción si está presente
-        if ($search) {
+        if ($search !== null && $search !== '') {
             $this->db->group_start();
             $this->db->like('equipos_medicos.nombre', $search);
             $this->db->or_like('equipos_medicos.descripcion', $search);
@@ -43,17 +43,18 @@ class M_reporte_equipos extends CI_Model
         }
 
         // Filtrar por número de serie o tag RFID si está presente
-        if ($numero_serie) {
-            $this->db->group_start();
+        if ($numero_serie !== null && $numero_serie !== '') {
+            $this->db->group_start();  // Inicia un grupo para condiciones OR
             $this->db->like('equipos_medicos.numero_serie', $numero_serie);
             $this->db->or_like('equipos_medicos.tag_rfid_id', $numero_serie);
-            $this->db->group_end();
+            $this->db->group_end(); // Finaliza el grupo
         }
 
         // Ejecutar la consulta y obtener los resultados
         $query = $this->db->get();
         return $query->result_array();
     }
+
 
 
 

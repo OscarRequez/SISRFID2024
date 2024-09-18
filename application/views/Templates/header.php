@@ -31,6 +31,9 @@
             font-size: 14px;
 
         }
+        td, th{
+        font-size: 13px !important;
+    }
 
         /* PARA EL TAMAÑO DEL CONTENIDO CENTRAL TOMANDO EL ASIDE*/
         .py-3 {
@@ -321,7 +324,7 @@
                                                 <li class="w-100">
                                                     <a href="<?php echo site_url('usuarios'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-people-fill"></i>
-                                                        <span class="d-none d-sm-inline">Usuarios</span>
+                                                        <span class="d-none d-sm-inline">Registros</span>
                                                     </a>
                                                 </li>
                                             <?php endif; ?>

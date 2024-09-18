@@ -1,6 +1,7 @@
 <?php $this->load->view('templates/header'); ?>
 
 <style>
+   
     .pagination {
         display: flex;
         justify-content: center;
@@ -10,7 +11,7 @@
 
 <div class="col py-3">
     <div class="row">
-        <h4 class="mb-3">Gestión de Equipos Médicos</h4>
+        <h3 class="mb-3">Gestión de Equipos Médicos</h3>
 
         <!-- Botón para abrir el modal -->
         <div class="col py-3">
@@ -42,8 +43,9 @@
                         <th>Descripción</th>
                         <th>Código</th>
                         <th>C.RFID</th>
+                        <th>Costo</th>
                         <th>Ubicación</th>
-                        <th>Registrado</th>
+                        
                         <th>F.Creación</th>
                         <th>Estado</th>
                         <th>Imagen</th>
@@ -88,6 +90,19 @@
                         <label for="RFID">RFID</label>
                         <input type="text" class="form-control" id="RFID" name="RFID" autocomplete="off" required>
                     </div>
+                    <!-- Campo para el costo -->
+                    <div class="form-group">
+                        <label for="costo">Costo</label>
+                        <input type="number" class="form-control" id="costo" name="costo" required step="0.01" min="0" placeholder="Ingrese el costo">
+                    </div>
+
+                    <!-- Campo para el tipo de equipo -->
+                    <div class="form-group">
+                        <label for="tipo_eq">Tipo de Equipo</label>
+                        <select class="form-control" id="tipo_eq" name="tipo_eq" required>
+                            <!-- Opciones cargadas dinámicamente -->
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label for="ubicacion">Ubicación</label>
                         <select class="form-control" id="ubicacion" name="ubicacion" required>
@@ -120,7 +135,51 @@
 </div>
 
 
+<script>
+    $(document).ready(function() {
+        // Manejar clic en el ícono del estado
+        $('body').on('click', 'i[data-toggle="modal"][data-target="#motivoModal"]', function() {
+            var equipoId = $(this).data('id');
 
+            // Hacer una solicitud AJAX para obtener la información del equipo eliminado
+            $.ajax({
+                url: "<?php echo site_url('obtener_motivo_eliminacion'); ?>", // Cambia esto según tu controlador
+                type: "POST",
+                data: {
+                    id: equipoId
+                },
+                dataType: 'json', // Asegúrate de que jQuery maneje la respuesta como JSON
+                success: function(response) {
+                    console.log(response); // Verifica el formato de la respuesta
+
+                    if (response.status === 'success') {
+                        // Accede a los datos correctamente
+                        $('#motivoTexto').text(response.data.motivo);
+                        $('#usuarioEliminador').text(response.data.usr_inactivador);
+                        $('#fechaEliminacion').text(response.data.fecha_inactivacion); // Añadir este campo si es necesario
+                        $('#numeroSerie').text(response.data.numero_serie); // Añadir este campo si es necesario
+                        $('#motivoModal').modal('show');
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Puedes obtener información adicional del error aquí
+                    console.error(xhr.responseText); // Verifica el error en la consola
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al obtener la información del equipo.',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function() {
@@ -148,8 +207,9 @@
                             '<td>' + item.descripcion + '</td>' +
                             '<td>' + item.numero_serie + '</td>' +
                             '<td>' + item.tag_rfid_id + '</td>' +
+                            '<td>' + item.costo + '</td>' +
                             '<td>' + item.ubicacion_nombre + '</td>' +
-                            '<td>' + item.usucre + '</td>' +
+                            
                             '<td>' + item.feccre + '</td>' +
                             '<td><center><i class="bi ' +
                             (item.estado == 1 ? 'fs-4 bi-check-circle-fill' :
@@ -164,16 +224,19 @@
                             (item.estado == 0 || item.estado == 3 ? 'data-toggle="modal" data-target="#motivoModal"' : '') +
                             'title="' + (item.estado == 1 ? 'Activo' :
                                 item.estado == 3 ? 'Mantenimiento' :
-                                'Inactivo') +
+                                'Eliminado') +
                             '"></i></center></td>' +
                             '<td><img width="50" height="50" src="<?php echo base_url('assets/imagenes/equipos/') ?>' + item.Imagen + '" alt=""></td>' +
                             '<td>' +
                             '<div class="d-flex justify-content-center">' +
-                            '<button class="btn btn-sm editModal btn-warning me-2" ' +
-                            'data-id="' + item.id + '" data-nombre="' + item.nombre + '" ' +
-                            'data-descripcion="' + item.descripcion + '" data-numero-serie="' + item.numero_serie + '" ' +
-                            'data-tag-rfid-id="' + item.tag_rfid_id + '" data-ubicacion-id="' + item.ubicacion_id + '" ' +
-                            'data-estado="' + item.estado + '" data-imagen="' + item.Imagen + '">' +
+                            '<button class="btn btn-sm editModal btn-warning me-2 ' +
+                            (item.estado == 0 ? 'disabled' : '') +
+                            '" ' +
+                            (item.estado == 0 ? 'onclick="return false;"' : 'data-id="' + item.id + '" data-nombre="' + item.nombre + '" ' +
+                                'data-descripcion="' + item.descripcion + '" data-numero-serie="' + item.numero_serie + '" ' +
+                                'data-tag-rfid-id="' + item.tag_rfid_id + '" data-ubicacion-id="' + item.ubicacion_id + '" ' +
+                                'data-estado="' + item.estado + '" data-imagen="' + item.Imagen + '" data-costo="' + item.costo + '" data-tipo_eq="' + item.tipo_eq + '"') +
+                            '>' +
                             '<i class="bi bi-pencil-square"></i></button>' +
                             '<button class="btn btn-sm btn-danger ' +
                             (item.estado == 0 ? 'disabled' : '') +
@@ -182,6 +245,7 @@
                             '</div>' +
                             '</td>' +
                             '</tr>';
+
                     });
                     $("#tbequipos").html(filas);
 
@@ -257,10 +321,28 @@
             });
         }
 
+        // Cargar tipos de equipos en el select
+        function cargarTiposEquipo() {
+            $.ajax({
+                url: "<?php echo site_url('obtener_tipos_equipo_select'); ?>", // Cambia la URL según sea necesario
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    var select = $('#tipo_eq');
+                    select.empty(); // Limpiar opciones existentes
+                    select.append('<option value="" disabled selected>Seleccionar tipo de equipo</option>');
+                    $.each(response.tipo_equipo, function(index, tipo) {
+                        select.append('<option value="' + tipo.id + '">' + tipo.tipo + '</option>');
+                    });
+                }
+            });
+        }
+
 
         $(document).ready(function() {
             mostrarDatosEquipos('', 1, 5); //cantidad de equipos el numero 5
             cargarUbicaciones(); // Cargar ubicaciones al inicio
+            cargarTiposEquipo();
 
             $(document).on('submit', '#formBusqueda', function(e) {
                 e.preventDefault();
@@ -291,6 +373,8 @@
                 $('#Descripcion').val('');
                 $('#Codigo').val('');
                 $('#RFID').val('');
+                $('#costo').val('');
+                $('#tipo_eq').val('');
                 $('#ubicacion').val('');
                 $('#imagenActual').attr('src', '');
                 $('#imagenActualContainer').hide();
@@ -308,7 +392,13 @@
                 $('#Descripcion').val($(this).data('descripcion'));
                 $('#Codigo').val($(this).data('numero-serie'));
                 $('#RFID').val($(this).data('tag-rfid-id'));
+                $('#costo').val($(this).data('costo'));
+                $('#tipo_eq').val($(this).data('tipo_eq'));
                 $('#ubicacion').val($(this).data('ubicacion-id'));
+
+                // Asignar la ubicación original cuando se abre el modal de edición
+                ubicacionOriginal = $(this).data('ubicacion-id'); // Guarda la ubicación original
+                $('#ubicacion').val(ubicacionOriginal); // Mostrar la ubicación actual en el select
 
 
                 var imagenActual = $(this).data('imagen');
@@ -325,6 +415,7 @@
             });
 
 
+
             $('#formEquipo').on('submit', function(e) {
                 e.preventDefault();
                 var nuevaUbicacion = $('#ubicacion').val();
@@ -332,7 +423,10 @@
                 var motivo = $('#motivo').val();
 
                 // Verificar si la ubicación ha cambiado
-                if (modoModal === 'editar' && nuevaUbicacion !== ubicacionOriginal) {
+                if (modoModal === 'editar' && nuevaUbicacion != ubicacionOriginal) {
+                    console.log('nuevaUbicacion', nuevaUbicacion);
+                    console.log('ubicacionOriginal_aqui', ubicacionOriginal);
+
                     motivoField.show(); // Mostrar el área de texto para el motivo
 
                     // Esperar a que el usuario ingrese el motivo
@@ -447,34 +541,29 @@
                             dataType: "json",
                             success: function(response) {
                                 if (response.status === 'success') {
-                                    // Actualizar el icono del estado en la vista
-                                    $('i[data-id="' + id + '"]').removeClass('bi-exclamation-circle').addClass('bi-check-circle');
+                                    // Actualiza el ícono del estado en la vista
+                                    var icon = $('i[data-id="' + id + '"]');
+                                    icon.removeClass('bi-check-circle bi-wrench-adjustable-circle-fill').addClass('fs-4 bi-x-circle-fill').css('color', 'red');
+
+                                    // Actualiza el HTML de la celda con el nuevo ícono y atributos
+                                    var newHtml = '<center><i class="fs-4 bi-x-circle-fill" data-id="' + id + '" data-estado="0" style="color: red; cursor: pointer;" data-toggle="modal" data-target="#motivoModal" title="Eliminado"></i></center>';
+                                    icon.closest('tr').find('td').eq(8).html(newHtml);
+
                                     Swal.fire({
                                         title: 'Eliminado!',
                                         text: 'El equipo ha sido eliminado.',
                                         icon: 'success'
-                                    }).then(() => {
-                                        // Actualiza el ícono de la fila en lugar de eliminarla
-                                        $('i[data-id="' + id + '"]').removeClass('bi-check-circle').addClass('bi-x-circle').css('color', 'red');
-                                        $('i[data-id="' + id + '"]').closest('tr').find('td').eq(8).html('<center><i class="bi fs-4 bi-x-circle" style="color: red;"></i></center>');
+                                    });
 
-                                    });
                                 } else {
-                                    Swal.fire({
-                                        title: 'Error',
-                                        text: response.message,
-                                        icon: 'error'
-                                    });
+                                    Swal.fire('Error', response.message, 'error');
                                 }
                             },
-                            error: function() {
-                                Swal.fire({
-                                    title: 'Error',
-                                    text: 'Hubo un problema al eliminar el equipo.',
-                                    icon: 'error'
-                                });
+                            error: function(xhr, status, error) {
+                                console.error("Error al eliminar el equipo: " + error);
                             }
                         });
+
                     },
                     allowOutsideClick: () => !Swal.isLoading()
                 });

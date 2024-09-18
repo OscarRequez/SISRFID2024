@@ -8,11 +8,11 @@
 </style>
 <div class="container py-3">
     <div class="row">
-        <h2 class="mb-3">Reporte de Equipos Médicos</h2>
+        <h3 class="mb-3">Reportes de Equipos</h3>
 
         <!-- Filtros de Búsqueda -->
         <div class="mb-4">
-            <h4>Filtros de Búsqueda</h4>
+            <h5>Filtros de Búsqueda</h5>
             <form id="reportFiltersForm">
                 <div class="row">
                     <!-- Filtro por Ubicación -->
@@ -53,7 +53,7 @@
 
         <!-- Resultados del Reporte -->
         <div class="mb-4">
-            <h2>Resultados del Reporte</h2>
+            <h3>Resultados del Reporte</h3>
             <div class="table-responsive" id="reportTableContainer">
                 <!-- Aquí se cargará la tabla de resultados por AJAX -->
                 <table class="table table-striped table-responsive">

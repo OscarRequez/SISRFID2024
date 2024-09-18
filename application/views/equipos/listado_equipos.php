@@ -11,11 +11,11 @@
 <div class="col py-3">
     <div class="row">
         <div class="col-md-12">
-            <h1 class="mt-4">Listado de Equipos Médicos</h1>
+            <h3 class="mt-4">Listado de Equipos Médicos</h3>
 
             <!-- Input de búsqueda -->
             <div class="form-group">
-                <input type="text" id="buscar" class="form-control" placeholder="Buscar por RFID, serie o ubicación">
+                <input type="text" id="buscar" class="form-control" placeholder="Buscar por Nombre, RFID, Codigo o Ubicación">
             </div>
             <br>
             <!-- Tabla de equipos -->
@@ -24,7 +24,7 @@
                     <thead class="bg-primary text-white">
                         <tr>
                             <th>Nombre</th>
-                            <th>Número de Serie</th>
+                            <th>Codigo</th>
                             <th>Tag RFID</th>
                             <th>Ubicación</th>
                             <th>
@@ -56,6 +56,8 @@
             </div>
             <div class="modal-body text-center">
                 <img id="modalImagen" src="" alt="Imagen del equipo" class="img-fluid">
+                
+                <p id="modalDescripcion"> </p>
             </div>
         </div>
     </div>
@@ -95,14 +97,14 @@
                             'style="color: ' +
                             (item.estado == 1 ? 'green' :
                                 item.estado == 3 ? 'blue' :
-                                'red') + '; cursor: pointer;" ' +
+                                'red') + ';" ' +
                             'title="' + (item.estado == 1 ? 'Activo' :
                                 item.estado == 3 ? 'Mantenimiento' :
                                 'Inactivo') +
                             '"></i></center></td>' +
                             '<td><center>' +
                             (item.Imagen ?
-                                '<button class="btn btn-success btn-sm verImagen" data-imagen="' + item.Imagen + '"><i class="bi bi-eye"></i></button>' :
+                                '<button class="btn btn-success btn-sm verImagen" data-imagen="' + item.Imagen + '" data-descripcion="' + item.descripcion + '" ><i class="bi bi-eye"></i></button>' :
                                 '<button class="btn btn-secondary btn-sm disabled"><i class="bi bi-eye"></i></button>') +
                             '</center></td>' +
                             '</tr>';
@@ -186,8 +188,12 @@
 
         // Manejo del botón de ver imagen
         $("#tbequipos").on("click", ".verImagen", function() {
+
             var imagen = $(this).data("imagen");
+            var descripcion = $(this).data("descripcion");
             $("#modalImagen").attr("src", "<?php echo base_url('assets/imagenes/equipos/') ?>" + imagen);
+            // Actualizar el texto de la descripción en el modal
+            $("#modalDescripcion").text(descripcion);
             $("#imagenModal").modal('show');
         });
     });

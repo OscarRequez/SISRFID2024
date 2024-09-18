@@ -65,6 +65,12 @@ class C_equipos extends MY_Controller
         echo json_encode(array('ubicaciones' => $ubicaciones));
     }
 
+    public function obtener_tipos_equipo_select()
+    {
+        $tipo_equipo = $this->mEquipos->tipos_equipo_select();
+        echo json_encode(array('tipo_equipo' => $tipo_equipo));
+    }
+
     // Método para agregar un equipo médico
     public function agregar_equipo()
     {
@@ -73,6 +79,8 @@ class C_equipos extends MY_Controller
         $this->form_validation->set_rules('Descripcion', 'Descripción', 'required');
         $this->form_validation->set_rules('Codigo', 'Código', 'required');
         $this->form_validation->set_rules('RFID', 'RFID', 'required');
+        $this->form_validation->set_rules('costo', 'costo', 'required');
+        $this->form_validation->set_rules('tipo_eq', 'tipo_eq', 'required');
         $this->form_validation->set_rules('ubicacion', 'Ubicación', 'required');
 
         if ($this->form_validation->run() == FALSE) {
@@ -133,6 +141,8 @@ class C_equipos extends MY_Controller
             'descripcion' => $this->input->post('Descripcion'),
             'numero_serie' => $this->input->post('Codigo'),
             'tag_rfid_id' => $this->input->post('RFID'),
+            'costo' => $this->input->post('costo'),
+            'tipo_eq' => $this->input->post('tipo_eq'),
             'ubicacion_id' => $this->input->post('ubicacion'),
             'Imagen' => $imagen_nombre,
             'estado' => 1,
@@ -163,7 +173,10 @@ class C_equipos extends MY_Controller
         $this->form_validation->set_rules('Descripcion', 'Descripción', 'required');
         $this->form_validation->set_rules('Codigo', 'Código', 'required');
         $this->form_validation->set_rules('RFID', 'RFID', 'required');
+        $this->form_validation->set_rules('costo', 'costo', 'required');
+        $this->form_validation->set_rules('tipo_eq', 'tipo_eq', 'required');
         $this->form_validation->set_rules('ubicacion', 'Ubicación', 'required');
+        
 
         if ($this->form_validation->run() == FALSE) {
             $response = array(
@@ -192,6 +205,12 @@ class C_equipos extends MY_Controller
         }
         if ($this->input->post('RFID') !== $equipo->tag_rfid_id) {
             $data['tag_rfid_id'] = $this->input->post('RFID');
+        }
+        if ($this->input->post('costo') !== $equipo->costo) {
+            $data['costo'] = $this->input->post('costo');
+        }
+        if ($this->input->post('tipo_eq') !== $equipo->tipo_eq) {
+            $data['tipo_eq'] = $this->input->post('tipo_eq');
         }
 
         // Verificar si la ubicación ha cambiado

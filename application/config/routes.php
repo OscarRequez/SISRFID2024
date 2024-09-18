@@ -75,7 +75,7 @@ $route['obtener_roles_ajax'] = 'usuarios/C_usuarios/obtener_roles_ajax';
 $route['guardar_usuario'] = 'usuarios/C_usuarios/guardar';
 $route['actualizar_usuario'] = 'usuarios/C_usuarios/actualizar';
 $route['cambiar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/cambiar_estado_usuario/$1';
-$route['usuarios/mostrar'] = 'usuarios/C_usuarios/mostrar';
+$route['usuarios_mostrar'] = 'usuarios/C_usuarios/usuarios_mostrar';
 $route['eliminar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/eliminar/$1';
 //Roles de usuario
 $route['usuarios/mostrarRoles'] = 'usuarios/C_roles/mostrarRoles';
@@ -87,7 +87,7 @@ $route['roles_actualizar_Permisos'] = 'usuarios/C_roles/actualizar_permisos';//P
 //AVATARES
 $route['avatars'] = 'usuarios/C_avatars';// Ruta para la página principal de avatares
 $route['avatars_agregar'] = 'usuarios/C_avatars/agregar';// Ruta para agregar un nuevo avatar (puedes usar POST para este método)
-$route['avatars_eliminar/(:num)'] = 'usuarios/C_avatars/eliminar/$1';// Ruta para eliminar un avatar (este método usa un ID como parámetro)
+$route['eliminar_avatar'] = 'usuarios/C_avatars/eliminar'; // Ruta para eliminar un avatar
 $route['obtener_avatares'] = 'Welcome/obtener_avatares';
 $route['actualizar_avatar'] = 'Welcome/actualizarAvatar';
 
@@ -96,6 +96,8 @@ $route['actualizar_avatar'] = 'Welcome/actualizarAvatar';
 $route['equipos'] = 'equipos/C_equipos';// Ruta para la página principal de EQUIPOS
 $route['equipos_mostrar'] = 'equipos/C_equipos/mostrar_equipos';
 $route['obtener_ubicaciones_select'] = 'equipos/C_equipos/obtener_ubicaciones_para_select';
+$route['obtener_tipos_equipo_select'] = 'equipos/C_equipos/obtener_tipos_equipo_select';
+
 $route['agregar_equipo'] = 'equipos/C_equipos/agregar_equipo';
 $route['editar_equipo'] = 'equipos/C_equipos/editar_equipo';
 $route['eliminar_equipo'] = 'equipos/C_equipos/eliminar_equipo';
