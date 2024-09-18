@@ -11,6 +11,7 @@
 
     }
 
+
     .pagination {
         display: flex;
         justify-content: center;
@@ -40,7 +41,7 @@
     }
 
     .notificaciones-wrapper {
-        max-height: 300px;
+        max-height: 210px;
         /* Ajusta la altura según lo necesites */
         overflow-y: auto;
         /* Añade una barra de desplazamiento si hay demasiadas notificaciones */
@@ -57,11 +58,13 @@
         background-color: red;
         color: white;
     }
+
 </style>
 </head>
 <!-- welcome.php -->
 
 <div class="col py-3">
+    
     <div class="row">
         <!-- Notificaciones -->
         <div class="col-md-3">
@@ -82,16 +85,16 @@
 
         <!-- Gráfico de Solicitudes de Mantenimiento -->
         <div class="col-md-6">
-            <div class="card">
+            <div class="card border border-primary">
                 <div class="card-body">
-                    <canvas id="maintenanceChart"></canvas>
+                    <canvas class="chart-container-canvas" id="maintenanceChart"></canvas>
                 </div>
             </div>
         </div>
 
         <!-- Estadísticas Generales -->
         <div class="col-md-3">
-            <div class="card">
+            <div class="card border border-primary">
                 <div class="card-header bg-primary text-white">
                     <h5 class="card-title">Equipos Registrados</h5>
                 </div>
@@ -109,7 +112,7 @@
 
     <div class="row mt-4">
         <div class="col-md-4">
-            <div class="card">
+            <div class="card border border-primary">
                 <div class="card-body">
                     <h5 class="card-title">Distribución de Equipos</h5>
                     <canvas class="chart-container" id="equipmentDistributionChart"></canvas>
@@ -118,7 +121,7 @@
         </div>
 
         <div class="col-md-8">
-            <div class="card">
+            <div class="card border border-primary">
                 <div class="card-body">
                     <h5 class="card-title ">Últimas Solicitudes de Mantenimiento</h5>
                     <div class="table-responsive">

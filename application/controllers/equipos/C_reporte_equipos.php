@@ -63,6 +63,9 @@ class C_reporte_equipos extends MY_Controller
 
             // Establecer el título del documento
             $pdf->SetTitle('Reporte de los Equipos');
+            // Establecer los márgenes
+            $pdf->SetMargins(15, 25, 15); // Ajusta los márgenes izquierdo, superior y derecho
+            $pdf->SetHeaderMargin(10); // Ajusta el margen inferior del encabezado
 
 
             // Añadir una página
@@ -82,6 +85,7 @@ class C_reporte_equipos extends MY_Controller
             $this->excel->generate_excel('reporte_equipos.xlsx', $data);
         }
     }
+    
     public function cargar_datos() //para la tabla de la vista donde se aplicacnlos filtros
     {
         $pagina = $this->input->post('pagina');
@@ -105,6 +109,7 @@ class C_reporte_equipos extends MY_Controller
             show_error('ID del equipo es requerido.');
         }
 
+
         // Llamar al modelo para obtener los datos del equipo
         $dataEquipo = $this->mREquipos->obtenerDatosEquipoPorId($equipoId);
         // Llamar al modelo para obtener el historial de mantenimiento
@@ -119,6 +124,16 @@ class C_reporte_equipos extends MY_Controller
             'elaborado_por' => $this->session->userdata('username'),
             'puesto' => $this->session->userdata('rol_name')
         ];
+
+        $dataDepreciacion = $this->mREquipos->obtenerDepreciacionPorEquipoId($equipoId);
+
+        // Pasar los datos a la vista
+        $html = $this->load->view('equipos/historial_equipo_pdf', [
+            'dataEquipo' => $dataEquipo,
+            'dataMantenimiento' => $dataMantenimiento,
+            'dataDepreciacion' => $dataDepreciacion,
+            'reporte_info' => $reporte_info
+        ], TRUE);
 
         if ($format == 'pdf') {
             // Verificar si TCPDF está cargado

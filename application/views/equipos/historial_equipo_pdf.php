@@ -45,12 +45,12 @@
         <table>
             <thead>
                 <tr>
-                    <th width="25px">#</th> <!-- Nueva columna para numeración -->
-                    <th width="85px">Fecha de Movimiento</th>
-                    <th width="85px">Ubicación Anterior</th>
-                    <th width="85px">Ubicación Nueva</th>
-                    <th width="85px">Usario que Cambio</th>
-                    <th width="200px">Motivo</th>
+                    <th width="25px"><strong>#</strong></th> <!-- Nueva columna para numeración -->
+                    <th width="85px"><strong>Fecha de Movimiento</strong></th>
+                    <th width="85px"><strong>Ubicación Anterior</strong></th>
+                    <th width="85px"><strong>Ubicación Nueva</strong></th>
+                    <th width="85px"><strong>Usuario que Cambio</strong></th>
+                    <th width="200px"><strong>Motivo</strong></th>
                 </tr>
             </thead>
             <tbody>
@@ -60,8 +60,8 @@
                     <tr>
                         <td width="25px"><?php echo $contador++; ?></td>
                         <td width="85px"><?php echo date('d/m/Y', strtotime($historial['fecha_movimiento'])); ?></td>
-                        <td width="85px"><?php echo htmlspecialchars($historial['ubicacion_anterior_nombre']); ?></td>
-                        <td width="85px"><?php echo htmlspecialchars($historial['ubicacion_nueva_nombre']); ?></td>
+                        <td width="85px" style="font-size:7px;"><?php echo htmlspecialchars($historial['ubicacion_anterior_nombre']); ?></td>
+                        <td width="85px" style="font-size:7px;"><?php echo htmlspecialchars($historial['ubicacion_nueva_nombre']); ?></td>
                         <td width="85px"><?php echo htmlspecialchars($historial['nombre_usuario']); ?></td>
                         <td width="200px"><?php echo htmlspecialchars($historial['motivo']); ?></td>
 
@@ -79,15 +79,15 @@
         <table>
             <thead>
                 <tr>
-                    <th width="30px">#</th> <!-- Nueva columna para numeración -->
-                    <th width="45px">ID</th>
-                    <th width="70px">Técnico</th>
-                    <th width="60px">Tipo</th>
-                    <th width="90px">Área de Solicitud</th>
-                    <th width="70px">F.Solicitud</th>
-                    <th width="70px">F.Conclusión</th>
-                    <th width="65px">Costo Total</th>
-                    <th width="60px">Estado</th>
+                    <th width="30px"><strong>#</strong></th> <!-- Nueva columna para numeración -->
+                    <th width="45px"><strong>ID</strong></th>
+                    <th width="70px"><strong>Técnico</strong></th>
+                    <th width="60px"><strong>Tipo</strong></th>
+                    <th width="90px"><strong>Área de Solicitud</strong></th>
+                    <th width="70px"><strong>F.Solicitud</strong></th>
+                    <th width="70px"><strong>F.Conclusión</strong></th>
+                    <th width="65px"><strong>Costo Total</strong></th>
+                    <th width="60px"><strong>Estado</strong></th>
                 </tr>
             </thead>
             <tbody>
@@ -152,7 +152,51 @@
         <p>No hay registros de mantenimiento para este equipo.</p>
     <?php endif; ?>
 
+    <h3>Historial de Depreciación</h3>
 
+    <?php if (!empty($dataDepreciacion)): ?>
+        <table style="font-size: 8px; width: 100%;">
+            <thead>
+                <tr>
+                    <th><strong>Año 1</strong></th>
+                    <th><strong>Valor (Bs.)</strong></th>
+                    <th><strong>Año 2</strong></th>
+                    <th><strong>Valor (Bs.)</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $ultimoValor = 0; // Variable para almacenar el último valor de depreciación
+                foreach ($dataDepreciacion as $index => $depreciacion): ?>
+                    <?php if ($index % 2 == 0): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($depreciacion['anio']); ?></td>
+                            <td><?php echo number_format($depreciacion['valor'], 2); ?> Bs.</td>
+                            <?php $siguiente = $dataDepreciacion[$index + 1] ?? null; ?>
+                            <?php if ($siguiente): ?>
+                                <td><?php echo htmlspecialchars($siguiente['anio']); ?></td>
+                                <td><?php echo number_format($siguiente['valor'], 2); ?> Bs.</td>
+                            <?php else: ?>
+                                <td colspan="2"></td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endif; ?>
+                    <?php
+                    // Actualizar el último valor de depreciación
+                    $ultimoValor = $depreciacion['valor'];
+                    ?>
+                <?php endforeach; ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="text-align: right;"><strong>Valor Actual del Equipo:</strong></td>
+                    <td><strong><?php echo number_format($ultimoValor, 2); ?> Bs.</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    <?php else: ?>
+        <p>No hay datos de depreciación disponibles.</p>
+    <?php endif; ?>
 </body>
 
 </html>

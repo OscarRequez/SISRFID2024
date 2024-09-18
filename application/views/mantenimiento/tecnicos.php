@@ -52,8 +52,9 @@
             </div>
             <div class="modal-body text-center">
                 <img id="modalImagen" src="" alt="Imagen del equipo" width="300px" class="img-fluid">
+                <p id="modalDescripcion"> </p>
             </div>
-            <p id="modalDescripcion"><strong>Descripcion:</strong> </p>
+           
         </div>
     </div>
 </div>
@@ -265,7 +266,7 @@
         var descripcion = $(this).data("descripcion");
         $("#modalImagen").attr("src", "<?php echo base_url('assets/imagenes/equipos/') ?>" + imagen);
         // Asignar la descripción al elemento <p> en el modal
-        $("#modalDescripcion").text('Descricion: ' + descripcion);
+        $("#modalDescripcion").text(descripcion);
         $("#imagenModal").modal('show');
     });
 

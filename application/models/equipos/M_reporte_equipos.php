@@ -198,4 +198,45 @@ class M_reporte_equipos extends CI_Model
         // Retornar el resultado
         return $query->result_array();
     }
+
+    public function obtenerDepreciacionPorEquipoId($equipoId)
+    {
+        // Obtener el equipo con su tipo y vida útil
+        $equipo = $this->db->select('e.costo, e.feccre, t.vida_util')
+            ->from('equipos_medicos e')
+            ->join('tipo_equipo t', 'e.tipo_eq = t.id')
+            ->where('e.id', $equipoId)
+            ->get()
+            ->row_array();
+
+        if (!$equipo) {
+            return null; // Manejar el caso en el que no se encuentre el equipo
+        }
+
+        $valorInicial = $equipo['costo'];
+        $fechaIngreso = $equipo['feccre'];
+        $vidaUtil = $equipo['vida_util']; // Años de vida útil del equipo
+
+        $anioCompra = date('Y', strtotime($fechaIngreso));
+        $anioActual = date('Y');
+        $depreciacionAnual = $valorInicial / $vidaUtil; // Depreciación lineal anual
+        $valoresDepreciacion = [];
+
+        // Generar el historial de depreciación año por año
+        for ($anio = $anioCompra; $anio <= $anioActual; $anio++) {
+            $valorActual = $valorInicial - ($depreciacionAnual * ($anio - $anioCompra));
+
+            // No mostrar valores negativos, si la vida útil ha terminado
+            if ($valorActual < 0) {
+                $valorActual = 0;
+            }
+
+            $valoresDepreciacion[] = [
+                'anio' => $anio,
+                'valor' => $valorActual
+            ];
+        }
+
+        return $valoresDepreciacion;
+    }
 }

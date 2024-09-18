@@ -176,7 +176,7 @@ class C_equipos extends MY_Controller
         $this->form_validation->set_rules('costo', 'costo', 'required');
         $this->form_validation->set_rules('tipo_eq', 'tipo_eq', 'required');
         $this->form_validation->set_rules('ubicacion', 'Ubicación', 'required');
-        
+
 
         if ($this->form_validation->run() == FALSE) {
             $response = array(
@@ -233,6 +233,18 @@ class C_equipos extends MY_Controller
 
             // Insertar el historial en la base de datos
             $this->mEquipos->insertar_movimiento_equipo($historial_data);
+
+            // Preparar los datos para la notificación
+            $notificacion = array(
+                'titulo' => 'Movimiento de Equipo',
+                'mensaje' => 'El equipo ' .  $this->input->post('Codigo') . ' fue cambiado de ubicación por el usuario ' . $this->session->userdata('username') . '',
+                'tipo' => 'info',
+                'rol' => 1, // 100 = administrador
+                'feccre' => date('Y-m-d H:i:s'),
+            );
+
+            // Insertar la notificación en la base de datos
+            $this->mEquipos->nueva_notificacion($notificacion);
         }
 
         // Siempre actualizar el estado, usuario y fecha de modificación
@@ -327,6 +339,19 @@ class C_equipos extends MY_Controller
                     'status' => 'success',
                     'message' => 'Equipo médico inactivado con éxito.'
                 );
+              
+                // Preparar los datos para la notificación
+                $notificacion = array(
+                    'titulo' => ' Eliminacion de Equipo',
+                    'mensaje' => 'El equipo con el id' .  $this->input->post('id') . ' fue Eliminado por el usuario ' . $this->session->userdata('username') . '',
+                    'tipo' => 'info',
+                    'rol' => 1, // 100 = administrador
+                    'feccre' => date('Y-m-d H:i:s'),
+                );
+
+                // Insertar la notificación en la base de datos
+                $this->mEquipos->nueva_notificacion($notificacion);
+
             } else {
                 $response = array(
                     'status' => 'error',

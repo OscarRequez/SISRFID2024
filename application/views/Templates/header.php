@@ -31,9 +31,11 @@
             font-size: 14px;
 
         }
-        td, th{
-        font-size: 13px !important;
-    }
+
+        td,
+        th {
+            font-size: 13px !important;
+        }
 
         /* PARA EL TAMAÑO DEL CONTENIDO CENTRAL TOMANDO EL ASIDE*/
         .py-3 {
@@ -256,21 +258,25 @@
         }
     </style>
 
+    
+
     <div class="container-fluid">
         <div class="row">
-            <nav class="navbar bg-primary">
-                <div class="container-fluid">
-                    <span class="navbar-text text-white ms-auto">
-                        <span id="currentDateTime"></span>
-                    </span>
-                </div>
-            </nav>
             <div class="container-fluid ">
                 <div class="row flex-nowrap">
-                    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
-                        <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <!--AQUI ESTA EL ASIDE-->
+                    <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark ">
+                          <!--aside fijo sticky top-->
+                        <div class="d-flex sticky-top flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                            <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                                <span class="fs-5 d-none d-sm-inline">SISAMED <?php echo date('Y'); ?></span>
+                            </a>
+                           
+                            <!--  <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                                <span class="fs-5 d-none d-sm-inline"id="currentDateTime"></span>
+                            </a>-->
 
-                            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start collapse-horizontal" id="menu">
                                 <li>
                                     <a href="<?php echo site_url('welcome'); ?>" class="nav-link px-0 align-middle">
                                         <i class="fs-4 bi bi-house"></i> <span class="ms-1 d-none d-sm-inline">Inicio</span>
@@ -453,7 +459,6 @@
                                 </li>
                             </ul>
 
-                            <hr>
                             <div class="dropdown pb-4">
                                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                                     <img id="userAvatar" src="<?php echo base_url($this->session->userdata('avatar_path')); ?>" alt="Usuario" width="50" height="50" class="rounded-circle">
@@ -478,7 +483,10 @@
                                 </ul>
                             </div>
                         </div>
+
                     </div>
+
+
 
                     <!-- Modal para seleccionar avatar -->
                     <div class="modal fade" id="avatarModal" tabindex="-1" aria-labelledby="avatarModalLabel" aria-hidden="true">
@@ -632,11 +640,12 @@
 
 
                     <script>
+                        /*
                         function updateDateTime() {
                             const options = {
                                 timeZone: 'America/La_Paz',
                                 year: 'numeric',
-                                month: 'long',
+                                month: 'numeric',
                                 day: 'numeric',
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -649,5 +658,5 @@
                         // Actualizar la fecha y hora al cargar la página
                         updateDateTime();
                         // Actualizar la fecha y hora cada segundo
-                        setInterval(updateDateTime, 1000);
+                        setInterval(updateDateTime, 1000);*/
                     </script>

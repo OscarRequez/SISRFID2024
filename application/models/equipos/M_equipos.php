@@ -164,4 +164,9 @@ class M_equipos extends CI_Model
 
         return false; // No se encontró información
     }
+
+    //notificaion
+    public function nueva_notificacion($data) {
+        return $this->db->insert('notificaciones', $data);
+    }
 }

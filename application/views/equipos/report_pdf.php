@@ -5,177 +5,156 @@
     <meta charset="UTF-8">
     <title>Reporte de Equipos</title>
     <style>
-        body {
-            font-family: Georgia, 'Times New Roman', Times, serif;
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        p {
             font-size: 10px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .header {
-            display: none;
-            /* Ocultar por defecto */
-        }
-
-        .header h2 {
-            text-align: center;
-            text-transform: uppercase;
-            font-size: 14px;
-            margin: 0;
-        }
-
-        .header p {
-            text-align: center;
-            margin: 5px 0;
-        }
-
-        @media print {
-            .header {
-                display: block;
-                background: white;
-                padding: 10px;
-                margin-bottom: 20px;
-                page-break-after: avoid;
-                border-bottom: 1px solid #000;
-
-            }
-
-            table {
-                margin-top: 60px;
-                /* Espacio suficiente para la cabecera en la primera página */
-            }
-
-            .page-break {
-                page-break-before: always;
-            }
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin-top: 10px;
         }
 
+        table,
         th,
         td {
-            border: 1px solid #C5C7C8;
+            border: 1px solid black;
             padding: 8px;
             text-align: left;
+            white-space: nowrap;
+            /* Previene que el texto se rompa en múltiples líneas */
+            font-size: 7px;
         }
 
         th {
-            background-color: #223361;
-            color: white;
+            background-color: #f2f2f2;
+            font-weight: bold;
         }
 
-        .small-column {
-            width: 18;
-        }
-
-        .small-column_nombre {
-            width: 100px;
-        }
-
-        .small-column_ubicacion {
-            width: 90px;
-        }
-
-        .small-column_RFID {
-            width: 70px;
-        }
-
-        .small-column_estado {
-            width: 70px;
+        .report-info {
+            margin-bottom: 20px;
         }
 
         .footer {
-            border-top: 1px solid #000;
             margin-top: 20px;
             text-align: center;
-            padding: 10px 0;
             font-size: 10px;
+        }
+
+        /* Clases para ajustar el ancho de las columnas */
+        .col-id {
+            width: 25px;
+            /* Menos espacio para ID */
+        }
+
+        .col-descripcion {
+            width: 140px;
+            /* Más espacio para Descripción */
+        }
+
+        .col-nombre {
+            width: 80px;
+            /* Espacio para Nombre */
+        }
+
+        .col-ubicacion {
+            width: 70px;
+            /* Espacio para Ubicación */
+        }
+
+        .col-fecha {
+            width: 60px;
+            /* Espacio para Fecha de Ingreso */
+        }
+
+        .col-costo {
+            width: 50px;
+            /* Espacio para Costo */
+        }
+
+        .col-estado {
+            width: 50px;
+            /* Espacio para Costo */
+        }
+
+        .col-codigo {
+            width: 60px;
+            /* Espacio para Costo */
         }
     </style>
 </head>
 
 <body>
-    <!-- Cabecera que se mostrará solo en la primera página -->
-    <div class="header">
-        <h2>Reporte de los Equipos</h2>
-        <p>
-            <strong><?php echo $reporte_info['empresa']; ?></strong><br>
-            <strong>Fecha:</strong> <?php echo $reporte_info['fecha']; ?><br>
-            <strong>Empresa:</strong> <?php echo $reporte_info['empresa']; ?><br>
-            <strong>Dirección:</strong> <?php echo $reporte_info['direccion']; ?><br>
-            <strong>Contacto:</strong> <?php echo $reporte_info['contacto']; ?><br>
-            <strong>Elaborado por:</strong> <?php echo $reporte_info['elaborado_por']; ?><br>
-            <strong>Rol:</strong> <?php echo $reporte_info['puesto']; ?>
-        </p>
-    </div>
+    <h2>Reporte de los Equipos</h2>
+    <p>
+        <strong><?php echo $reporte_info['empresa']; ?></strong><br>
+        <strong>Fecha:</strong> <?php echo $reporte_info['fecha']; ?><br>
+        <strong>Elaborado por:</strong> <?php echo htmlspecialchars($reporte_info['elaborado_por']); ?> - <?php echo htmlspecialchars($reporte_info['puesto']); ?><br>
+    </p>
 
-    <!-- Contenido principal de la tabla -->
-    <div class="content">
+    <hr>
+
+    <div class="report-info">
+        <h3>Detalles de Equipos</h3>
         <table>
             <thead>
                 <tr>
-                    <th class="small-column">#</th>
-                    <th class="small-column">ID</th>
-                    <th class="small-column_nombre">Nombre</th>
-                    <th class="small-column_nombre">Descripción</th>
-                    <th class="small-column_ubicacion">Ubicación</th>
-                    <th class="small-column_estado">Estado</th>
-                    <th class="small-column_RFID">Codigo Eq.</th>
-                    <th class="small-column_RFID">RFID</th>
+                    <th class="col-id"><strong>ID</strong></th>
+                    <th class="col-nombre"><strong>Nombre</strong></th>
+                    <th class="col-descripcion"><strong>Descripción</strong></th>
+                    <th class="col-estado"><strong>Estado</strong></th>
+                    <th class="col-codigo"><strong>Código</strong></th>
+                    <th class="col-ubicacion"><strong>Ubicación</strong></th>
+                    <th class="col-fecha"><strong>Fecha de Ingreso</strong></th>
+                    <th class="col-costo"><strong>Costo</strong></th>
                 </tr>
             </thead>
             <tbody>
-                <?php if (!empty($data) && is_array($data)): ?>
-                    <?php
-                    $contador = 1;
-                    foreach ($data as $item):
-                    ?>
-                        <tr>
-                            <td class="small-column"><?php echo $contador++; ?></td>
-                            <td class="small-column"><?php echo htmlspecialchars($item['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="small-column_nombre"><?php echo htmlspecialchars($item['nombre'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="small-column_nombre"><?php echo htmlspecialchars($item['descripcion'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="small-column_ubicacion"><?php echo htmlspecialchars(ucfirst(strtolower($item['ubicacion_nombre'])), ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="small-column_estado">
-                                <?php
-                                $estado = $item['estado'];
-                                switch ($estado) {
-                                    case 1:
-                                        echo 'Activo';
-                                        break;
-                                    case 0:
-                                        echo 'Inactivo';
-                                        break;
-                                    case 3:
-                                        echo 'Mantenimiento';
-                                        break;
-                                    default:
-                                        echo 'Desconocido';
-                                        break;
-                                }
-                                ?>
-                            </td>
-                            <td class="small-column_RFID"><?php echo htmlspecialchars($item['numero_serie'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="small-column_RFID"><?php echo htmlspecialchars($item['tag_rfid_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+                <?php foreach ($data as $item): ?>
                     <tr>
-                        <td colspan="8">No se encontraron datos.</td>
+                        <td class="col-id"><?php echo $item['id']; ?></td>
+                        <td class="col-nombre"><?php echo $item['nombre']; ?></td>
+                        <td class="col-descripcion"><?php echo $item['descripcion']; ?></td>
+                        <td class="col-estado">
+                            <?php
+                            $estado = $item['estado'];
+                            switch ($estado) {
+                                case 1:
+                                    echo 'Activo';
+                                    break;
+                                case 0:
+                                    echo 'Inactivo';
+                                    break;
+                                case 3:
+                                    echo 'Mantenimiento';
+                                    break;
+                                default:
+                                    echo 'Desconocido';
+                                    break;
+                            }
+                            ?>
+                        </td>
+                        <td class="col-codigo"><?php echo $item['numero_serie']; ?></td>
+                        <td class="col-ubicacion"><?php echo $item['ubicacion_nombre']; ?></td>
+                        <td class="col-fecha"><?php echo date('d/m/Y', strtotime($item['feccre'])); ?></td>
+                        <td class="col-costo"><?php echo number_format($item['costo'], 2, ',', '.'); ?></td>
                     </tr>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
 
-    <!-- Pie de página -->
     <div class="footer">
-        <p>Reporte generado por el sistema de informacion de equipos.</p>
-    </div>
+      
+    <p>Reporte generado por <?php echo $reporte_info['elaborado_por']; ?> en <?php echo $reporte_info['fecha']; ?></p>
+    <p>Total Registros generados: <?php echo count($data); ?></p>
+
+</div>
 </body>
 
 </html>

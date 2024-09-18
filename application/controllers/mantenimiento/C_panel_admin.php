@@ -45,13 +45,16 @@ class C_panel_Admin extends MY_Controller
     {
         $pagina = $this->input->post('pagina');
         $cantidad = $this->input->post('cantidad');
+        $buscar = $this->input->post('filtro'); // Obtén el término de búsqueda si está presente
         $offset = ($pagina - 1) * $cantidad;
-
-        $data['solicitudes'] = $this->mPanelAdmin->obtenerSolicitudesAdmin($offset, $cantidad);
-        $data['totalregistros'] = $this->mPanelAdmin->contarSolicitudesAdmin();
-
+    
+        // Llama al modelo con el término de búsqueda opcional
+        $data['solicitudes'] = $this->mPanelAdmin->obtenerSolicitudesAdmin($offset, $cantidad, $buscar);
+        $data['totalregistros'] = $this->mPanelAdmin->contarSolicitudesAdmin($buscar);
+    
         echo json_encode($data);
     }
+    
 
     public function obtener_tecnicos()
     {

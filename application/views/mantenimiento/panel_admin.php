@@ -19,22 +19,33 @@
 <div class="col py-3">
     <h2>Panel de Mantenimiento</h2>
 
-    <!-- Formulario de filtro por fecha -->
-    <form id="filtroFechasMantenimiento" class="mb-4">
-        <div class="row">
-            <div class="col-md-3">
-                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                <input type="date" class="form-control" id="fechaInicio" name="fecha_inicio" required>
+    <!-- Formularios en línea -->
+    <div class="row">
+        <!-- Formulario de filtro por fecha -->
+        <form id="filtroFechasMantenimiento" class="col-lg-6 col-md-12 d-flex align-items-end mb-4">
+            <div class="row w-100">
+                <div class="col-md-4">
+                    <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" id="fechaInicio" name="fecha_inicio" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="fechaFin" class="form-label">Fecha Fin</label>
+                    <input type="date" class="form-control" id="fechaFin" name="fecha_fin" required>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-file-earmark-pdf"></i> Reporte</button>
+                </div>
             </div>
-            <div class="col-md-3">
-                <label for="fechaFin" class="form-label">Fecha Fin</label>
-                <input type="date" class="form-control" id="fechaFin" name="fecha_fin" required>
+        </form>
+
+        <!-- Formulario de búsqueda -->
+        <form id="formBuscarSolicitudes" class="col-lg-6 col-md-12 d-flex align-items-end mb-4">
+            <div class="input-group w-100">
+                <input type="text" class="form-control" id="buscarTexto" placeholder="ID de Mantenimiento o Código de Equipo">
+                <button class="btn btn-primary" type="submit">Buscar</button>
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-file-earmark-pdf"></i> Generar Reporte</button>
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
 
 
     <!-- Tabla para mostrar las solicitudes -->
@@ -57,7 +68,7 @@
                 </tr>
             </thead>
             <tbody id="solicitudesTableBody">
-                <!-- Las filas de la tabla se llenarán dinámicamente aquí -->
+
             </tbody>
         </table>
     </div>
@@ -109,7 +120,7 @@
             <div class="modal-body text-center">
                 <img id="modalImagen" src="" alt="Imagen del equipo" width="300px" class="img-fluid">
             </div>
-            <p id="modalDescripcion"><strong>Descripcion:</strong> </p>
+
         </div>
     </div>
 </div>
@@ -139,14 +150,14 @@
         });
     }
 
-    // Función para cargar las solicitudes desde el servidor
-    function cargarSolicitudes(pagina = 1, cantidad = 5) {
+    function cargarSolicitudes(pagina = 1, cantidad = 5, filtro = '') {
         $.ajax({
             url: "<?php echo site_url('solicitudes_obtener'); ?>", // URL del endpoint para obtener solicitudes
             type: "POST", // Método HTTP POST
             data: {
                 pagina: pagina,
-                cantidad: cantidad // Número de registros por página
+                cantidad: cantidad, // Número de registros por página
+                filtro: filtro // Parámetro de búsqueda
             },
             dataType: "json", // Tipo de datos esperado en la respuesta
             success: function(response) {
@@ -286,7 +297,6 @@
         });
     }
 
-
     $(document).ready(function() {
         // Manejar clic en el botón "Asignar" en la tabla de solicitudes
         $(document).on('click', '.nuevaAsignacion', function() {
@@ -407,6 +417,12 @@
             });
         });
 
+        $('#formBuscarSolicitudes').on('submit', function(e) {
+            e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+            var filtro = $('#buscarTexto').val(); // Obtener el valor del campo de búsqueda
+            cargarSolicitudes(1, 5, filtro); // Cargar las solicitudes con el filtro
+        });
+
         // Manejo del botón de ver imagen
         $("#solicitudesTableBody").on("click", ".verImagen", function() {
             var imagen = $(this).data("imagen");
@@ -457,7 +473,6 @@
         });
     });
 </script>
-
 <script>
     $('#filtroFechasMantenimiento').on('submit', function(event) {
         event.preventDefault(); // Previene el envío del formulario por defecto
@@ -538,7 +553,4 @@
         });
     });
 </script>
-
-
-
 <?php $this->load->view('templates/footer'); ?>

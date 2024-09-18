@@ -119,7 +119,7 @@
 
 
     <div class="row">
-        <h1 class="mb-3">Lista de Roles de Usuario</h1>
+        <h3 class="mb-3">Lista de Roles de Usuario</h3>
         <div class="table table-responsive">
             <table class="table table-hover table-bordered table-responsive">
                 <thead class="bg-primary text-white">

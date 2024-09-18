@@ -7,31 +7,51 @@ class M_panel_Admin extends CI_Model
         $this->load->database(); // Cargar la base de datos
     }
 
-    public function obtenerSolicitudesAdmin($offset, $cantidad)
+    public function obtenerSolicitudesAdmin($offset, $cantidad, $buscar = '')
     {
         // Definir el límite y el offset para la paginación
         $this->db->limit($cantidad, $offset);
-
-        // Realizar la unión entre la tabla 'mantenimiento', 'ubicaciones' y 'usuarios'
+    
+        // Realizar la unión entre la tabla 'mantenimiento', 'ubicaciones', 'usuarios' y 'equipos_medicos'
         $this->db->select('mantenimiento.*, ubicaciones.nombre AS ubicacion_nombre, usuarios.nombre AS usu_tecnico, equipos_medicos.imagen AS Imagen');
         $this->db->from('mantenimiento');
         $this->db->join('ubicaciones', 'mantenimiento.ubicacion_solicitud = ubicaciones.id', 'left');
-        $this->db->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id', 'left'); // Unir con la tabla 'usuarios'
-        $this->db->join('equipos_medicos', '(mantenimiento.numero_serie_eq = equipos_medicos.numero_serie OR mantenimiento.numero_serie_eq = equipos_medicos.tag_rfid_id)', 'left'); // Unir con la tabla 'equipos_medicos'
-
+        $this->db->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id', 'left');
+        $this->db->join('equipos_medicos', '(mantenimiento.numero_serie_eq = equipos_medicos.numero_serie OR mantenimiento.numero_serie_eq = equipos_medicos.tag_rfid_id)', 'left');
+    
+        // Aplicar el filtro de búsqueda si se proporciona
+        if (!empty($buscar)) {
+            $this->db->group_start();
+            $this->db->like('mantenimiento.id', $buscar);
+            $this->db->or_like('mantenimiento.numero_serie_eq', $buscar);
+            $this->db->group_end();
+        }
+    
         // Ordenar por fecha de solicitud en orden descendente
         $this->db->order_by('mantenimiento.fecha_solicitud', 'DESC');
-
-        // Ejecutar la consulta
+    
+        $this->db->limit($cantidad, $offset);
         $query = $this->db->get();
-
-        // Devolver el resultado como un array
-        return $query->result_array();
+        return $query->result();
     }
-    public function contarSolicitudesAdmin()
+    
+    public function contarSolicitudesAdmin($buscar = '')
     {
-        return $this->db->count_all('mantenimiento');
+        $this->db->from('mantenimiento');
+        $this->db->join('ubicaciones', 'mantenimiento.ubicacion_solicitud = ubicaciones.id', 'left');
+        $this->db->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id', 'left');
+        $this->db->join('equipos_medicos', '(mantenimiento.numero_serie_eq = equipos_medicos.numero_serie OR mantenimiento.numero_serie_eq = equipos_medicos.tag_rfid_id)', 'left');
+    
+        if (!empty($buscar)) {
+            $this->db->group_start();
+            $this->db->like('mantenimiento.id', $buscar);
+            $this->db->or_like('mantenimiento.numero_serie_eq', $buscar);
+            $this->db->group_end();
+        }
+    
+        return $this->db->count_all_results();
     }
+    
 
 
     public function get_tecnicos_por_rol($rol_id)
@@ -211,7 +231,8 @@ class M_panel_Admin extends CI_Model
     }
 
     //notificaion
-    public function nueva_notificacion($data) {
+    public function nueva_notificacion($data)
+    {
         return $this->db->insert('notificaciones', $data);
     }
 }
