@@ -73,81 +73,82 @@ class C_doc_registro extends MY_Controller
 
         echo json_encode($respuesta);
     }
+
     public function agregar_documento()
     {
+        // Verificar tamaño de la imagen
+        if ($_FILES['imagen']['size'] > 2048 * 1024) { // Tamaño máximo: 2MB
+            echo json_encode(array('status' => 'error', 'message' => 'La imagen de portada debe pesar como máximo 2MB.'));
+            return; // Para detener la ejecución si el archivo es demasiado grande
+        }
+    
+        // Verificar tamaño del documento
+        if ($_FILES['documento']['size'] > 5120 * 1024) { // Tamaño máximo: 5MB
+            echo json_encode(array('status' => 'error', 'message' => 'El documento debe pesar como máximo 5MB.'));
+            return; // Para detener la ejecución si el archivo es demasiado grande
+        }
+    
         // Configuración para la subida de la imagen de portada
         $configImagen['upload_path'] = './assets/imagenes/documentos/';
         $configImagen['allowed_types'] = 'jpg|jpeg|png|gif';
         $configImagen['max_size'] = 2048;  // Tamaño máximo: 2MB
         $configImagen['file_name'] = time() . '_' . $_FILES['imagen']['name']; // Añadir timestamp al nombre del archivo
         $this->upload->initialize($configImagen);
-
+    
         if (!$this->upload->do_upload('imagen')) {
             // Devolver error si la imagen no se subió
-            $response = [
-                'status' => 'error',
-                'message' => 'Error al subir la imagen: ' . $this->upload->display_errors()
-            ];
-            echo json_encode($response);
-            return;
+            echo json_encode(array('status' => 'error', 'message' => 'Error al subir la imagen: ' . $this->upload->display_errors()));
+            return; // Para detener la ejecución si la subida falla
         } else {
             $imagenData = $this->upload->data();
         }
-
+    
         // Configuración para la subida del documento (PDF, Word, etc.)
         $configDocumento['upload_path'] = './assets/documentos/';
         $configDocumento['allowed_types'] = 'pdf|doc|docx|txt';
         $configDocumento['max_size'] = 5120;  // Tamaño máximo: 5MB
         $configDocumento['file_name'] = time() . '_' . $_FILES['documento']['name']; // Añadir timestamp al nombre del archivo
         $this->upload->initialize($configDocumento);
-
+    
         if (!$this->upload->do_upload('documento')) {
             // Devolver error si el documento no se subió
-            $response = [
-                'status' => 'error',
-                'message' => 'Error al subir el documento: ' . $this->upload->display_errors()
-            ];
-            echo json_encode($response);
-            return;
+            echo json_encode(array('status' => 'error', 'message' => 'Error al subir el documento: ' . $this->upload->display_errors()));
+            return; // Para detener la ejecución si la subida falla
         } else {
             $documentoData = $this->upload->data();
         }
-
+    
         // Guardar los datos en la base de datos
-        $data = [
+        $data = array(
             'titulo' => $this->input->post('titulo'),
             'documento' => $documentoData['file_name'],  // Nombre del archivo del documento
             'imagen_portada' => $imagenData['file_name'],  // Nombre del archivo de la imagen de portada
             'usucre' => $this->session->userdata('email'),  // Asumiendo que estás guardando el correo del usuario actual
             'feccre' => date('Y-m-d H:i:s'),
             'estado' => 1  // Estado activo por defecto
-        ];
-
+        );
+    
         // Insertar en la base de datos
         $insert_id = $this->mDocRegistro->insertar_documento($data);
-
+    
         if ($insert_id) {
             // Enviar respuesta de éxito
-            $response = [
-                'status' => 'success',
-                'message' => 'Documento agregado exitosamente'
-            ];
+            echo json_encode(array('status' => 'success', 'message' => 'Documento agregado exitosamente.'));
         } else {
             // Enviar respuesta de fallo
-            $response = [
-                'status' => 'error',
-                'message' => 'Error al guardar los datos en la base de datos'
-            ];
+            echo json_encode(array('status' => 'error', 'message' => 'Error al guardar los datos en la base de datos.'));
         }
-
-        echo json_encode($response);
     }
+    
 
-    public function obtener_documento($id) {
+
+
+    public function obtener_documento($id)
+    {
         $documento = $this->mDocRegistro->obtener_documento_por_id($id);
         echo json_encode($documento);
     }
-/*
+    /*
     public function editar_documento($id) {
         // Cargar el modelo
 
@@ -215,18 +216,19 @@ class C_doc_registro extends MY_Controller
     }
 */
 
-    public function eliminar_documento() {
+    public function eliminar_documento()
+    {
         $id = $this->input->post('id');
         $imagen = $this->input->post('imagen');
         $documento = $this->input->post('documento');
-    
+
         // Eliminar archivo de imagen y documento
         unlink('./assets/imagenes/documentos/' . $imagen);
         unlink('./assets/documentos/' . $documento);
-    
+
         // Eliminar el registro de la base de datos
         $this->mDocRegistro->eliminar_documento($id);
-    
+
         echo json_encode(['status' => 'success', 'message' => 'Documento eliminado correctamente.']);
     }
 }

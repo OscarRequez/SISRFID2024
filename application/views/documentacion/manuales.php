@@ -7,27 +7,36 @@
         margin: 20px 0;
     }
 
-    #imagen_doc {
-        height: 260px;
-        /* Ajusta el tamaño de la imagen de portada según tus necesidades */
-        object-fit: cover;
-        /* Asegura que la imagen se ajuste correctamente */
+    #card_doc {
+        height: 350px;
+        /* Altura fija para todas las tarjetas con ID card_doc */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 10px;
     }
 
-    #imagen_doc:hover {
+    #card_doc .card-img-top {
+        height: 230px;
+        /* Altura fija para la imagen */
+        object-fit: cover;
+        /* Ajusta la imagen para cubrir el contenedor sin distorsión */
+        transition: transform 0.3s ease;
+    }
+
+    #card_doc .card-img-top:hover {
         transform: scale(1.05);
         /* Aumenta el tamaño de la imagen al pasar el ratón sobre ella */
         opacity: 1.1;
         /* Opcional: Añade un efecto de opacidad para mejorar la visibilidad */
     }
 
-    #card_doc {
-        width: 220px;
-    }
-
-    .card-body {
+    #card_doc .card-body {
         text-align: center;
-        /* Centra el texto en la tarjeta */
+
     }
 </style>
 
@@ -35,7 +44,7 @@
 
 <div class="col py-3">
     <h2>Documentación y Manuales</h2>
-
+    <hr>
     <div class="container my-4">
         <div class="row" id="documentos-container">
             <!-- Aquí se cargarán las tarjetas de documentos mediante AJAX -->
@@ -61,16 +70,16 @@
                 if (response.documentos.length > 0) {
                     $.each(response.documentos, function(index, documento) {
                         var cardHtml = `
-                                <div class="col-md-3">
-                                    <div class="card mb-4" id="card_doc">
-                                        <img id="imagen_doc" src="<?php echo base_url('assets/imagenes/documentos/') . '/'; ?>${documento.imagen_portada}" class="card-img-top" alt="Imagen de portada">
+                                <div class="col-md-3 col-sm-6 mb-4">
+                                    <div class="card" id="card_doc">
+                                        <img id="imagen_doc" class="card-img-top img-thumbnail" src="<?php echo base_url('assets/imagenes/documentos/') . '/'; ?>${documento.imagen_portada}" alt="Imagen de portada">
                                         <div class="card-body">
-                                            <h5 class="card-title">${documento.titulo}</h5>
-                                            <p class="card-text">
-                                                 ${documento.feccre}
-                                            </p>
+                                            <h5 style="font-size:15px" class="card-title">${documento.titulo}</h5>
+                                            <p style="font-size:12px"class="card-text">${documento.feccre}</p>
+                                        </div>
+                                        <div class="card-footer text-center">
                                             <a href="<?php echo base_url('assets/documentos/') . '/'; ?>${documento.documento}" class="btn btn-primary" target="_blank">
-                                                <i class="bi bi-box-arrow-in-up-right"> </i> Leer
+                                                <i class="bi bi-box-arrow-in-up-right"></i>
                                             </a>
                                         </div>
                                     </div>
