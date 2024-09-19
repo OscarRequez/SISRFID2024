@@ -147,7 +147,10 @@ class C_reporte_equipos extends MY_Controller
 
             // Establecer el título del documento
             $pdf->SetTitle('Historial del Equipo');
-
+             // Establecer los márgenes
+             $pdf->SetMargins(10, 20, 10); // Ajusta los márgenes izquierdo, superior y derecho
+             $pdf->SetHeaderMargin(10); // Ajusta el margen inferior del encabezado
+ 
             // Añadir una página
             $pdf->AddPage();
             $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));

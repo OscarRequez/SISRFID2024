@@ -77,6 +77,7 @@ $route['actualizar_usuario'] = 'usuarios/C_usuarios/actualizar';
 $route['cambiar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/cambiar_estado_usuario/$1';
 $route['usuarios_mostrar'] = 'usuarios/C_usuarios/usuarios_mostrar';
 $route['eliminar_estado_usuario/(:num)'] = 'usuarios/C_usuarios/eliminar/$1';
+
 //Roles de usuario
 $route['usuarios/mostrarRoles'] = 'usuarios/C_roles/mostrarRoles';
 $route['permisos/obtenerPermisosUnicos'] = 'usuarios/C_roles/agregarRolCheckbox';
@@ -84,6 +85,7 @@ $route['roles/agregar'] = 'usuarios/C_roles/agregar';
 $route['usuarios/obtenerPermisosDeUnRol'] = 'usuarios/C_roles/obtenerPermisosDeUnRol/$1';// Ruta para obtener permisos de un rol
 $route['checksParaEditar'] = 'usuarios/C_roles/agregarRolCheckbox';
 $route['roles_actualizar_Permisos'] = 'usuarios/C_roles/actualizar_permisos';//PARA ACTUALIZAR LOS PERMISOS DE UN ROL
+
 //AVATARES
 $route['avatars'] = 'usuarios/C_avatars';// Ruta para la página principal de avatares
 $route['avatars_agregar'] = 'usuarios/C_avatars/agregar';// Ruta para agregar un nuevo avatar (puedes usar POST para este método)
@@ -91,13 +93,11 @@ $route['eliminar_avatar'] = 'usuarios/C_avatars/eliminar'; // Ruta para eliminar
 $route['obtener_avatares'] = 'Welcome/obtener_avatares';
 $route['actualizar_avatar'] = 'Welcome/actualizarAvatar';
 
-
 //EQUIPOS 
 $route['equipos'] = 'equipos/C_equipos';// Ruta para la página principal de EQUIPOS
 $route['equipos_mostrar'] = 'equipos/C_equipos/mostrar_equipos';
 $route['obtener_ubicaciones_select'] = 'equipos/C_equipos/obtener_ubicaciones_para_select';
 $route['obtener_tipos_equipo_select'] = 'equipos/C_equipos/obtener_tipos_equipo_select';
-
 $route['agregar_equipo'] = 'equipos/C_equipos/agregar_equipo';
 $route['editar_equipo'] = 'equipos/C_equipos/editar_equipo';
 $route['eliminar_equipo'] = 'equipos/C_equipos/eliminar_equipo';
@@ -126,13 +126,20 @@ $route['asignar_tecnico'] = 'mantenimiento/C_panel_admin/asignar_tecnico';// asi
 $route['confirmar_solicitud'] = 'mantenimiento/C_panel_admin/confirmar_solicitud';//
 $route['mantenimiento_reporte_fechas'] = 'mantenimiento/C_panel_admin/mantenimiento_reporte_fechas';//
 
-
 //TECNICOS
 $route['tecnicos'] = 'mantenimiento/C_tecnicos';// Ruta
 $route['obtener_tareas'] = 'mantenimiento/C_tecnicos/obtener_tareas';// Ruta
 $route['marcar_tarea_hecha'] = 'mantenimiento/C_tecnicos/marcar_tarea_hecha';// Ruta
 $route['generar_reporte_tareas'] = 'mantenimiento/C_tecnicos/generar_reporte_tareas';
 
+//DOCUMENTACION
+$route['registro'] = 'documentacion/C_doc_registro';// Ruta
+$route['obtener_documentos'] = 'documentacion/C_doc_registro/obtener_documentos';// Ruta
+$route['agregar_documento'] = 'documentacion/C_doc_registro/agregar_documento';// Ruta
+$route['editar_documento'] = 'documentacion/C_doc_registro/editar_documento';// Ruta
+$route['eliminar_documento'] = 'documentacion/C_doc_registro/eliminar_documento';// Ruta
+//DOCUMENTACION solo vista
+$route['manuales'] = 'documentacion/C_manuales';// Ruta
 
 
 

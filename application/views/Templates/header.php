@@ -87,7 +87,7 @@
         /* Efecto hover para los enlaces del menú */
         /* COLORES TEMAS */
         /* Tema Azul - por defecto */
-        .default-theme .bg-primary,
+        .default-theme .bg-primary,   
         .default-theme .btn-primary {
             background-color: #007bff !important;
             border-color: #007bff !important;
@@ -95,6 +95,10 @@
 
         .default-theme .text-primary {
             color: #007bff !important;
+        }
+
+        .default-theme .border-primary{
+            border-color: #007bff !important;
         }
 
         .default-theme #menu a.nav-link:hover {
@@ -108,6 +112,10 @@
         .green-theme .bg-primary,
         .green-theme .btn-primary {
             background-color: #28a745 !important;
+            border-color: #28a745 !important;
+        }
+
+        .green-theme  .border-primary{
             border-color: #28a745 !important;
         }
 
@@ -130,6 +138,10 @@
             border-color: #fd7e14 !important;
         }
 
+        .orange-theme   .border-primary{
+            border-color: #fd7e14 !important;
+        }
+
         .orange-theme .text-primary {
             color: #fd7e14 !important;
         }
@@ -148,6 +160,11 @@
             background-color: #8747E7 !important;
             border-color: #8747E7 !important;
         }
+
+        .red-theme   .border-primary{
+            border-color: #8747E7 !important;
+        }
+
 
         .red-theme .text-primary {
             color: #8747E7 !important;
@@ -402,7 +419,7 @@
                                         <ul class="collapse nav flex-column ms-1" id="submenu4" data-bs-parent="#menu">
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'documentacion', 'manuales')): ?>
                                                 <li class="w-100">
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('manuales'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-files"></i>
                                                         <span class="d-none d-sm-inline">Manuales</span>
                                                     </a>
@@ -411,7 +428,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'documentacion', 'registro')): ?>
                                                 <li>
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('registro'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-clipboard2-plus"></i>
                                                         <span class="d-none d-sm-inline">Registro</span>
                                                     </a>

@@ -47,14 +47,14 @@ class C_panel_Admin extends MY_Controller
         $cantidad = $this->input->post('cantidad');
         $buscar = $this->input->post('filtro'); // Obtén el término de búsqueda si está presente
         $offset = ($pagina - 1) * $cantidad;
-    
+
         // Llama al modelo con el término de búsqueda opcional
         $data['solicitudes'] = $this->mPanelAdmin->obtenerSolicitudesAdmin($offset, $cantidad, $buscar);
         $data['totalregistros'] = $this->mPanelAdmin->contarSolicitudesAdmin($buscar);
-    
+
         echo json_encode($data);
     }
-    
+
 
     public function obtener_tecnicos()
     {
@@ -195,6 +195,9 @@ class C_panel_Admin extends MY_Controller
 
                 // Establecer el título del documento
                 $pdf->SetTitle('Reporte de Mantenimiento');
+                // Establecer los márgenes
+                $pdf->SetMargins(10, 20, 10); // Ajusta los márgenes izquierdo, superior y derecho
+                $pdf->SetHeaderMargin(10); // Ajusta el margen inferior del encabezado
 
                 // Añadir una página
                 $pdf->AddPage();

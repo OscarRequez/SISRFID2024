@@ -145,6 +145,9 @@ class C_tecnicos extends MY_Controller
 
             // Establecer el título del documento
             $pdf->SetTitle('Reporte de la Tarea');
+             // Establecer los márgenes
+             $pdf->SetMargins(10, 20, 10); // Ajusta los márgenes izquierdo, superior y derecho
+             $pdf->SetHeaderMargin(10); // Ajusta el margen inferior del encabezado
 
             // Añadir una página
             $pdf->AddPage();
