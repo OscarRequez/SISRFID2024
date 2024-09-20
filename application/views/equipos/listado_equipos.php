@@ -9,10 +9,11 @@
 </style>
 
 <div class="col py-3">
+
     <div class="row">
         <div class="col-md-12">
-            <h3 class="mt-4">Listado de Equipos Médicos</h3>
-
+        <h3 class="mt-4">Listado de Equipos Médicos</h3>
+        <hr>
             <!-- Input de búsqueda -->
             <div class="form-group">
                 <input type="text" id="buscar" class="form-control" placeholder="Buscar por Nombre, RFID, Codigo o Ubicación">

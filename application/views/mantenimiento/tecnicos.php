@@ -10,7 +10,7 @@
 
 <div class="col py-3">
     <h2>Tareas de Mantenimiento</h2>
-    <br>
+<hr>
     <!-- Tabla para mostrar las solicitudes -->
     <div class="table-responsive">
         <table class="table table-striped table-responsive">
@@ -46,7 +46,7 @@
 <div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="imagenModalLabel">Imagen del Equipo</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -63,7 +63,7 @@
 <div class="modal fade" id="hechoModal" tabindex="-1" aria-labelledby="hechoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="hechoModalLabel">Marcar Tarea como Hecha</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

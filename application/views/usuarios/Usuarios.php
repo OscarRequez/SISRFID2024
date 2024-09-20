@@ -12,6 +12,8 @@
 <!-- Botón para agregar nuevo usuario -->
 <div class="col py-3">
     <div class="row">
+    <h3 class="mb-3">Registros de Usuarios</h3>
+        <hr>
         <!-- Columna para el botón de agregar usuario -->
         <div class="col-md-6 py-3">
             <button type="button" class="btn mb-3 bg-primary text-white" data-bs-toggle="modal" data-bs-target="#addUserModal">
@@ -32,7 +34,7 @@
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header  bg-primary text-white">
                     <h5 class="modal-title" id="addUserModalLabel">Agregar Nuevo Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -118,7 +120,7 @@
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header  bg-primary text-white">
                     <h5 class="modal-title" id="editModalLabel">Editar Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>

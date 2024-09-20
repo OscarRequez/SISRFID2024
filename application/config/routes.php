@@ -141,6 +141,16 @@ $route['eliminar_documento'] = 'documentacion/C_doc_registro/eliminar_documento'
 //DOCUMENTACION solo vista
 $route['manuales'] = 'documentacion/C_manuales';// Ruta
 
+//rfid
+$route['lectura'] = 'rfid/C_lectura';// Ruta //DOCUMENTACION solo vista
+$route['crear_tarea_lectura'] = 'rfid/C_lectura/crear_tarea_lectura';// Ruta
+$route['tareas_lectura_obtener'] = 'rfid/C_lectura/tareas_lectura_obtener';// Ruta
+$route['obtener_operarios'] = 'rfid/C_lectura/obtener_operarios';// Ruta
+$route['asignar_operario'] = 'rfid/C_lectura/asignar_operario';// Ruta
+
+
+
+
 
 
 

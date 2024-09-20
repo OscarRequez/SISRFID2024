@@ -9,7 +9,7 @@
 <div class="container py-3">
     <div class="row">
         <h3 class="mb-3">Reportes de Equipos</h3>
-
+<hr>
         <!-- Filtros de Búsqueda -->
         <div class="mb-4">
             <h5>Filtros de Búsqueda</h5>

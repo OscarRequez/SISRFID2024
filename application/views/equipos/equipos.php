@@ -12,7 +12,7 @@
 <div class="col py-3">
     <div class="row">
         <h3 class="mb-3">Gestión de Equipos Médicos</h3>
-
+<hr>
         <!-- Botón para abrir el modal -->
         <div class="col py-3">
             <div class="row">

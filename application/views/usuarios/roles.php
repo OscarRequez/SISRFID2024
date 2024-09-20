@@ -43,6 +43,8 @@
 <div class="col py-3">
 
     <div class="row">
+    <h3 class="mb-3">Lista de Roles de Usuario</h3>
+    <hr>
         <div class="col py-3">
             <div class="row">
                 <div class="col-md-6">
@@ -59,7 +61,7 @@
     <div class="modal fade" id="agregarRolModal" tabindex="-1" aria-labelledby="agregarRolModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header  bg-primary text-white">
                     <h5 class="modal-title" id="agregarRolModalLabel">Agregar Nuevo Rol</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -119,7 +121,7 @@
 
 
     <div class="row">
-        <h3 class="mb-3">Lista de Roles de Usuario</h3>
+
         <div class="table table-responsive">
             <table class="table table-hover table-bordered table-responsive">
                 <thead class="bg-primary text-white">

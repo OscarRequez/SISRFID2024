@@ -10,6 +10,7 @@
 
 <div class="col py-3">
     <h2>Solicitudes de Mantenimiento</h2>
+    <hr>
     <div class="row">
         <div class="col-md-6">
             <!-- Botón para abrir el modal de nueva solicitud -->
@@ -51,7 +52,7 @@
 <div class="modal fade" id="nuevaSolicitudModal" tabindex="-1" aria-labelledby="nuevaSolicitudModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="nuevaSolicitudModalLabel">Nueva Solicitud</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

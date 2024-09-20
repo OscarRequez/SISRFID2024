@@ -16,10 +16,14 @@
 
 <style>
     .card-img-top {
-        object-fit: cover; /* Ajusta la imagen para cubrir el contenedor sin distorsión */
-        width: 100%; /* Hace que la imagen se ajuste al ancho del contenedor */
-        height: 150px; /* Ajusta la altura fija para todas las imágenes */
-        border-radius: 50%; /* Hace que la imagen sea circular */
+        object-fit: cover;
+        /* Ajusta la imagen para cubrir el contenedor sin distorsión */
+        width: 100%;
+        /* Hace que la imagen se ajuste al ancho del contenedor */
+        height: 150px;
+        /* Ajusta la altura fija para todas las imágenes */
+        border-radius: 50%;
+        /* Hace que la imagen sea circular */
     }
 
     .card-body {
@@ -29,23 +33,30 @@
     }
 
     .card-title {
-        text-transform:lowercase; /* Convierte todo el texto a mayúsculas */
+        text-transform: lowercase;
+        /* Convierte todo el texto a mayúsculas */
     }
 </style>
 
 
 <div class="col py-3">
-    <h3 class="col py-3">Seccion de Avatars</h3>
+    <h3>Seccion de Avatars</h3>
+    <hr>
     <!-- Botón para abrir el modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAvatarModal">
-        Agregar Nuevo Avatar
-    </button>
+
+        <div class="row">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAvatarModal">
+                Agregar Avatar <i class="bi bi-emoji-smile"></i>
+             </button>
+                <br> <br> </div>
+        </div>
 
     <!-- Modal para agregar un nuevo avatar -->
     <div class="modal fade" id="addAvatarModal" tabindex="-1" aria-labelledby="addAvatarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addAvatarModalLabel">Agregar Nuevo Avatar</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -68,7 +79,8 @@
 
 
     <!-- Galería de avatares existentes -->
-    <h4><br>Avatares Existentes</h4>
+
+
     <div class="row">
         <?php foreach ($avatares as $avatar): ?>
             <div class="col-md-2 mb-3">
@@ -87,7 +99,6 @@
             </div>
         <?php endforeach; ?>
     </div>
-
 </div>
 <script>
     // Función para mostrar SweetAlert2 antes de eliminar

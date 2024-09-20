@@ -382,7 +382,7 @@
                                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'lectura')): ?>
                                                 <li class="w-100">
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('lectura'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-check2-square"></i>
                                                         <span class="d-none d-sm-inline">Lectura</span>
                                                     </a>
@@ -391,7 +391,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'registro')): ?>
                                                 <li>
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('registro'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-clipboard2-plus"></i>
                                                         <span class="d-none d-sm-inline">Registro</span>
                                                     </a>
@@ -400,7 +400,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'reportes')): ?>
                                                 <li>
-                                                    <a href="#" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('reportes'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-journal-text"></i>
                                                         <span class="d-none d-sm-inline">Reportes</span>
                                                     </a>
