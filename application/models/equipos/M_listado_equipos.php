@@ -42,14 +42,17 @@ class M_listado_equipos extends CI_Model
     // Contar el total de registros con búsqueda opcional
     public function count_all_equipos($buscar = '')
     {
+        $this->db->select('equipos_medicos.*, ubicaciones.nombre as ubicacion_nombre');
         $this->db->from('equipos_medicos');
+        $this->db->join('ubicaciones', 'ubicaciones.id = equipos_medicos.ubicacion_id', 'left');
 
         if ($buscar) {
             $this->db->group_start();
-            $this->db->like('nombre', $buscar);
-            $this->db->or_like('numero_serie', $buscar);
-            $this->db->or_like('tag_rfid_id', $buscar);
-            $this->db->or_like('ubicacion_id', $buscar);
+            $this->db->like('equipos_medicos.nombre', $buscar);
+            $this->db->or_like('equipos_medicos.numero_serie', $buscar);
+            $this->db->or_like('equipos_medicos.tag_rfid_id', $buscar);
+            $this->db->or_like('equipos_medicos.ubicacion_id', $buscar);
+            $this->db->or_like('ubicaciones.nombre', $buscar);
             $this->db->group_end();
         }
 

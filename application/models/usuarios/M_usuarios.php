@@ -12,8 +12,8 @@ class M_usuarios extends CI_Model
     {
         // Filtrar por búsqueda si se proporciona
         if (!empty($buscar)) {
-            $this->db->like('nombre', $buscar);
-            $this->db->or_like('email', $buscar);
+            $this->db->like('usuarios.nombre', $buscar);
+            $this->db->or_like('usuarios.cedula', $buscar);
         }
 
         // Filtrar por estado 1 o 0
@@ -29,7 +29,7 @@ class M_usuarios extends CI_Model
         // Filtrar por búsqueda si se proporciona
         if (!empty($buscar)) {
             $this->db->like('usuarios.nombre', $buscar);
-            $this->db->or_like('usuarios.ci', $buscar);
+            $this->db->or_like('usuarios.cedula', $buscar);
         }
 
         // Filtrar por estado 1 o 0 donde 1 activo 0 inactio y 3 es eliminado para que no se muestre en la tabla
