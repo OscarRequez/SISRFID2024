@@ -141,13 +141,21 @@ $route['eliminar_documento'] = 'documentacion/C_doc_registro/eliminar_documento'
 //DOCUMENTACION solo vista
 $route['manuales'] = 'documentacion/C_manuales';// Ruta
 
-//rfid
-$route['lectura'] = 'rfid/C_lectura';// Ruta //DOCUMENTACION solo vista
-$route['crear_tarea_lectura'] = 'rfid/C_lectura/crear_tarea_lectura';// Ruta
-$route['tareas_lectura_obtener'] = 'rfid/C_lectura/tareas_lectura_obtener';// Ruta
-$route['obtener_operarios'] = 'rfid/C_lectura/obtener_operarios';// Ruta
-$route['asignar_operario'] = 'rfid/C_lectura/asignar_operario';// Ruta
+//panel RFID
+$route['registro'] = 'rfid/C_registro_tareas';// Ruta //DOCUMENTACION solo vista
+$route['crear_tarea_lectura'] = 'rfid/C_registro_tareas/crear_tarea_lectura';// Ruta
+$route['tareas_asignadas_obtener'] = 'rfid/C_registro_tareas/tareas_asignadas_obtener';// Ruta
+$route['obtener_operarios'] = 'rfid/C_registro_tareas/obtener_operarios';// Ruta
+$route['asignar_operario'] = 'rfid/C_registro_tareas/asignar_operario';// Ruta
+$route['confirmar_tarea_lectura_admin'] = 'rfid/C_registro_tareas/confirmar_tarea_lectura_admin';// Ruta
 
+
+//LECTURA RFID
+$route['lectura'] = 'rfid/C_lectura';// Ruta //DOCUMENTACION solo vista
+$route['tareas_lectura_obtener'] = 'rfid/C_lectura/tareas_lectura_obtener';// Ruta
+$route['procesar_lectura_tags'] = 'rfid/C_lectura/procesar_lectura_tags';// Ruta
+$route['confirmar_tarea_lectura'] = 'rfid/C_lectura/confirmar_tarea_lectura';// Ruta
+$route['generar_reporte_tarea_lectura'] = 'rfid/C_lectura/generar_reporte_tarea_lectura';// Ruta
 
 
 

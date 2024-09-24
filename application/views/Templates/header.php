@@ -87,7 +87,7 @@
         /* Efecto hover para los enlaces del menú */
         /* COLORES TEMAS */
         /* Tema Azul - por defecto */
-        .default-theme .bg-primary,   
+        .default-theme .bg-primary,
         .default-theme .btn-primary {
             background-color: #007bff !important;
             border-color: #007bff !important;
@@ -97,7 +97,7 @@
             color: #007bff !important;
         }
 
-        .default-theme .border-primary{
+        .default-theme .border-primary {
             border-color: #007bff !important;
         }
 
@@ -115,7 +115,7 @@
             border-color: #28a745 !important;
         }
 
-        .green-theme  .border-primary{
+        .green-theme .border-primary {
             border-color: #28a745 !important;
         }
 
@@ -138,7 +138,7 @@
             border-color: #fd7e14 !important;
         }
 
-        .orange-theme   .border-primary{
+        .orange-theme .border-primary {
             border-color: #fd7e14 !important;
         }
 
@@ -161,7 +161,7 @@
             border-color: #8747E7 !important;
         }
 
-        .red-theme   .border-primary{
+        .red-theme .border-primary {
             border-color: #8747E7 !important;
         }
 
@@ -275,7 +275,7 @@
         }
     </style>
 
-    
+
 
     <div class="container-fluid">
         <div class="row">
@@ -283,12 +283,12 @@
                 <div class="row flex-nowrap">
                     <!--AQUI ESTA EL ASIDE-->
                     <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark ">
-                          <!--aside fijo sticky top-->
+                        <!--aside fijo sticky top-->
                         <div class="d-flex sticky-top flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                             <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                                 <span class="fs-5 d-none d-sm-inline">SISAMED <?php echo date('Y'); ?></span>
                             </a>
-                           
+
                             <!--  <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                                 <span class="fs-5 d-none d-sm-inline"id="currentDateTime"></span>
                             </a>-->
@@ -380,6 +380,15 @@
                                             <span class="ms-1 d-none d-sm-inline">RFID</span>
                                         </a>
                                         <ul class="collapse nav flex-column ms-1" id="submenu3" data-bs-parent="#menu">
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'registro')): ?>
+                                                <li>
+                                                    <a href="<?php echo site_url('registro'); ?>" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-clipboard2-plus"></i>
+                                                        <span class="d-none d-sm-inline">Panel RFID</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'lectura')): ?>
                                                 <li class="w-100">
                                                     <a href="<?php echo site_url('lectura'); ?>" class="nav-link px-0">
@@ -389,14 +398,6 @@
                                                 </li>
                                             <?php endif; ?>
 
-                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'registro')): ?>
-                                                <li>
-                                                    <a href="<?php echo site_url('registro'); ?>" class="nav-link px-0">
-                                                        <i class="fs-4 bi bi-clipboard2-plus"></i>
-                                                        <span class="d-none d-sm-inline">Registro</span>
-                                                    </a>
-                                                </li>
-                                            <?php endif; ?>
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'reportes')): ?>
                                                 <li>

@@ -9,39 +9,12 @@
 <div class="col py-3">
     <h2 class="text-center">Lectura RFID - Control de Equipos Médicos</h2>
     <hr>
-
-    <div class="row">
-        <div class="col-md-6">
-            <!-- Botón para abrir el modal de nueva solicitud -->
-            <button type="button" class="btn mb-3 bg-primary text-white" data-bs-toggle="modal" data-bs-target="#nuevaSolicitudModal">
-                <i class="bi bi-clipboard2-plus"></i> Nueva Solicitud
-            </button>
-        </div>
-    </div>
-
     <!-- Formularios en línea -->
     <div class="row">
-        <!-- Formulario de filtro por fecha 
-        <form id="filtroFechasMantenimiento" class="col-lg-6 col-md-12 d-flex align-items-end mb-4">
-            <div class="row w-100">
-                <div class="col-md-4">
-                    <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                    <input type="date" class="form-control" id="fechaInicio" name="fecha_inicio" required>
-                </div>
-                <div class="col-md-4">
-                    <label for="fechaFin" class="form-label">Fecha Fin</label>
-                    <input type="date" class="form-control" id="fechaFin" name="fecha_fin" required>
-                </div>
-                <div class="col-md-4 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-file-earmark-pdf"></i> Reporte</button>
-                </div>
-            </div>
-        </form> -->
-
         <!-- Formulario de búsqueda -->
         <form id="formBuscarSolicitudes" class="col-lg-6 col-md-12 d-flex align-items-end mb-4">
             <div class="input-group w-100">
-                <input type="text" class="form-control" id="buscarTexto" placeholder="ID de tarea o Ubicacion">
+                <input type="text" class="form-control" id="buscarTexto" placeholder="Buscar ID de tarea o Ubicacion">
                 <button class="btn btn-primary" type="submit">Buscar</button>
             </div>
         </form>
@@ -57,12 +30,13 @@
                     <th>Descripción</th>
                     <th>Tipo</th>
                     <th>Total Equipos</th>
+                    <th>Leídos</th>
+                    <th>Por leer</th>
+                    <th>Fuera de Área</th>
                     <th>Fecha de Solicitud</th>
                     <th>Área de Solicitud</th>
-                    <th>Tec. Asignado</th>
                     <th>Estado</th>
                     <th>Accion</th>
-
                 </tr>
             </thead>
             <tbody id="tareasCreadas">
@@ -77,160 +51,57 @@
     </div>
 </div>
 
-
-
-
-<!-- Modal para agregar nueva solicitud -->
-<div class="modal fade" id="nuevaSolicitudModal" tabindex="-1" aria-labelledby="nuevaSolicitudModalLabel" aria-hidden="true">
+<!-- Modal de Lectura -->
+<div class="modal fade" id="modalLectura" tabindex="-1" aria-labelledby="modalLecturaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="nuevaSolicitudModalLabel">Nueva Tarea</h5>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLecturaLabel">Lectura de Tarea</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formNuevaTareaLectura">
+                <form id="formLectura">
                     <div class="mb-3">
-                        <label for="ubicacion" class="form-label">Unidad</label>
-                        <select id="ubicacion" name="unidad" class="form-control" required>
-                            <option value="" disabled selected>Seleccionar ubicación</option>
-                        </select>
+                        <label for="lecturaDatos" class="form-label">Ingrese los datos de la lectura:</label>
+                        <textarea class="form-control" id="lecturaDatos" rows="3" required></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label for="tipo_tarea" class="form-label">Tipo de Tarea</label>
-                        <select id="tipo_tarea" name="tipo_tarea" class="form-control" required>
-                            <option value="Control">Control</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="descripcion" class="form-label">Descripción del Problema</label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required></textarea>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Ingresar Datos</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-<!-- Modal para asignar técnico -->
 
-<div class="modal fade" id="nuevaAsignacion" tabindex="-1" aria-labelledby="nuevaAsignacionLabel" aria-hidden="true">
+<!-- Modal de Confirmación de Tarea -->
+<div class="modal fade" id="modalConfirmarTarea" tabindex="-1" aria-labelledby="modalConfirmarTareaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="nuevaAsignacionLabel">Asignar Operario</h5>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmarTareaLabel">Confirmar Tarea</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formNuevaAsignacion">
-                    <input type="hidden" id="solicitudId" name="solicitud_id">
+                <form id="formConfirmarTarea">
                     <div class="mb-3">
-                        <label for="operarios" class="form-label">Operario</label>
-                        <select id="operarios" name="operarios" class="form-control" required>
-                            <option value="" disabled selected>Seleccionar Operario</option>
-                            <!-- Opciones del técnico se llenarán aquí -->
-                        </select>
+                        <label for="observacionTarea" class="form-label">Observación:</label>
+                        <textarea class="form-control" id="observacionTarea" rows="3" placeholder="Ingrese las observaciones de la tarea"></textarea>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Asignar</button>
-                    </div>
+                    <input type="hidden" id="idTareaConfirmar"> <!-- Campo oculto para el ID de la tarea -->
                 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnEnviarConfirmacion">Confirmar</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <script>
     // Definir paginaActual en el alcance global
     let paginaActual = 1;
 
-    // Manejar envío del formulario con AJAX
-    $('#formNuevaTareaLectura').on('submit', function(e) {
-        e.preventDefault(); // Prevenir el envío normal del formulario
-
-        $.ajax({
-            url: "<?php echo site_url('crear_tarea_lectura'); ?>",
-            type: "POST",
-            data: $(this).serialize(), // Serializar los datos del formulario
-            dataType: "json",
-            success: function(response) {
-                if (response.status === 'success') {
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: response.message,
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar'
-                    }).then(function() {
-                        $('#nuevaSolicitudModal').modal('hide');
-                        // Recargar la tabla de solicitudes
-                        cargarSolicitudes(paginaActual);
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error',
-                        text: response.message,
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-            },
-            error: function() {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al procesar la solicitud.',
-                    icon: 'error',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        });
-    });
-
-    // Función para cargar la lista de técnicos desde el servidor
-    function cargaroperarios() {
-        $.ajax({
-            url: "<?php echo site_url('obtener_operarios'); ?>", // URL del endpoint para obtener técnicos
-            type: "GET", // Método HTTP GET
-            dataType: "json", // Tipo de datos esperado en la respuesta
-            success: function(response) {
-                var opciones = '<option value="" disabled selected>Seleccionar Operario</option>';
-                // Crear las opciones del select a partir de la respuesta
-                $.each(response.operarios, function(key, tecnico) {
-                    opciones += '<option value="' + tecnico.id + '">' + tecnico.nombre + '</option>';
-                });
-                $('#operarios').html(opciones); // Insertar las opciones en el select
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al cargar los técnicos:", status, error);
-                $("#operarios").html('<option value="">Error al cargar Operario</option>'); // Mostrar mensaje de error
-            }
-        });
-    }
-
-    // Función para cargar ubicaciones
-    function cargarUbicaciones() {
-        $.ajax({
-            url: "<?php echo site_url('obtener_ubicaciones_select'); ?>",
-            type: "GET",
-            dataType: "json",
-
-            success: function(response) {
-                var opciones = '<option value="" disabled selected>Seleccionar ubicación</option>';
-                $.each(response.ubicaciones, function(key, ubicacion) {
-                    opciones += '<option value="' + ubicacion.id + '">' + ubicacion.nombre + '</option>';
-                });
-                $('#ubicacion').html(opciones);
-            },
-            error: function(xhr, status, error) {
-                console.error("Error al cargar las ubicaciones:", status, error);
-                $("#ubicacion").html('<option value="">Error al cargar ubicaciones</option>');
-            }
-        });
-    }
 
     // Definir la función cargarSolicitudes fuera del $(document).ready para acceso global
     function cargarSolicitudes(pagina = 1, cantidad = 5, filtro = '') {
@@ -256,53 +127,57 @@
                         '<td>' + item.id + '</td>' + // ID de la tarea
                         '<td>' + item.descripcion_tarea + '</td>' + // Descripción de la tarea
                         '<td>' + item.tipo_tarea + '</td>' + // Tipo de tarea
-                        '<td>' + item.total_equipos + '</td>' + // Tipo de tarea
+                        '<td style="text-align: center;">' + item.total_equipos + '</td>' + // Total de equipos
+                        '<td style="text-align: center;">' + item.total_leidos + '</td>' + // Total leídos
+                        '<td style="text-align: center;">' + item.total_no_leidos + '</td>' + // Total no leídos
+                        '<td style="text-align: center;">' + item.total_otros + '</td>' + // Total otros
                         '<td>' + item.feccre + '</td>' + // Fecha de creación de la tarea
                         '<td>' + item.nombre_ubicacion + '</td>' + // Ubicación de la tarea
-                        '<td style="background-color: ' + (item.nombre_operario ? '' : '#DF5562') + '; color: ' + (item.nombre_operario ? '' : '#721c24') + ';">' +
-                        (item.nombre_operario ? item.nombre_operario : '') + // Operario asignado
-                        '</td>' +
                         '<td><center><i class="bi ' +
                         (item.estado == 1 ? 'fs-4 bi-send-fill ' : // Estado 1: Solicitud enviada
-                            item.estado == 2 ? 'fs-4 bi bi-pc-display-horizontal' : // Estado 2: En Mantenimiento
-                            item.estado == 3 ? 'fs-4 bi-check-circle-fill' : // Estado 3: Completado
-                            item.estado == 4 ? 'fs-4 bi-question-circle' : // Estado 4: Por Confirmar
+                            item.estado == 2 ? 'fs-4 bi bi-pc-display-horizontal' : // Estado 2: En Proceso"
+                            item.estado == 3 ? 'fs-4 bi-check-circle' : // Estado 3: Completado
+                            item.estado == 4 ? 'fs-4 bi-check-circle-fill' : // Estado 4: Por Confirmar
                             'fs-4 bi-question-circle') + // Estado desconocido
                         '" style="color: ' +
                         (item.estado == 1 ? '#1F3BB6' : // Color para estado "Solicitado"
-                            item.estado == 2 ? '#0a1039' : // Color para estado "En Mantenimiento"
-                            item.estado == 3 ? '#05AD30' : // Color para estado "Completado"
-                            item.estado == 4 ? '#FFC107' : // Color para estado "Por Confirmar"
+                            item.estado == 2 ? '#0a1039' : // Color para estado "En Proceso"
+                            item.estado == 3 ? '#05AD30 ' : // Color para estado "Por Confirmar"
+                            item.estado == 4 ? '#2aa932' : // Color para estado "Completado"
                             '#000') + '; cursor: ' +
-                        (item.estado == 1 || item.estado == 2 || item.estado == 4 ? 'pointer' : 'default') + ';" ' +
+                        (item.estado == 1 || item.estado == 2 || item.estado == 3 ? 'pointer' : 'default') + ';" ' +
                         'title="' + (item.estado == 1 ? 'Solicitado' :
                             item.estado == 2 ? 'En Proceso' :
-                            item.estado == 3 ? 'Completado' :
-                            item.estado == 4 ? 'Por Confirmar' :
+                            item.estado == 3 ? 'Por Confirmar' :
+                            item.estado == 4 ? 'Completado' :
                             'Desconocido') +
                         '"></i></center></td>' +
 
                         '<td><center>' +
                         '<div style="display: flex; gap: 5px; justify-content: center;">' +
-                        '<button class="btn btn-success btn-sm nuevaAsignacion" ' +
-                        'data-bs-toggle="modal" data-bs-target="#nuevaAsignacion" ' +
+                        // Botón Lectura
+                        '<button title="Lectura de RFID" class="btn btn-success btn-sm nuevaLectura" ' +
+                        'data-bs-toggle="modal" data-bs-target="#modalLectura" ' + // Abre el modal de lectura
                         'data-id="' + item.id + '" ' +
-                        'data-nombre="' + item.descripcion_tarea + '" ' +
+                        'data-ubicacion_nombre="' + item.nombre_ubicacion + '" ' +
+                        'data-ubicacion="' + item.ubicacion_tarea + '" ' +
                         (item.estado == 3 || item.estado == 4 ? 'disabled' : '') + '>' +
-                        'Asignar</button>' +
+                        '<i title="Lectura de RFID" class="bi bi-upc-scan"></i></button>' +
+                        // Botón Reporte PDF
                         '<button class="btn btn-danger btn-sm reportePDF ' +
                         (item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' +
                         'data-id="' + item.id + '">' +
-                        '<i class="bi bi-file-earmark-pdf"></i>' +
-                        '</button>' +
+                        '<i class="bi bi-file-earmark-pdf" title="Generar Reporte PDF"></i></button>' +
+                        // Botón Confirmar
                         '<button class="btn btn-primary btn-sm confirmar ' +
-                        (item.estado == 4 ? '' : 'disabled') + '" ' +
-                        'title="Confirmar" data-id="' + item.id + '" data-equipo-id="' + item.equipo_id + '">' +
-                        '<i class="bi bi-check-circle"></i>' +
-                        '</button>' +
+                        (item.estado == 1 || item.estado == 2 ? '' : 'disabled') + '" ' +
+                        'data-bs-toggle="modal" data-bs-target="#modalConfirmarTarea" ' +
+                        'data-id="' + item.id + '">' +
+                        '<i class="bi bi-check-circle"></i></button>' +
                         '</div>' +
                         '</center></td>' +
                         '</tr>';
+
                 });
 
                 $("#tareasCreadas").html(filas);
@@ -380,13 +255,25 @@
     }
 
 
-
     $(document).ready(function() {
-        // Cargar ubicaciones cuando se abre el modal
-        $('#nuevaSolicitudModal').on('show.bs.modal', function() {
-            cargarUbicaciones();
+
+/*
+
+        Swal.fire({
+            title: "Bienvenido al modulo de tareas RFID.",
+            width: 300,
+            padding: "3em",
+            color: "#716add",
+            background: "#fff url(/images/trees.png)",
+            backdrop: `
+                    rgba(0,0,123,0.4)
+                    url("assets/imagenes/gving-crypto.gif")
+                    left top
+                    no-repeat
+                `
         });
 
+*/
         // Cargar solicitudes iniciales
         cargarSolicitudes(paginaActual);
 
@@ -400,147 +287,7 @@
             }
         });
 
-        // Manejar inserción de nuevo registro y recargar la tabla
-        $('#insertarSolicitud').on('submit', function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: "<?php echo site_url('tareas_lectura_insertar'); ?>",
-                type: "POST",
-                data: $(this).serialize(),
-                success: function(response) {
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: response.message,
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar'
-                    }).then(function() {
-                        $('#nuevaSolicitudModal').modal('hide');
-                        cargarSolicitudes(paginaActual);
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error en la inserción:", status, error);
-                }
-            });
-        });
 
-        // Manejar clic en el botón "Asignar" en la tabla de solicitudes
-        $(document).on('click', '.nuevaAsignacion', function() {
-            var solicitudId = $(this).data('id');
-            var equipoNombre = $(this).data('nombre');
-
-            // Rellenar los campos ocultos del formulario en el modal
-            $('#solicitudId').val(solicitudId);
-
-            // Opcional: Si quieres mostrar el nombre del equipo en algún lugar del modal
-            $('#nuevaAsignacionLabel').text('Asignar Técnico para: ' + equipoNombre);
-
-            // Cargar la lista de técnicos en el select del modal
-            cargaroperarios();
-        });
-
-        // Manejar el envío del formulario para asignar el técnico
-        $('#formNuevaAsignacion').on('submit', function(e) {
-            e.preventDefault(); // Evitar el comportamiento predeterminado del formulario
-
-            var solicitudId = $('#solicitudId').val(); // Obtener el ID de la solicitud
-            var operarioId = $('#operarios').val(); // Obtener el ID del técnico seleccionado
-
-            // Verificar que se haya seleccionado un técnico
-            if (!operarioId) {
-                alert('Por favor, seleccione un técnico.');
-                return;
-            }
-
-            // Enviar la solicitud de asignación de técnico
-            $.ajax({
-                url: "<?php echo site_url('asignar_operario'); ?>", // URL del endpoint para asignar el técnico
-                type: "POST", // Método HTTP POST
-                data: {
-                    solicitud_id: solicitudId,
-                    operario_id: operarioId
-                },
-                dataType: "json", // Tipo de datos esperado en la respuesta
-                success: function(response) {
-                    if (response.status === 'success') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: response.message,
-                            confirmButtonText: 'Aceptar'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $('#nuevaAsignacion').modal('hide'); // Cerrar el modal
-                                cargarSolicitudes(paginaActual); // Recargar la lista de solicitudes
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error al asignar técnico:", status, error);
-                    alert('Error al asignar el técnico. Inténtalo de nuevo.'); // Mostrar mensaje de error
-                }
-            });
-        });
-
-//todavia por adaptar a este modulos
-        $(document).on('click', '.confirmar', function() {
-            var solicitudId = $(this).data('id');
-            var equipoId = $(this).data('equipo-id');
-
-            // Llamada AJAX para confirmar la solicitud
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Estás a punto de confirmar esta solicitud.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, confirmar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "<?php echo site_url('confirmar_solicitud'); ?>", // Endpoint para confirmar
-                        type: "POST",
-                        data: {
-                            solicitud_id: solicitudId,
-                            equipo_id: equipoId
-                        },
-                        dataType: "json",
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                Swal.fire(
-                                    '¡Confirmado!',
-                                    response.message,
-                                    'success'
-                                );
-                                // Recargar la tabla o actualizar la página si es necesario
-                                cargarSolicitudes(paginaActual); // Si tienes una función para recargar la tabla
-                            } else {
-                                Swal.fire(
-                                    'Error',
-                                    response.message,
-                                    'error'
-                                );
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire(
-                                'Error',
-                                'Hubo un problema al confirmar la solicitud.',
-                                'error'
-                            );
-                        }
-                    });
-                }
-            });
-        });
 
         $('#formBuscarSolicitudes').on('submit', function(e) {
             e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
@@ -562,6 +309,152 @@
             }
         });
 
+        // MODAL DE NUEVA LECTURA
+        $(document).on('click', '.nuevaLectura', function() {
+            var tareaId = $(this).data('id');
+            var ubicacionTarea = $(this).data('ubicacion_nombre');
+
+            // Actualiza el título del modal con el nombre de la tarea
+            $('#modalLecturaLabel').text('LECTURA RFID ' + ubicacionTarea);
+
+            // Limpiar el campo de textarea
+            $('#lecturaDatos').val('');
+
+            // Manejar la acción del botón de "Ingresar Datos"
+            $('#formLectura').off('submit').on('submit', function(e) {
+                e.preventDefault();
+
+                var datosLectura = $('#lecturaDatos').val();
+
+                // Enviar los datos por AJAX
+                $.ajax({
+                    url: "<?php echo site_url('procesar_lectura_tags'); ?>",
+                    type: "POST",
+                    data: {
+                        rfid_tags: datosLectura,
+                        tarea_id: tareaId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        // Mostrar SweetAlert según el estado de la respuesta
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Éxito',
+                                text: response.message,
+                                confirmButtonText: 'Ok'
+                            });
+                            // Cerrar el modal al éxito
+                            $('#modalLectura').modal('hide');
+                            // Recargar o actualizar la tabla si es necesario
+                            cargarSolicitudes();
+                        } else if (response.status === 'error') {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                                confirmButtonText: 'Ok'
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Manejo de errores generales de la solicitud
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un problema al procesar la solicitud.',
+                            confirmButtonText: 'Ok'
+                        });
+                        console.error("Error al ingresar los datos de lectura:", error);
+                    }
+                });
+            });
+        });
+
+        //EVENTO DE CONFIRMAR LA TAREA
+        // Evento para cuando se hace clic en el botón de confirmar tarea
+        $(document).on('click', '.confirmar', function() {
+            var idTarea = $(this).data('id'); // Obtener el ID de la tarea
+            $('#idTareaConfirmar').val(idTarea); // Establecer el ID en el campo oculto del modal
+            $('#modalConfirmarTarea').modal('show'); // Mostrar el modal
+        });
+
+        // Evento para enviar la confirmación al servidor
+        $('#btnEnviarConfirmacion').on('click', function() {
+            var idTarea = $('#idTareaConfirmar').val(); // Obtener el ID de la tarea desde el campo oculto
+            var observacion = $('#observacionTarea').val(); // Obtener la observación
+
+            // Validar que se haya ingresado una observación
+            if (!observacion.trim()) {
+                Swal.fire('Error', 'Debe ingresar una observación o como mínimo ingrese la frase "sin observaciones"', 'error');
+                return;
+            }
+
+            // SweetAlert de confirmación
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Estás a punto de confirmar esta solicitud.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Enviar la solicitud AJAX si se confirma
+                    $.ajax({
+                        url: "<?php echo site_url('confirmar_tarea_lectura'); ?>",
+                        type: 'POST',
+                        data: {
+                            id: idTarea,
+                            observacion: observacion
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Éxito', 'La tarea fue confirmada correctamente', 'success');
+                                $('#modalConfirmarTarea').modal('hide'); // Cerrar el modal
+                                // Recargar la tabla
+                                cargarSolicitudes(paginaActual);
+
+                            } else {
+                                Swal.fire('Error', 'No se pudo confirmar la tarea', 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Hubo un problema al confirmar la tarea', 'error');
+                        }
+                    });
+                }
+            });
+        });
+
+
+    });
+</script>
+
+<script>
+    $(document).on('click', '.reportePDF', function() {
+        var tareaId = $(this).data('id'); // Capturar el ID de la tarea
+
+        // SweetAlert de confirmación
+        Swal.fire({
+            title: 'Confirmar Reporte',
+            text: "¿Deseas generar el reporte PDF para esta tarea?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, generar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Construir la URL solo con el ID de la tarea
+                var url = '<?php echo site_url('generar_reporte_tarea_lectura'); ?>' + '?tareaId=' + tareaId;
+
+                // Abrir el reporte en una nueva pestaña
+                window.open(url, '_blank');
+            }
+        });
     });
 </script>
 

@@ -45,95 +45,205 @@ class C_lectura extends MY_Controller
         $pagina = $this->input->post('pagina');
         $cantidad = $this->input->post('cantidad');
         $buscar = $this->input->post('filtro'); // Obtén el término de búsqueda si está presente
+        $usuario = $this->session->userdata('user_id');
+
         $offset = ($pagina - 1) * $cantidad;
 
         // Llama al modelo con el término de búsqueda opcional
-        $data['tareas'] = $this->mLectura->obtenerTareasLectura($offset, $cantidad, $buscar);
-        $data['totalregistros'] = $this->mLectura->contarTareasLectura($buscar);
+        $data['tareas'] = $this->mLectura->obtenerTareasLectura($offset, $cantidad, $usuario, $buscar);
+        $data['totalregistros'] = $this->mLectura->contarTareasLectura($usuario, $buscar);
 
         echo json_encode($data);
     }
 
-    public function obtener_operarios()
+    public function procesar_lectura_tags()
     {
+        // Obtener los tags del textarea
+        $tags_input = $this->input->post('rfid_tags');
+        $tarea_id = $this->input->post('tarea_id');
 
-        // Obtener los técnicos con rol_id = 3
-        $operarios = $this->mLectura->operarios_por_rol(9); //9 es usaurios que son operarios en roles 
+        // Validar los tags en el modelo (eliminar duplicados y vacíos)
+        $tags = $this->mLectura->validarTags($tags_input);
 
-        // Devolver la respuesta en formato JSON
-        echo json_encode(array('operarios' => $operarios));
+        if (empty($tags)) {
+            echo json_encode(array('status' => 'error', 'message' => 'No se han detectado tags RFID.'));
+            return;
+        }
+
+        // Verificar si los tags ya están registrados para la tarea
+        $tags_registrados = $this->mLectura->verificarTagsRegistrados($tags, $tarea_id);
+        $tags_registrados_ids = array_column($tags_registrados, 'rfid_tag');
+
+        if (count($tags_registrados_ids) == count($tags)) {
+            echo json_encode(array('status' => 'error', 'message' => 'Todos los tags ya están registrados.'));
+            return;
+        } elseif (!empty($tags_registrados_ids)) {
+            // Filtrar los tags no registrados
+            $tags = array_diff($tags, $tags_registrados_ids);
+        }
+
+        // Obtener la tarea de lectura por su ID
+        $tarea = $this->mLectura->obtenerTareaPorId($tarea_id);
+        if (!$tarea) {
+            echo json_encode(array('status' => 'error', 'message' => 'La tarea de lectura no existe.'));
+            return;
+        }
+
+        // Obtener los equipos médicos que coinciden con los tags leídos
+        $equipos = $this->mLectura->obtenerEquiposPorTags($tags);
+        if (empty($equipos)) {
+            echo json_encode(array('status' => 'error', 'message' => 'No se encontraron equipos médicos con los tags proporcionados o los tags ya fueron registrados anteriormente en esta tarea.'));
+            return;
+        }
+
+        // Inicializar contadores
+        $total_leidos = $tarea->total_leidos;
+        $total_otros = $tarea->total_otros;
+        $resultados_lectura = [];
+        $mensaje_tags_existentes = [];
+
+        // Procesar los equipos
+        foreach ($equipos as $equipo) {
+            $leido = false;
+            if ($equipo['ubicacion_id'] == $tarea->ubicacion_tarea) {
+                $leido = true;
+                $total_leidos++;
+            } else {
+                $total_otros++;
+            }
+
+            // Preparar los datos para insertar en la tabla resultados_lectura
+            $resultados_lectura[] = [
+                'tarea_id' => $tarea_id,
+                'equipo_id' => $equipo['id'],
+                'rfid_tag' => $equipo['tag_rfid_id'],
+                'ubicacion_eq' => $equipo['ubicacion_id'],
+                'leido' => $leido,
+                'usucre' => $this->session->userdata('email'),
+                'feccre' => date('Y-m-d H:i:s')
+            ];
+        }
+
+        // Insertar los resultados de la lectura en la base de datos
+        if (!empty($resultados_lectura)) {
+            if (!$this->mLectura->insertarResultadosLectura($resultados_lectura)) {
+                echo json_encode(array('status' => 'error', 'message' => 'Error al guardar los resultados de la lectura.'));
+                return;
+            }
+        }
+
+        // Actualizar los contadores en la tarea de lectura
+        if (!$this->mLectura->actualizarTareaLectura($tarea_id, [
+            'total_leidos' => $total_leidos,
+            'total_otros' => $total_otros,
+            'total_no_leidos' => $tarea->total_equipos - $total_leidos,
+            'usumod' => $this->session->userdata('email'),
+            'fecmod' => date('Y-m-d H:i:s'),
+        ])) {
+            echo json_encode(array('status' => 'error', 'message' => 'Error al actualizar la tarea de lectura.'));
+            return;
+        }
+
+        // Responder con éxito
+        echo json_encode(array('status' => 'success', 'message' => 'Lectura de tags procesada correctamente.'));
     }
 
+    //confirmar tarea de lectura:
 
-    public function asignar_operario()
+    public function confirmar_tarea_lectura()
     {
-        $solicitud_id = $this->input->post('solicitud_id');
-        $operario_id = $this->input->post('operario_id');
+        // Recibir los datos por POST
+        $idTarea = $this->input->post('id');
+        $observacion = $this->input->post('observacion');
 
-        // Datos de auditoría
-        $usumod = $this->session->userdata('email');
-        $fecmod = date('Y-m-d H:i:s');
-        $fecAsignacion = date('Y-m-d H:i:s');
+        // Verificar si se recibió el ID de la tarea
+        if (empty($idTarea)) {
+            echo json_encode(['success' => false, 'message' => 'ID de tarea no proporcionado.']);
+            return;
+        }
 
-        // Asignar técnico a la solicitud
-        $resultado = $this->mLectura->asignar_operario($solicitud_id, $operario_id, $usumod, $fecAsignacion,  $fecmod);
+        // Preparar los datos para la actualización
+        $data = [
+            'estado' => 3, // Cambia el estado a "por confirmar"
+            'observaciones' => $observacion,
+            'usumod' => $this->session->userdata('email'), // Usuario que modifica
+            'fecmod' => date('Y-m-d H:i:s'), // Fecha de modificación
+            'fecha_fin' => date('Y-m-d H:i:s'), // Fecha de finalización
+        ];
 
+        // Llamar al modelo para actualizar la tarea
+        $resultado = $this->mLectura->actualizar_tarea($idTarea, $data);
+
+        // Verificar el resultado y responder con JSON
         if ($resultado) {
-
-            //INSERTAR LA NOTIFICACION
-            $notificacion = array(
-                'titulo' => 'Nueva Tarea',
-                'mensaje' => 'Usted tiene un nuevo trabajo asignado',
-                'tipo' => 'info',
-                'usuario_id' => $operario_id, //  = tecnico especifico
-                'feccre' => date('Y-m-d H:i:s'),
-            );
-
-            // Insertar la notificación en la base de datos
-            $notificacion_insertada = $this->mLectura->nueva_notificacion($notificacion);
-
-
-            echo json_encode(array('status' => 'success', 'message' => 'Técnico asignado exitosamente.'));
+            echo json_encode(['success' => true, 'message' => 'Tarea confirmada correctamente.']);
         } else {
-            echo json_encode(array('status' => 'error', 'message' => 'Error al asignar técnico.'));
+            echo json_encode(['success' => false, 'message' => 'Error al confirmar la tarea.']);
         }
     }
 
-    public function crear_tarea_lectura()
+
+    public function generar_reporte_tarea_lectura()
     {
-        if ($this->input->is_ajax_request()) {
-            // Obtener los datos del formulario
+        // Obtener el ID de la tarea desde los parámetros de la solicitud
+        $tareaId = $this->input->get('tareaId');
+        $format = $this->input->get('format') ?: 'pdf'; // PDF por defecto
 
-            $descripcion = $this->input->post('descripcion');
-            $tipo_tarea = $this->input->post('tipo_tarea');
-            $ubicacion_tarea = $this->input->post('unidad');
+        // Llamar al modelo para obtener los datos de la tarea según su ID
+        $data = $this->mLectura->obtenerDatosTareaPorId($tareaId);
 
-            $total_equipos_area = $this->mLectura->cantidad_equipos_ubicacion($ubicacion_tarea);
+        // Validar si se obtuvieron los datos de la tarea
+        if (!$data) {
+            show_error('No se encontraron datos para la tarea solicitada.');
+            return;
+        }
 
-            // Preparar los datos para la inserción
-            $data = array(
-                'descripcion_tarea' => $descripcion,
-                'tipo_tarea' => $tipo_tarea,
-                'ubicacion_tarea' => $ubicacion_tarea,
-                'tipo_tarea' => $tipo_tarea,
-                'total_equipos'=>$total_equipos_area,
-                'estado' => 1,
-                'usucre' => $this->session->userdata('email'),
-                'feccre' => date('Y-m-d H:i:s')
-            );
+        // Datos adicionales para el reporte
+        $reporte_info = [
+            'fecha' => date('d/m/Y'),
+            'empresa' => 'Hospital de Clínicas',
+            'direccion' => 'Av. Saavedra, La Paz, Bolivia',
+            'contacto' => '+519 73716289 - mamanioscar509@gmail.com',
+            'elaborado_por' => $this->session->userdata('username'),
+            'puesto' => $this->session->userdata('rol_name')
+        ];
 
-            // Insertar la solicitud en la base de datos
-            $solicitud_insertada = $this->mLectura->insertar_tarea($data);
-
-
-
-            if ($solicitud_insertada) {
-                echo json_encode(array('status' => 'success', 'message' => 'Solicitud agregada exitosamente.'));
-            } else {
-                echo json_encode(array('status' => 'error', 'message' => 'Error al agregar la solicitud o notificación.'));
+        if ($format == 'pdf') {
+            // Verificar si TCPDF está cargado
+            if (!class_exists('TCPDF')) {
+                show_error('La clase TCPDF no está disponible. Por favor, asegúrate de que la biblioteca esté instalada y cargada.');
+                return;
             }
-        } else {
-            redirect('lectura');
+
+            // Crear una nueva instancia de TCPDF
+            $pdf = new TCPDF();
+
+            // Establecer el título del documento
+            $pdf->SetTitle('Reporte de la Tarea de Lectura RFID');
+
+            // Establecer los márgenes
+            $pdf->SetMargins(10, 20, 10);
+            $pdf->SetHeaderMargin(10);
+
+            // Añadir una página
+            $pdf->AddPage();
+            $pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, 'Reporte Tarea de Lectura', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
+            $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+            // Generar HTML del reporte con los datos y la información adicional
+            $html = $this->load->view('rfid/reporte_tarea_lectura_pdf', [
+                'data' => $data,
+                'reporte_info' => $reporte_info,
+                'equipos_no_leidos' => $data['equipos_no_leidos'], // Agregar equipos no leídos
+            ], TRUE);
+            $pdf->writeHTML($html);
+
+            // Enviar el PDF al navegador
+            $pdf->Output('report_tareas.pdf', 'I'); // 'I' para mostrar en el navegador
+
+        } else if ($format == 'excel') {
+            // Si es Excel, cargar la biblioteca correspondiente
+            $this->excel->generate_excel('reporte_tareas.xlsx', $data);
         }
     }
 }
