@@ -61,7 +61,7 @@
 <!-- welcome.php -->
 
 <div class="col py-3">
-<h2>Bienvenido al Sistema</h2>
+<h2 class="text-center">Bienvenido al Sistema de Información Web de Equipos</h2>
 <hr>
     <div class="row">
         <!-- Notificaciones -->

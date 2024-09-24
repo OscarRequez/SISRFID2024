@@ -142,6 +142,7 @@ class C_registro_tareas extends MY_Controller
         // Recibir datos enviados por AJAX
         $solicitud_id = $this->input->post('solicitud_id');
         $ubicacion = $this->input->post('ubicacion');
+        $operario_id = $this->input->post('operario_id');
 
         // Obtener el email del usuario actual desde la sesión
         $usuario_actual = $this->session->userdata('email');
@@ -158,9 +159,9 @@ class C_registro_tareas extends MY_Controller
                 // Preparar los datos para la notificación
                 $notificacion = array(
                     'titulo' => 'Proceso Completado',
-                    'mensaje' => 'El proceso de Lectura del equipo  ' . $ubicacion . ', fue completado y confirmado.',
+                    'mensaje' => 'El proceso de Lectura de la unidad de   ' . $ubicacion . ', a la que fuiste asignado fue confirmado.',
                     'tipo' => 'info',
-                    'rol' => 3, // 3 = tecnico de soporte
+                    'usuario_id' => $operario_id, //  operario de la tarea
                     'feccre' => date('Y-m-d H:i:s'),
                 );
 

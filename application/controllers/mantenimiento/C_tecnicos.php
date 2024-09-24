@@ -66,6 +66,7 @@ class C_tecnicos extends MY_Controller
         $costos_totales = $this->input->post('costo_total');
         $facturas = $this->input->post('factura');
 
+
         // Comenzar transacción
         $this->db->trans_start();
 
@@ -103,7 +104,7 @@ class C_tecnicos extends MY_Controller
                 'titulo' => 'Tareas por confirmar',
                 'mensaje' => 'Existen trabajos de mantenimiento por confirmar',
                 'tipo' => 'info',
-                'rol' => 1, // 1 = admin
+                'rol' => $usu_tecnico, // 1 = admin
                 'feccre' => date('Y-m-d H:i:s'),
             );
 

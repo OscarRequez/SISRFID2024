@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SISAMED</title>
+    <title>INFOWEB EQ</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -286,7 +286,7 @@
                         <!--aside fijo sticky top-->
                         <div class="d-flex sticky-top flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                             <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                                <span class="fs-5 d-none d-sm-inline">SISAMED <?php echo date('Y'); ?></span>
+                                <span class="fs-5 d-none d-sm-inline">INFOWEB EQ <?php echo date('Y'); ?></span>
                             </a>
 
                             <!--  <a href="" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
@@ -316,7 +316,7 @@
                                             <?php endif; ?>
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'listado')): ?>
-                                                <li>
+                                                <li class="w-100">
                                                     <a href="<?php echo site_url('listado'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-list-check"></i>
                                                         <span class="d-none d-sm-inline">Listado</span>
@@ -325,7 +325,7 @@
                                             <?php endif; ?>
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'equipos', 'reportes')): ?>
-                                                <li>
+                                                <li class="w-100" > 
                                                     <a href="<?php echo site_url('reportes'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-journal-text"></i>
                                                         <span class="d-none d-sm-inline">Reportes</span>
@@ -399,11 +399,11 @@
                                             <?php endif; ?>
 
 
-                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'reportes')): ?>
-                                                <li>
-                                                    <a href="<?php echo site_url('reportes'); ?>" class="nav-link px-0">
-                                                        <i class="fs-4 bi bi-journal-text"></i>
-                                                        <span class="d-none d-sm-inline">Reportes</span>
+                                            <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'info_rfid')): ?>
+                                                <li class="w-100">
+                                                    <a href="<?php echo site_url('info_rfid'); ?>" class="nav-link px-0">
+                                                        <i class="fs-4 bi bi-upc-scan"></i>
+                                                        <span class="d-none d-sm-inline">Info-RFID</span>
                                                     </a>
                                                 </li>
                                             <?php endif; ?>

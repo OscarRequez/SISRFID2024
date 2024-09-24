@@ -181,14 +181,14 @@
                         '<td>' + item.tipo_mantenimiento + '</td>' +
                         '<td>' + item.fecha_solicitud + '</td>' +
                         '<td>' + item.ubicacion_nombre + '</td>' +
-                        '<td style="background-color: ' + (item.usu_tecnico ? '' : '#DF5562') + '; color: ' + (item.usu_tecnico ? '' : '#721c24') + ';">' +
-                        (item.usu_tecnico ? item.usu_tecnico : '') +
+                        '<td style="background-color: ' + (item.nom_tecnico ? '' : '#DF5562') + '; color: ' + (item.nom_tecnico ? '' : '#721c24') + ';">' +
+                        (item.nom_tecnico ? item.nom_tecnico : '') +
                         '</td>' +
                         '<td><center><i class="bi ' +
                         (item.estado == 1 ? 'fs-4 bi-send-fill ' :
                             item.estado == 2 ? 'fs-4 bi-wrench-adjustable' :
                             item.estado == 3 ? 'fs-4 bi-check-circle-fill' :
-                            item.estado == 4 ? 'fs-4 bi-question-circle' :
+                            item.estado == 4 ? 'fs-4 bi-check-circle-fill' :
                             'fs-4 bi-question-circle') +
                         '" style="color: ' +
                         (item.estado == 1 ? '#1F3BB6' :
@@ -223,7 +223,7 @@
                         '</button>' +
                         '<button class="btn btn-primary btn-sm confirmar ' +
                         (item.estado == 4 ? '' : 'disabled') + '" ' +
-                        'title="Confirmar" data-id="' + item.id + '" data-equipo-id="' + item.equipo_id + '">' +
+                        'title="Confirmar" data-id="' + item.id + '" data-equipo_id="' + item.equipo_id + '" data-usu_tecnico="' + item.usu_tecnico + '">' +
                         '<i class="bi bi-check-circle"></i>' +
                         '</button>' +
                         '</div>' +
@@ -368,7 +368,8 @@
 
         $(document).on('click', '.confirmar', function() {
             var solicitudId = $(this).data('id');
-            var equipoId = $(this).data('equipo-id');
+            var equipo_id = $(this).data('equipo_id');
+            var usu_tecnico = $(this).data('usu_tecnico');
 
             // Llamada AJAX para confirmar la solicitud
             Swal.fire({
@@ -385,7 +386,8 @@
                         type: "POST",
                         data: {
                             solicitud_id: solicitudId,
-                            equipo_id: equipoId
+                            equipo_id: equipo_id,
+                            usu_tecnico: usu_tecnico
                         },
                         dataType: "json",
                         success: function(response) {
@@ -451,6 +453,7 @@
 <script>
     $(document).on('click', '.reportePDF', function() {
         var tareaId = $(this).data('id'); // Capturar el ID de la tarea
+        var usu_tecnico = $(this).data('usu_tecnico'); // Capturar el ID de la tarea
 
         // SweetAlert de confirmación
         Swal.fire({

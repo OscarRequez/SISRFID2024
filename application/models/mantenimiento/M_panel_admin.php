@@ -13,7 +13,7 @@ class M_panel_Admin extends CI_Model
         $this->db->limit($cantidad, $offset);
     
         // Realizar la unión entre la tabla 'mantenimiento', 'ubicaciones', 'usuarios' y 'equipos_medicos'
-        $this->db->select('mantenimiento.*, ubicaciones.nombre AS ubicacion_nombre, usuarios.nombre AS usu_tecnico, equipos_medicos.imagen AS Imagen');
+        $this->db->select('mantenimiento.*, ubicaciones.nombre AS ubicacion_nombre, usuarios.nombre AS nom_tecnico, equipos_medicos.imagen AS Imagen');
         $this->db->from('mantenimiento');
         $this->db->join('ubicaciones', 'mantenimiento.ubicacion_solicitud = ubicaciones.id', 'left');
         $this->db->join('usuarios', 'mantenimiento.usu_tecnico = usuarios.id', 'left');

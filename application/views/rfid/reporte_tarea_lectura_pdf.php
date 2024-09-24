@@ -63,7 +63,7 @@
         }
 
         .col-costo {
-            width: 50px;
+            width: 55px;
             /* Espacio para Costo */
         }
 
@@ -147,11 +147,12 @@
     <hr>
 
     <h3>Resultados de la Lectura</h3>
-    <h4>Equipos Leídos (Pertenecen al Área)</h4>
+    <!-- Equipos Leídos (Pertenecen al Área) -->
+    <h4>Equipos Leídos (Pertenecen al Área) - Total: <?= count($data['equipos_leidos'] ?? []) ?></h4>
     <table>
         <thead>
             <tr>
-                <th scope="col"><strong>ID</strong></th>
+                <th scope="col"><strong>#</strong></th>
                 <th scope="col"><strong>Etiqueta RFID</strong></th>
                 <th scope="col"><strong>Equipo ID</strong></th>
                 <th scope="col"><strong>Ubicación</strong></th>
@@ -159,9 +160,9 @@
         </thead>
         <tbody>
             <?php if (isset($data['equipos_leidos']) && !empty($data['equipos_leidos'])): ?>
-                <?php foreach ($data['equipos_leidos'] as $resultado): ?>
+                <?php foreach ($data['equipos_leidos'] as $indexLeido => $resultado): ?>
                     <tr>
-                        <td><?= $resultado['id'] ?></td>
+                        <td><?= $indexLeido + 1 ?></td>
                         <td><?= $resultado['rfid_tag'] ?></td>
                         <td><?= $resultado['equipo_id'] ?></td>
                         <td><?= $resultado['nombre_ubicacion_eq'] ?></td>
@@ -175,39 +176,12 @@
         </tbody>
     </table>
 
-    <h4>Equipos No Pertenecientes</h4>
-    <table>
-        <thead>
-            <tr>
-                <th scope="col"><strong>ID</strong></th>
-                <th scope="col"><strong>Etiqueta RFID</strong></th>
-                <th scope="col"><strong>Equipo ID</strong></th>
-                <th scope="col"><strong>Pertenece a</strong></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (isset($data['equipos_no_pertenecientes']) && !empty($data['equipos_no_pertenecientes'])): ?>
-                <?php foreach ($data['equipos_no_pertenecientes'] as $resultado): ?>
-                    <tr>
-                        <td><?= $resultado['id'] ?></td>
-                        <td><?= $resultado['rfid_tag'] ?></td>
-                        <td><?= $resultado['equipo_id'] ?></td>
-                        <td><?= $resultado['nombre_ubicacion_eq'] ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6" class="no-data">No se encontraron resultados de lectura para equipos que no pertenecen.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-
-    <h3>Equipos No Leídos</h3>
+    <!-- Equipos No Leídos -->
+    <h4>Equipos No Leídos - Total: <?= count($equipos_no_leidos ?? []) ?></h4>
     <table class="table">
         <thead>
             <tr>
-                <th class="col-id"><strong>ID</strong></th>
+                <th class="col-id"><strong>#</strong></th>
                 <th class="col-descripcion"><strong>Descripción</strong></th>
                 <th class="col-estado"><strong>Estado</strong></th>
                 <th class="col-codigo"><strong>Código</strong></th>
@@ -218,14 +192,13 @@
         <tbody>
             <?php if (empty($equipos_no_leidos)): ?>
                 <tr>
-                    <td colspan="6" style="text-align: center;">
-                        No se encontraron equipos no leídos</td>
+                    <td colspan="6" style="text-align: center;">No se encontraron equipos no leídos</td>
                 </tr>
             <?php else: ?>
-                <?php foreach ($equipos_no_leidos as $equipo): ?>
+                <?php foreach ($equipos_no_leidos as $indexNoLeido => $equipo): ?>
                     <tr>
-                        <td class="col-id"><?php echo $equipo['id']; ?></td>
-                        <td class="col-descripcion"><?php echo $equipo['descripcion']; ?></td>
+                        <td class="col-id"><?= $indexNoLeido + 1 ?></td>
+                        <td class="col-descripcion"><?= $equipo['descripcion']; ?></td>
                         <td class="col-estado">
                             <?php
                             $estado = $equipo['estado'];
@@ -245,15 +218,43 @@
                             }
                             ?>
                         </td>
-                        <td class="col-codigo"><?php echo $equipo['numero_serie']; ?></td>
-                        <td class="col-rfid"><?php echo $equipo['tag_rfid_id']; ?></td>
-                        <td class="col-costo"><?php echo number_format($equipo['costo'], 2, ',', '.'); ?></td>
+                        <td class="col-codigo"><?= $equipo['numero_serie']; ?></td>
+                        <td class="col-rfid"><?= $equipo['tag_rfid_id']; ?></td>
+                        <td class="col-costo"><?= number_format($equipo['costo'], 2, ',', '.'); ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
     </table>
-
+    
+    <!-- Equipos No Pertenecientes -->
+    <h4>Equipos No Pertenecientes - Total: <?= count($data['equipos_no_pertenecientes'] ?? []) ?></h4>
+    <table>
+        <thead>
+            <tr>
+                <th scope="col"><strong>#</strong></th>
+                <th scope="col"><strong>Etiqueta RFID</strong></th>
+                <th scope="col"><strong>Equipo ID</strong></th>
+                <th scope="col"><strong>Pertenece a</strong></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (isset($data['equipos_no_pertenecientes']) && !empty($data['equipos_no_pertenecientes'])): ?>
+                <?php foreach ($data['equipos_no_pertenecientes'] as $indexNoPert => $resultado): ?>
+                    <tr>
+                        <td><?= $indexNoPert + 1 ?></td>
+                        <td><?= $resultado['rfid_tag'] ?></td>
+                        <td><?= $resultado['equipo_id'] ?></td>
+                        <td><?= $resultado['nombre_ubicacion_eq'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="6" class="no-data">No se encontraron resultados de lectura para equipos que no pertenecen.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 </body>
 
 </html>

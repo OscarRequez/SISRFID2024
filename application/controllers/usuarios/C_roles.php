@@ -60,130 +60,130 @@ class C_roles extends MY_Controller
     {
         $permisos = $this->mRoles->obtenerPermisosUnicos();
         echo json_encode(['modulos' => $permisos]);
-        
     }
 
-  //agregar rol a la BD
-  public function agregar() {
-    // Validar el formulario
-    $this->form_validation->set_rules('nombreRol', 'Nombre del Rol', 'required');
+    //agregar rol a la BD
+    public function agregar()
+    {
+        // Validar el formulario
+        $this->form_validation->set_rules('nombreRol', 'Nombre del Rol', 'required');
 
-    if ($this->form_validation->run() === FALSE) {
-        // Redirige o muestra errores
-        $this->session->set_flashdata('error', validation_errors());
-        redirect('roles');
-    } else {
-        // Obtener datos del formulario
-        $nombreRol = $this->input->post('nombreRol');
-        $usucre = $this->session->userdata('email'); // Usuario creador
-        $fechaActual = date('Y-m-d H:i:s'); // Fecha actual (formato completo)
+        if ($this->form_validation->run() === FALSE) {
+            // Redirige o muestra errores
+            $this->session->set_flashdata('error', validation_errors());
+            redirect('roles');
+        } else {
+            // Obtener datos del formulario
+            $nombreRol = $this->input->post('nombreRol');
+            $usucre = $this->session->userdata('email'); // Usuario creador
+            $fechaActual = date('Y-m-d H:i:s'); // Fecha actual (formato completo)
 
-        $dataRol = [
-            'nombre' => $nombreRol,  // Asegúrate de que esto sea una cadena
-            'estado' => 1,          // Valor numérico para el estado activo
-            'usucre' => $usucre,
-            'feccre' => $fechaActual
-        ];
+            $dataRol = [
+                'nombre' => $nombreRol,  // Asegúrate de que esto sea una cadena
+                'estado' => 1,          // Valor numérico para el estado activo
+                'usucre' => $usucre,
+                'feccre' => $fechaActual
+            ];
 
-        // Insertar el rol
-        $this->mRoles->insertarRol($dataRol);
-        $rol_id = $this->db->insert_id(); // Obtener el ID del nuevo rol
+            // Insertar el rol
+            $this->mRoles->insertarRol($dataRol);
+            $rol_id = $this->db->insert_id(); // Obtener el ID del nuevo rol
 
-        // Obtener módulos y submódulos
-        $modulos = $this->input->post('modulos');
-        $submodulos = $this->input->post('submodulos');
+            // Obtener módulos y submódulos
+            $modulos = $this->input->post('modulos');
+            $submodulos = $this->input->post('submodulos');
 
-        // Insertar permisos
-        if ($modulos) {
-            foreach ($modulos as $modulo) {
-                // Insertar el módulo si no tiene submódulos específicos
-                if (!isset($submodulos[$modulo]) || empty($submodulos[$modulo])) {
-                    $dataPermiso = [
-                        'rol_id' => $rol_id,
-                        'modulo' => $modulo,
-                        'submodulo' => NULL,   // Submódulo es NULL si no hay submódulos
-                        'usucre' => $usucre,
-                        'feccre' => $fechaActual
-                    ];
-                    $this->mRoles->insertarPermiso($dataPermiso);
-                } else {
-                    // Insertar sub-módulos
-                    foreach ($submodulos[$modulo] as $submodulo) {
+            // Insertar permisos
+            if ($modulos) {
+                foreach ($modulos as $modulo) {
+                    // Insertar el módulo si no tiene submódulos específicos
+                    if (!isset($submodulos[$modulo]) || empty($submodulos[$modulo])) {
                         $dataPermiso = [
                             'rol_id' => $rol_id,
                             'modulo' => $modulo,
-                            'submodulo' => $submodulo,
+                            'submodulo' => NULL,   // Submódulo es NULL si no hay submódulos
                             'usucre' => $usucre,
                             'feccre' => $fechaActual
                         ];
                         $this->mRoles->insertarPermiso($dataPermiso);
+                    } else {
+                        // Insertar sub-módulos
+                        foreach ($submodulos[$modulo] as $submodulo) {
+                            $dataPermiso = [
+                                'rol_id' => $rol_id,
+                                'modulo' => $modulo,
+                                'submodulo' => $submodulo,
+                                'usucre' => $usucre,
+                                'feccre' => $fechaActual
+                            ];
+                            $this->mRoles->insertarPermiso($dataPermiso);
+                        }
                     }
                 }
             }
+
+            // Redirigir o mostrar mensaje de éxito
+            $this->session->set_flashdata('success', 'Rol y permisos agregados exitosamente.');
+            redirect('roles');
         }
-
-        // Redirigir o mostrar mensaje de éxito
-        $this->session->set_flashdata('success', 'Rol y permisos agregados exitosamente.');
-        redirect('roles');
     }
-}
 
-// Función para obtener permisos de un rol
-public function obtenerPermisosDeUnRol() {
-    $rol_id = $this->input->post('rol_id');
-    $permisos = $this->mRoles->obtenerPermisosDeUnRol($rol_id);
-    echo json_encode(['permisos' => $permisos]);
-}
-
-
-//obtenerlos para editaros
-public function obtenerDatosRol($rol_id) {
-    // Obtener los datos del rol
-    $this->db->where('id', $rol_id);
-    $rol = $this->db->get('roles')->row_array();
-    
-    // Obtener permisos del rol
-    $this->db->select('modulo, submodulo');
-    $this->db->from('permisos');
-    $this->db->where('rol_id', $rol_id);
-    $permisos = $this->db->get()->result_array();
-
-    // Obtener módulos y submódulos únicos
-    $modulos_submodulos = $this->mRoles->obtenerPermisosUnicos();
-    
-    $data = [
-        'rol' => $rol,
-        'permisos' => $permisos,
-        'modulos_submodulos' => $modulos_submodulos
-    ];
-
-    echo json_encode($data);
-}
+    // Función para obtener permisos de un rol
+    public function obtenerPermisosDeUnRol()
+    {
+        $rol_id = $this->input->post('rol_id');
+        $permisos = $this->mRoles->obtenerPermisosDeUnRol($rol_id);
+        echo json_encode(['permisos' => $permisos]);
+    }
 
 
-//PARA ACTUALIZAR LOS ROLES:
-public function actualizar_permisos() {
-    $rol_id = $this->input->post('rol_id');
-    $nombre = $this->input->post('nombre');
-    $estado = $this->input->post('estado');
-    $modulos = $this->input->post('modulos');
-    $submodulos = $this->input->post('submodulos');
+    //obtenerlos para editaros
+    public function obtenerDatosRol($rol_id)
+    {
+        // Obtener los datos del rol
+        $this->db->where('id', $rol_id);
+        $rol = $this->db->get('roles')->row_array();
 
-    // Actualizar el nombre y estado del rol
-    $data_rol = array(
-        'nombre' => $nombre,
-        'estado' => $estado,
-        'fecmod' => date('Y-m-d H:i:s'),
-        'usumod' => $this->session->userdata('email') // Asumiendo que tienes el ID del usuario en la sesión
-    );
-    $this->mRoles->actualizarRol($rol_id, $data_rol);
+        // Obtener permisos del rol
+        $this->db->select('modulo, submodulo');
+        $this->db->from('permisos');
+        $this->db->where('rol_id', $rol_id);
+        $permisos = $this->db->get()->result_array();
 
-    // Actualizar los permisos del rol
-    $this->mRoles->actualizarPermisos($rol_id, $modulos, $submodulos);
+        // Obtener módulos y submódulos únicos
+        $modulos_submodulos = $this->mRoles->obtenerPermisosUnicos();
 
-    echo json_encode(['success' => true]);
-}
+        $data = [
+            'rol' => $rol,
+            'permisos' => $permisos,
+            'modulos_submodulos' => $modulos_submodulos
+        ];
+
+        echo json_encode($data);
+    }
 
 
-    
+    //PARA ACTUALIZAR LOS ROLES:
+    public function actualizar_permisos()
+    {
+        $rol_id = $this->input->post('rol_id');
+        $nombre = $this->input->post('nombre');
+        $estado = $this->input->post('estado');
+        $modulos = $this->input->post('modulos');
+        $submodulos = $this->input->post('submodulos');
+
+        // Actualizar el nombre y estado del rol
+        $data_rol = array(
+            'nombre' => $nombre,
+            'estado' => $estado,
+            'fecmod' => date('Y-m-d H:i:s'),
+            'usumod' => $this->session->userdata('email') // Asumiendo que tienes el ID del usuario en la sesión
+        );
+        $this->mRoles->actualizarRol($rol_id, $data_rol);
+
+        // Actualizar los permisos del rol
+        $this->mRoles->actualizarPermisos($rol_id, $modulos, $submodulos);
+
+        echo json_encode(['success' => true]);
+    }
 }

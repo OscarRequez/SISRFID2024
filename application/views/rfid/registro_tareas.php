@@ -228,60 +228,61 @@
             },
             dataType: "json",
             success: function(response) {
-                console.log(response);
+                var hayPendientes = false; // Variable para detectar si hay algún registro con estado 3
                 var filas = "";
+
                 // Crear las filas dinámicamente con los datos de la tarea de lectura
                 $.each(response.tareas, function(index, item) {
-                    let estiloFila = ''; // Puedes agregar condiciones para cambiar el estilo de la fila si es necesario
+                    // Si el estado es 3, marcamos que hay registros pendientes
+                    if (item.estado == 3 && !hayPendientes) {
+                        hayPendientes = true;
+                    }
+
+                    var estiloFila = (item.estado == 3) ? 'style="background-color: #E7EDFF; font-weight: bold;"' : '';
 
                     filas += '<tr ' + estiloFila + '>' +
-                        '<td>' + item.id + '</td>' + // ID de la tarea
-                        '<td>' + item.descripcion_tarea + '</td>' + // Descripción de la tarea
-                        '<td>' + item.tipo_tarea + '</td>' + // Tipo de tarea
-                        '<td>' + item.total_equipos + '</td>' + // Total de equipos asociados a la tarea
-                        '<td>' + item.feccre + '</td>' + // Fecha de creación de la tarea
-                        '<td>' + item.nombre_ubicacion + '</td>' + // Ubicación de la tarea
+                        '<td>' + item.id + '</td>' +
+                        '<td>' + item.descripcion_tarea + '</td>' +
+                        '<td>' + item.tipo_tarea + '</td>' +
+                        '<td>' + item.total_equipos + '</td>' +
+                        '<td>' + item.feccre + '</td>' +
+                        '<td>' + item.nombre_ubicacion + '</td>' +
                         '<td style="background-color: ' + (item.nombre_operario ? '' : '#DF5562') + '; color: ' + (item.nombre_operario ? '' : '#721c24') + ';">' +
-                        (item.nombre_operario ? item.nombre_operario : '') + // Operario asignado
+                        (item.nombre_operario ? item.nombre_operario : '') +
                         '</td>' +
                         '<td><center><i class="bi ' +
-                        (item.estado == 1 ? 'fs-4 bi-send-fill' : // Estado 1: Solicitud enviada
-                            item.estado == 2 ? 'fs-4 bi-pc-display-horizontal' : // Estado 2: En proceso
-                            item.estado == 3 ? 'fs-4 bi-check-circle' : // Estado 3: Por confirmar
-                            item.estado == 4 ? 'fs-4 bi-check-circle-fill' : // Estado 4: Completado
-                            'fs-4 bi-question-circle') + // Estado desconocido
+                        (item.estado == 1 ? 'fs-4 bi-send-fill' :
+                            item.estado == 2 ? 'fs-4 bi-pc-display-horizontal' :
+                            item.estado == 3 ? 'fs-4 bi-check-circle' :
+                            item.estado == 4 ? 'fs-4 bi-check-circle-fill' :
+                            'fs-4 bi-question-circle') +
                         '" style="color: ' +
-                        (item.estado == 1 ? '#1F3BB6' : // Color para estado "Solicitado"
-                            item.estado == 2 ? '#0a1039' : // Color para estado "En proceso"
-                            item.estado == 3 ? '#2aa932' : // Color para estado "Por confirmar"
-                            item.estado == 4 ? '#05AD30' : // Color para estado "Completado"
+                        (item.estado == 1 ? '#1F3BB6' :
+                            item.estado == 2 ? '#0a1039' :
+                            item.estado == 3 ? '#2aa932' :
+                            item.estado == 4 ? '#05AD30' :
                             '#000') + '; cursor: ' +
                         (item.estado == 1 || item.estado == 2 || item.estado == 3 ? 'pointer' : 'default') + ';" ' +
                         'title="' + (item.estado == 1 ? 'Solicitado' :
                             item.estado == 2 ? 'En proceso' :
                             item.estado == 3 ? 'Por confirmar' :
                             item.estado == 4 ? 'Completado' :
-                            'Desconocido') +
-                        '"></i></center></td>' +
-
+                            'Desconocido') + '"></i></center></td>' +
                         '<td><center>' +
                         '<div style="display: flex; gap: 5px; justify-content: center;">' +
                         '<button class="btn btn-success btn-sm nuevaAsignacion" ' +
                         'data-bs-toggle="modal" data-bs-target="#nuevaAsignacion" ' +
                         'data-id="' + item.id + '" ' +
                         'data-nombre="' + item.descripcion_tarea + '" ' +
-                        (item.estado == 3 || item.estado == 4 ? 'disabled' : '') + '>' + // Deshabilitar si está completado
-                        'Asignar</button>' +
-
+                        (item.estado == 3 || item.estado == 4 ? 'disabled' : '') + '>Asignar</button>' +
                         '<button class="btn btn-danger btn-sm reportePDF ' +
-                        (item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' + // Habilitar sólo si está completado
+                        (item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' +
                         'data-id="' + item.id + '">' +
                         '<i class="bi bi-file-earmark-pdf"></i>' +
                         '</button>' +
-
                         '<button class="btn btn-primary btn-sm confirmar ' +
-                        (item.estado == 3 ? '' : 'disabled') + '" ' + // Habilitar si está por confirmar
-                        'title="Confirmar" data-id="' + item.id + '" data-ubicacion_tarea="' + item.nombre_ubicacion + '">' +
+                        (item.estado == 3 ? '' : 'disabled') + '" ' +
+                        'title="Confirmar" data-id="' + item.id + '" data-ubicacion_tarea="' + item.nombre_ubicacion + '" data-operario_id="' + item.operario + '">' +
                         '<i class="bi bi-check-circle"></i>' +
                         '</button>' +
                         '</div>' +
@@ -289,13 +290,22 @@
                         '</tr>';
                 });
 
+                // Mostrar la alerta si hay registros pendientes, pero solo una vez
+                if (hayPendientes) {
+                    Swal.fire({
+                        title: 'Pendientes de Confirmación',
+                        text: 'Existen registros a la espera de ser confirmados.',
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido'
+                    });
+                }
+
 
                 $("#tareasCreadas").html(filas);
 
                 // Paginación
                 var totalregistros = response.totalregistros;
                 var numerolinks = Math.ceil(totalregistros / cantidadPorPagina); // Usar la misma variable aquí
-
                 var paginador = "<ul class='pagination'>";
 
                 // Botón "Primera" y "Anterior"
@@ -389,8 +399,6 @@
             cargarUbicaciones();
         });
 
-        // Cargar solicitudes iniciales
-        cargarSolicitudes(paginaActual);
 
         // Manejar eventos de clic en la paginación
         $(document).on('click', '.page-link', function(e) {
@@ -497,8 +505,9 @@
         $(document).on('click', '.confirmar', function() {
             var solicitudId = $(this).data('id');
             var ubicacion_tarea = $(this).data('ubicacion_tarea');
-            console.log(" ",solicitudId);
-            console.log(" ",ubicacion_tarea);
+            var operario_id = $(this).data('operario_id');
+            console.log(" ", solicitudId);
+            console.log(" ", operario_id);
 
             // Llamada AJAX para confirmar la solicitud
             Swal.fire({
@@ -515,7 +524,8 @@
                         type: "POST",
                         data: {
                             solicitud_id: solicitudId,
-                            ubicacion: ubicacion_tarea
+                            ubicacion: ubicacion_tarea,
+                            operario_id: operario_id
                         },
                         dataType: "json",
                         success: function(response) {

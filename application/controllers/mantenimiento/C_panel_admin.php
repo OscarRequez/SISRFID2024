@@ -113,6 +113,8 @@ class C_panel_Admin extends MY_Controller
         // Recibir datos enviados por AJAX
         $solicitud_id = $this->input->post('solicitud_id');
         $equipo_id = $this->input->post('equipo_id');
+        $usu_tecnico = $this->input->post('usu_tecnico');
+
 
         // Obtener el email del usuario actual desde la sesión
         $usuario_actual = $this->session->userdata('email');
@@ -131,9 +133,9 @@ class C_panel_Admin extends MY_Controller
                 // Preparar los datos para la notificación
                 $notificacion = array(
                     'titulo' => 'Proceso Completado',
-                    'mensaje' => 'El proceso de mantenimiento del equipo  ' . $equipo_id . ', fue completado y confirmado.',
+                    'mensaje' => 'El proceso de mantenimiento del equipo  ' . $equipo_id . ', al que fuiste asignado, fue completado y confirmado.',
                     'tipo' => 'info',
-                    'rol' => 3, // 3 = tecnico de soporte
+                    'usuario_id' => $usu_tecnico, //  = tecnico de soporte especifico
                     'feccre' => date('Y-m-d H:i:s'),
                 );
 

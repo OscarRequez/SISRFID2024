@@ -149,13 +149,18 @@ $route['obtener_operarios'] = 'rfid/C_registro_tareas/obtener_operarios';// Ruta
 $route['asignar_operario'] = 'rfid/C_registro_tareas/asignar_operario';// Ruta
 $route['confirmar_tarea_lectura_admin'] = 'rfid/C_registro_tareas/confirmar_tarea_lectura_admin';// Ruta
 
-
 //LECTURA RFID
 $route['lectura'] = 'rfid/C_lectura';// Ruta //DOCUMENTACION solo vista
 $route['tareas_lectura_obtener'] = 'rfid/C_lectura/tareas_lectura_obtener';// Ruta
 $route['procesar_lectura_tags'] = 'rfid/C_lectura/procesar_lectura_tags';// Ruta
 $route['confirmar_tarea_lectura'] = 'rfid/C_lectura/confirmar_tarea_lectura';// Ruta
 $route['generar_reporte_tarea_lectura'] = 'rfid/C_lectura/generar_reporte_tarea_lectura';// Ruta
+
+//INFO RFID
+$route['info_rfid'] = 'rfid/C_info_rfid';// Ruta //DOCUMENTACION solo vista
+$route['obtener_datos_equipo_rfid'] = 'rfid/C_info_rfid/obtener_datos_equipo_rfid';// Ruta
+$route['reporte_rfid_equipo'] = 'rfid/C_info_rfid/reporte_rfid_equipo';// Ruta
+
 
 
 

@@ -176,6 +176,19 @@ class C_lectura extends MY_Controller
 
         // Verificar el resultado y responder con JSON
         if ($resultado) {
+
+            //INSERTAR LA NOTIFICACION
+            $notificacion = array(
+                'titulo' => 'Tareas por confirmar',
+                'mensaje' => 'Existen trabajos de lectura RFID por confirmar',
+                'tipo' => 'info',
+                'rol' => 4, // 4 = gestor de inventario
+                'feccre' => date('Y-m-d H:i:s'),
+            );
+
+            // Insertar la notificación en la base de datos
+            $notificacion_insertada = $this->mLectura->nueva_notificacion($notificacion);
+
             echo json_encode(['success' => true, 'message' => 'Tarea confirmada correctamente.']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Error al confirmar la tarea.']);
