@@ -25,7 +25,8 @@ date_default_timezone_set('America/La_Paz');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/RFID_CODE/';
+
+$config['base_url'] = 'http://localhost/Infoweb/';
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,9 @@ $config['base_url'] = 'http://localhost/RFID_CODE/';
 | variable so that it is blank.
 |
 */
+
+// Esto elimina index.php de las URLs. Cambia esta línea a: $config['index_page'] = '';
+
 $config['index_page'] = '';
 
 /*
