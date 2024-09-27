@@ -54,7 +54,7 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 //login
-$route['authenticate'] = 'C_login/authenticate';
+$route['autenticacion'] = 'C_login/authenticate';
 $route['welcome'] = 'welcome'; // Ruta de ejemplo para la página de bienvenida
 $route['login_error'] = 'C_login'; // CUANDO DA ERROR
 $route['logout'] = 'C_login/logout'; //CERRAR SESION

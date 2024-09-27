@@ -10,49 +10,54 @@
 
     <style>
         body {
-            background-color: #BDC4DB;
+            background-color: #f0f4f8;
+            /* Fondo claro */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
+        * {
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            
 
-        .login-container {
-            background: #CACDD8;
-            /* Color de fondo */
-            padding: 30px;
-            /* Espaciado interno */
-            border-radius: 8px;
-            /* Bordes redondeados */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 16px 16px rgba(0, 0, 0, 0.19);
-            /* Sombras más pronunciadas */
-            width: 320;
-            /* Ancho del contenedor */
-            height: 320;
-            /* Alto del contenedor */
-            max-width: 100%;
-            /* Asegura que no exceda el ancho de su contenedor padre */
-            margin: auto;
-            /* Centra el contenedor horizontalmente */
         }
 
-        .login-container h2 {
+        .login-container {
+            background: #ffffff;
+            /* Fondo blanco para la tarjeta */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* Sombras más suaves */
+            width: 320px;
+            height: auto;
+            max-width: 100%;
+            margin: auto;
+        }
+
+        .login-container h4 {
+            color: #1a73e8;
+            /* Color azul más vibrante */
+            font-weight: bold;
             margin-bottom: 20px;
         }
 
         .form-group label {
+            color: #4a4a4a;
+            /* Color oscuro para texto */
             font-weight: bold;
         }
 
         .btn-primary {
-            background-color: #7887C7;
-            border-color: #7887C7;
+            background-color: #1a73e8;
+            border-color: #1a73e8;
         }
 
         .btn-primary:hover {
-            background-color: #C39BF2;
-            border-color: #C39BF2;
+            background-color: #155ab7;
+            border-color: #155ab7;
         }
 
         .alert {
@@ -66,18 +71,19 @@
         <div class="row justify-content-center">
             <div class="col-md-4 login-container">
                 <center>
-                    <h4 style="color:#7887C7"><i class="fs-4 bi bi-person-circle" style="color:#7887C7"> </i>INICIAR SESIÓN</h4>
-                </center> <br>
+                    <h4><i class="fs-4 bi bi-person-circle"></i> INICIAR SESIÓN</h4>
+                </center>
+                <br>
                 <?php if ($this->session->flashdata('error')): ?>
                     <div class="alert alert-danger"><?php echo $this->session->flashdata('error'); ?></div>
                 <?php endif; ?>
-                <form method="post" action="<?php echo site_url('C_login/authenticate'); ?>">
+                <form method="post" action="<?php echo site_url('autenticacion'); ?>">
                     <div class="form-group">
-                        <label style="color:#7887C7" for="email">Usuario:</label>
+                        <label for="email">Usuario:</label>
                         <input type="text" class="form-control" id="email" name="email" placeholder="Introduce tu email" required>
                     </div>
                     <div class="form-group">
-                        <label style="color:#7887C7" for="password">Contraseña:</label>
+                        <label for="password">Contraseña:</label>
                         <input type="password" class="form-control" id="password" name="password" placeholder="Introduce tu contraseña" required>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>

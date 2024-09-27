@@ -14,7 +14,7 @@
         <div class="col-md-6">
             <!-- Botón para abrir el modal de nueva solicitud -->
             <button type="button" class="btn mb-3 bg-primary text-white" data-bs-toggle="modal" data-bs-target="#nuevaSolicitudModal">
-                <i class="bi bi-clipboard2-plus"></i> Nueva Solicitud
+                <i class="bi bi-pencil-square"></i> Nueva tarea
             </button>
         </div>
     </div>

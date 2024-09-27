@@ -85,36 +85,53 @@ class C_usuarios extends MY_Controller
             $usuario_existente = $this->mUsuario->obtener_usuario_por_cedula($cedula);
 
             if ($usuario_existente) {
-                // La cédula ya está en uso, enviar un mensaje de error a la vista
-                $this->session->set_flashdata('error', 'La cédula de identidad ' . $cedula . ' ya está en uso para otro usuario.');
-                redirect('usuarios'); // Cambia esto según tu vista actual
-            } else {
-                // Hashear la contraseña con el costo especificado
-                $options = ['cost' => 12];
-                $hashed_password = password_hash($password, PASSWORD_BCRYPT, $options);
-
-                $data = array(
-                    'nombre' => $nombre,
-                    'email' => $email,
-                    'cedula' => $cedula,
-                    'contraseña' => $hashed_password,
-                    'rol_id' => $rol_id,
-                    'estado' => 1, // Estado activo por defecto
-                    'usucre' => $this->session->userdata('email'), // Usuario creador
-                    'feccre' => date('Y-m-d H:i:s'), // Fecha y hora actual
-                );
-
-                // Llamar al modelo para insertar el usuario en la base de datos
-                $this->mUsuario->insertar_usuario($data);
-
-                // Redirigir a la lista de usuarios o mostrar un mensaje de éxito
-                $this->session->set_flashdata('success', 'Usuario agregado exitosamente.');
-                redirect('usuarios'); // Cambia la redirección según tus necesidades
+                // Retornar respuesta JSON indicando que la cédula ya está en uso
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'La cédula de identidad ' . $cedula . ' ya está en uso para otro usuario.'
+                ]);
+                return;
             }
+
+            // Verificar si el email ya está registrado en la base de datos
+            $email_existente = $this->mUsuario->obtener_usuario_por_email($email);
+
+            if ($email_existente) {
+                // Retornar respuesta JSON indicando que el email ya está en uso
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'El email ' . $email . ' ya está registrado para otro usuario.'
+                ]);
+                return;
+            }
+
+            // Hashear la contraseña con el costo especificado
+            $options = ['cost' => 12];
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT, $options);
+
+            $data = array(
+                'nombre' => $nombre,
+                'email' => $email,
+                'cedula' => $cedula,
+                'contraseña' => $hashed_password,
+                'rol_id' => $rol_id,
+                'estado' => 1, // Estado activo por defecto
+                'usucre' => $this->session->userdata('email'), // Usuario creador
+                'feccre' => date('Y-m-d H:i:s'), // Fecha y hora actual
+            );
+
+            // Llamar al modelo para insertar el usuario en la base de datos
+            $this->mUsuario->insertar_usuario($data);
+
+            // Retornar respuesta JSON indicando éxito
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Usuario agregado exitosamente.'
+            ]);
         }
     }
 
-    // USUARIO NUEVO AGREGAR A LA BASE DE DATOS
+    //actualizar datos de usuario
     public function actualizar()
     {
         $id = $this->input->post('id');
@@ -126,12 +143,21 @@ class C_usuarios extends MY_Controller
 
         // Verifica si la cédula ya existe para otro usuario
         $usuario_existente = $this->mUsuario->obtener_usuario_por_cedula($cedula);
-
         if ($usuario_existente && $usuario_existente->id != $id) {
-            // Si existe otro usuario con la misma cédula y no es el actual, responde con un error
             echo json_encode(['status' => 'error', 'message' => 'La cédula de identidad ' . $cedula . ' ya está en uso para otro usuario.']);
             return;
         }
+
+        // Verifica si el email ya está registrado para otro usuario
+        $email_existente = $this->mUsuario->obtener_usuario_por_email($email, $id);
+        if ($email_existente && $email_existente->id != $id) {
+            echo json_encode(['status' => 'error', 'message' => 'El email ' . $email . ' ya está registrado para otro usuario.']);
+            return;
+        }
+
+        // Obtiene el usuario actual para verificar el correo antiguo
+        $usuario_actual = $this->mUsuario->obtener_usuario_por_id($id);
+        $email_antiguo = $usuario_actual->email;
 
         // Construye el array de datos a actualizar
         $datos = array(
@@ -140,17 +166,29 @@ class C_usuarios extends MY_Controller
             'cedula' => $cedula,
             'rol_id' => $rol,
             'fecmod' => date('Y-m-d H:i:s'),
-            'usumod' => $this->session->userdata('username')
+            'usumod' => $this->session->userdata('email')
         );
 
         if (!empty($contraseña)) {
             $datos['contraseña'] = password_hash($contraseña, PASSWORD_BCRYPT);
         }
 
-        $this->mUsuario->actualizar_usuario($id, $datos);
+        // Actualiza el usuario
+        if (!$this->mUsuario->actualizar_usuario($id, $datos)) {
+            echo json_encode(['status' => 'error', 'message' => 'Error al actualizar el usuario.']);
+            return;
+        }
+
+        // Solo actualiza registros relacionados si el email ha cambiado
+        if ($email_antiguo !== $email) {
+            if (!$this->mUsuario->actualizar_registros_por_email($email_antiguo, $email)) {
+                echo json_encode(['status' => 'error', 'message' => 'Error al actualizar registros relacionados.']);
+                return;
+            }
+        }
+
         echo json_encode(['status' => 'success', 'message' => 'Usuario actualizado correctamente.']);
     }
-
 
     public function cambiar_estado_usuario($id)
     {

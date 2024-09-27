@@ -60,6 +60,55 @@ class M_usuarios extends CI_Model
         }
     }
 
+    public function obtener_usuario_por_email($email)
+    {
+        $this->db->where('email', $email);
+        $query = $this->db->get('usuarios'); // Asegúrate de usar el nombre correcto de la tabla
+
+        if ($query->num_rows() > 0) {
+            return $query->row(); // Devuelve el usuario encontrado
+        }
+        return false; // No existe el email
+    }
+
+    public function obtener_usuario_por_id($id)
+    {
+        return $this->db->get_where('usuarios', ['id' => $id])->row();
+    }
+
+    public function actualizar_registros_por_email($email_antiguo, $email_nuevo)
+    {
+        // Mapeo de tablas a sus respectivos nombres de campo de email
+        $tablas = [
+            'avatars' => ['usucre', 'usumod'],
+            'documentos' => ['usucre', 'usumod'],
+            'mantenimiento' => ['usucre', 'usumod', 'usuconf'],
+            'equipos_eliminados' => ['usr_inactivador'],
+            'equipos_medicos' => ['usucre', 'usumod'],
+            'materiales_mant' => ['usucre', 'usumod'],
+            'mov_equipos' => ['usucre', 'usumod'],
+            'permisos' => ['usucre'],
+            'resultados_lectura' => ['usucre'],
+            'roles' => ['usucre', 'usumod'],
+            'tareas_lectura' => ['usucre', 'usumod', 'usuconf'],
+            'ubicaciones' => ['usucre', 'usumod'],
+            'usuarios' => ['usucre', 'usumod'],
+        ];
+
+        foreach ($tablas as $tabla => $campos_email) {
+            foreach ($campos_email as $campo_email) {
+                $this->db->where($campo_email, $email_antiguo);
+                $this->db->update($tabla, [$campo_email => $email_nuevo]);
+                // No importa si hubo actualizaciones o no, no necesitamos controlar afectaciones aquí
+            }
+        }
+
+        return true; // Siempre devolver true, sin importar si hubo actualizaciones o no
+    }
+
+
+
+
     public function get_usuarios_con_roles()
     {
         $this->db->select('usuarios.id, usuarios.nombre, usuarios.email, roles.nombre AS rol_nombre, usuarios.estado, usuarios.usucre, usuarios.feccre,');

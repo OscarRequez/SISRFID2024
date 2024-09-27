@@ -7,7 +7,7 @@
     }
 </style>
 <div class="col py-3">
-    <h2 class="text-center">Lectura RFID - Control de Equipos Médicos</h2>
+    <h2 class="text-center">Lectura RFID - Control de Equipos Institucionales</h2>
     <hr>
     <!-- Formularios en línea -->
     <div class="row">
@@ -119,67 +119,72 @@
             success: function(response) {
                 console.log(response);
                 var filas = "";
-                // Crear las filas dinámicamente con los datos de la tarea de lectura
-                $.each(response.tareas, function(index, item) {
-                    let estiloFila = ''; // Puedes agregar condiciones para cambiar el estilo de la fila si es necesario
 
-                    filas += '<tr ' + estiloFila + '>' +
-                        '<td>' + item.id + '</td>' + // ID de la tarea
-                        '<td>' + item.descripcion_tarea + '</td>' + // Descripción de la tarea
-                        '<td>' + item.tipo_tarea + '</td>' + // Tipo de tarea
-                        '<td style="text-align: center;">' + item.total_equipos + '</td>' + // Total de equipos
-                        '<td style="text-align: center;">' + item.total_leidos + '</td>' + // Total leídos
-                        '<td style="text-align: center;">' + item.total_no_leidos + '</td>' + // Total no leídos
-                        '<td style="text-align: center;">' + item.total_otros + '</td>' + // Total otros
-                        '<td>' + item.feccre + '</td>' + // Fecha de creación de la tarea
-                        '<td>' + item.nombre_ubicacion + '</td>' + // Ubicación de la tarea
-                        '<td><center><i class="bi ' +
-                        (item.estado == 1 ? 'fs-4 bi-send-fill ' : // Estado 1: Solicitud enviada
-                            item.estado == 2 ? 'fs-4 bi bi-pc-display-horizontal' : // Estado 2: En Proceso"
-                            item.estado == 3 ? 'fs-4 bi-check-circle' : // Estado 3: Completado
-                            item.estado == 4 ? 'fs-4 bi-check-circle-fill' : // Estado 4: Por Confirmar
-                            'fs-4 bi-question-circle') + // Estado desconocido
-                        '" style="color: ' +
-                        (item.estado == 1 ? '#1F3BB6' : // Color para estado "Solicitado"
-                            item.estado == 2 ? '#0a1039' : // Color para estado "En Proceso"
-                            item.estado == 3 ? '#05AD30 ' : // Color para estado "Por Confirmar"
-                            item.estado == 4 ? '#2aa932' : // Color para estado "Completado"
-                            '#000') + '; cursor: ' +
-                        (item.estado == 1 || item.estado == 2 || item.estado == 3 ? 'pointer' : 'default') + ';" ' +
-                        'title="' + (item.estado == 1 ? 'Solicitado' :
-                            item.estado == 2 ? 'En Proceso' :
-                            item.estado == 3 ? 'Por Confirmar' :
-                            item.estado == 4 ? 'Completado' :
-                            'Desconocido') +
-                        '"></i></center></td>' +
+                // Verificar si hay tareas
+                if (response.tareas.length === 0) {
+                    filas = '<tr><td colspan="11" class="text-center">Sin tareas asignadas</td></tr>'; // Ajusta el colspan según el número de columnas
+                } else {
+                    // Crear las filas dinámicamente con los datos de la tarea de lectura
+                    $.each(response.tareas, function(index, item) {
+                        let estiloFila = ''; // Puedes agregar condiciones para cambiar el estilo de la fila si es necesario
 
-                        '<td><center>' +
-                        '<div style="display: flex; gap: 5px; justify-content: center;">' +
-                        // Botón Lectura
-                        '<button title="Lectura de RFID" class="btn btn-success btn-sm nuevaLectura" ' +
-                        'data-bs-toggle="modal" data-bs-target="#modalLectura" ' + // Abre el modal de lectura
-                        'data-id="' + item.id + '" ' +
-                        'data-ubicacion_nombre="' + item.nombre_ubicacion + '" ' +
-                        'data-ubicacion="' + item.ubicacion_tarea + '" ' +
-                        (item.estado == 3 || item.estado == 4 ? 'disabled' : '') + '>' +
-                        '<i title="Lectura de RFID" class="bi bi-upc-scan"></i></button>' +
-                        // Botón Reporte PDF
-                        '<button class="btn btn-danger btn-sm reportePDF ' +
-                        (item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' +
-                        'data-id="' + item.id + '">' +
-                        '<i class="bi bi-file-earmark-pdf" title="Generar Reporte PDF"></i></button>' +
-                        // Botón Confirmar
-                        '<button class="btn btn-primary btn-sm confirmar ' +
-                        (item.estado == 1 || item.estado == 2 ? '' : 'disabled') + '" ' +
-                        'data-bs-toggle="modal" data-bs-target="#modalConfirmarTarea" ' +
-                        'data-id="' + item.id + '">' +
-                        '<i class="bi bi-check-circle"></i></button>' +
-                        '</div>' +
-                        '</center></td>' +
-                        '</tr>';
+                        filas += '<tr ' + estiloFila + '>' +
+                            '<td>' + item.id + '</td>' + // ID de la tarea
+                            '<td>' + item.descripcion_tarea + '</td>' + // Descripción de la tarea
+                            '<td>' + item.tipo_tarea + '</td>' + // Tipo de tarea
+                            '<td style="text-align: center;">' + item.total_equipos + '</td>' + // Total de equipos
+                            '<td style="text-align: center;">' + item.total_leidos + '</td>' + // Total leídos
+                            '<td style="text-align: center;">' + item.total_no_leidos + '</td>' + // Total no leídos
+                            '<td style="text-align: center;">' + item.total_otros + '</td>' + // Total otros
+                            '<td>' + item.feccre + '</td>' + // Fecha de creación de la tarea
+                            '<td>' + item.nombre_ubicacion + '</td>' + // Ubicación de la tarea
+                            '<td><center><i class="bi ' +
+                            (item.estado == 1 ? 'fs-4 bi-send-fill ' : // Estado 1: Solicitud enviada
+                                item.estado == 2 ? 'fs-4 bi bi-pc-display-horizontal' : // Estado 2: En Proceso"
+                                item.estado == 3 ? 'fs-4 bi-check-circle' : // Estado 3: Completado
+                                item.estado == 4 ? 'fs-4 bi-check-circle-fill' : // Estado 4: Por Confirmar
+                                'fs-4 bi-question-circle') + // Estado desconocido
+                            '" style="color: ' +
+                            (item.estado == 1 ? '#1F3BB6' : // Color para estado "Solicitado"
+                                item.estado == 2 ? '#0a1039' : // Color para estado "En Proceso"
+                                item.estado == 3 ? '#05AD30 ' : // Color para estado "Por Confirmar"
+                                item.estado == 4 ? '#2aa932' : // Color para estado "Completado"
+                                '#000') + '; cursor: ' +
+                            (item.estado == 1 || item.estado == 2 || item.estado == 3 ? 'pointer' : 'default') + ';" ' +
+                            'title="' + (item.estado == 1 ? 'Solicitado' :
+                                item.estado == 2 ? 'En Proceso' :
+                                item.estado == 3 ? 'Por Confirmar' :
+                                item.estado == 4 ? 'Completado' :
+                                'Desconocido') +
+                            '"></i></center></td>' +
 
-                });
+                            '<td><center>' +
+                            '<div style="display: flex; gap: 5px; justify-content: center;">' +
+                            // Botón Lectura
+                            '<button title="Lectura de RFID" class="btn btn-success btn-sm nuevaLectura" ' +
+                            'data-bs-toggle="modal" data-bs-target="#modalLectura" ' + // Abre el modal de lectura
+                            'data-id="' + item.id + '" ' +
+                            'data-ubicacion_nombre="' + item.nombre_ubicacion + '" ' +
+                            'data-ubicacion="' + item.ubicacion_tarea + '" ' +
+                            (item.estado == 3 || item.estado == 4 ? 'disabled' : '') + '>' +
+                            '<i title="Lectura de RFID" class="bi bi-upc-scan"></i></button>' +
+                            // Botón Reporte PDF
+                            '<button class="btn btn-danger btn-sm reportePDF ' +
+                            (item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' +
+                            'data-id="' + item.id + '">' +
+                            '<i class="bi bi-file-earmark-pdf" title="Generar Reporte PDF"></i></button>' +
+                            // Botón Confirmar
+                            '<button class="btn btn-primary btn-sm confirmar ' +
+                            (item.estado == 1 || item.estado == 2 ? '' : 'disabled') + '" ' +
+                            'data-bs-toggle="modal" data-bs-target="#modalConfirmarTarea" ' +
+                            'data-id="' + item.id + '">' +
+                            '<i class="bi bi-check-circle"></i></button>' +
+                            '</div>' +
+                            '</center></td>' +
+                            '</tr>';
 
+                    });
+                }
                 $("#tareasCreadas").html(filas);
 
                 // Paginación
@@ -257,23 +262,23 @@
 
     $(document).ready(function() {
 
-/*
+        /*
 
-        Swal.fire({
-            title: "Bienvenido al modulo de tareas RFID.",
-            width: 300,
-            padding: "3em",
-            color: "#716add",
-            background: "#fff url(/images/trees.png)",
-            backdrop: `
-                    rgba(0,0,123,0.4)
-                    url("assets/imagenes/gving-crypto.gif")
-                    left top
-                    no-repeat
-                `
-        });
+                Swal.fire({
+                    title: "Bienvenido al modulo de tareas RFID.",
+                    width: 300,
+                    padding: "3em",
+                    color: "#716add",
+                    background: "#fff url(/images/trees.png)",
+                    backdrop: `
+                            rgba(0,0,123,0.4)
+                            url("assets/imagenes/gving-crypto.gif")
+                            left top
+                            no-repeat
+                        `
+                });
 
-*/
+        */
         // Cargar solicitudes iniciales
         cargarSolicitudes(paginaActual);
 

@@ -1,7 +1,6 @@
 <?php $this->load->view('templates/header'); ?>
 
 <style>
-   
     .pagination {
         display: flex;
         justify-content: center;
@@ -12,13 +11,13 @@
 <div class="col py-3">
     <div class="row">
         <h3 class="mb-3">Gestión de Equipos Médicos</h3>
-<hr>
+        <hr>
         <!-- Botón para abrir el modal -->
         <div class="col py-3">
             <div class="row">
                 <div class="col-md-6">
                     <button type="button" id="btnAgregarEquipo" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalEquipo">
-                        Agregar Equipo
+                        Agregar Equipo <i class="bi bi-pc-display"></i>
                     </button>
                 </div>
             </div>
@@ -45,7 +44,7 @@
                         <th>C.RFID</th>
                         <th>Costo</th>
                         <th>Ubicación</th>
-                        
+
                         <th>F.Creación</th>
                         <th>Estado</th>
                         <th>Imagen</th>
@@ -134,6 +133,17 @@
     </div>
 </div>
 
+<!-- validar que el costo no sea negativo-->
+<script>
+    document.getElementById('formulario').addEventListener('submit', function(event) {
+        var costo = document.getElementById('costo').value;
+        if (costo < 0) {
+            event.preventDefault(); // Detiene el envío del formulario
+            alert('El costo no puede ser un valor negativo.');
+        }
+    });
+</script>
+
 
 <script>
     $(document).ready(function() {
@@ -209,7 +219,7 @@
                             '<td>' + item.tag_rfid_id + '</td>' +
                             '<td>' + item.costo + '</td>' +
                             '<td>' + item.ubicacion_nombre + '</td>' +
-                            
+
                             '<td>' + item.feccre + '</td>' +
                             '<td><center><i class="bi ' +
                             (item.estado == 1 ? 'fs-4 bi-check-circle-fill' :

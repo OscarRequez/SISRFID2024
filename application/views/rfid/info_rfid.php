@@ -31,6 +31,12 @@
     .btn {
         margin-top: 10px;
     }
+
+    .imagen-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
 
 <div class="col py-3">
@@ -85,107 +91,109 @@
             </div>
         </div>
     </div>
+
+    <div class="imagen-container">
+        <img src="assets/imagenes/buscarfid.gif" width="250px" alt="Descripción de la imagen" />
+    </div>
 </div>
 
 <script>
     $(document).ready(function() {
-    // Evento click del botón de búsqueda
-    $('#btnBuscar').click(function() {
-        buscarEquipoRFID();
-    });
-
-    // Evento keydown para detectar el Enter en el campo de texto
-    $('#codigoRFID').keydown(function(e) {
-        if (e.keyCode == 13) {  // Código de tecla Enter
-            e.preventDefault();  // Evitar que el formulario se envíe si lo hay
+        // Evento click del botón de búsqueda
+        $('#btnBuscar').click(function() {
             buscarEquipoRFID();
-        }
-    });
+        });
 
-    function buscarEquipoRFID() {
-        var codigoRFID = $('#codigoRFID').val();
+        // Evento keydown para detectar el Enter en el campo de texto
+        $('#codigoRFID').keydown(function(e) {
+            if (e.keyCode == 13) { // Código de tecla Enter
+                e.preventDefault(); // Evitar que el formulario se envíe si lo hay
+                buscarEquipoRFID();
+            }
+        });
 
-        $.ajax({
-            url: "<?php echo site_url('obtener_datos_equipo_rfid'); ?>",
-            type: "POST",
-            data: {
-                codigo: codigoRFID
-            },
-            success: function(response) {
-                response = JSON.parse(response); // Asegúrate de que estás analizando correctamente
+        function buscarEquipoRFID() {
+            var codigoRFID = $('#codigoRFID').val();
 
-                if (response.success && response.data.equipo) {
-                    // Llenar las tarjetas con la información del equipo
-                    $('#informacionEquipo').show(); // Mostrar la sección de información
-                    $('#descripcionEquipo').text(response.data.equipo.descripcion);
-                    $('#tipo_eq').text(response.data.equipo.tipo_nombre);
-                    $('#numeroSerieEquipo').text(response.data.equipo.numero_serie);
-                    $('#ubicacionEquipo').text(response.data.equipo.ubicacion_nombre); // Aquí puedes obtener el nombre si lo necesitas
-                    $('#estadoEquipo').text(
-                        response.data.equipo.estado == "1" ? "Activo" :
-                        response.data.equipo.estado == "0" ? "Inactivo" :
-                        response.data.equipo.estado == "3" ? "Mantenimiento" :
-                        "Desconocido"
-                    );
-                    $('#imagenEquipo').attr('src', response.data.equipo.ruta_imagen);
+            $.ajax({
+                url: "<?php echo site_url('obtener_datos_equipo_rfid'); ?>",
+                type: "POST",
+                data: {
+                    codigo: codigoRFID
+                },
+                success: function(response) {
+                    response = JSON.parse(response); // Asegúrate de que estás analizando correctamente
 
-                    // Asignar el ID del equipo al botón de generar reporte
-                    $('.reporte_rfid_PDF').data('id', response.data.equipo.id); // Asigna el ID del equipo
+                    if (response.success && response.data.equipo) {
+                        // Llenar las tarjetas con la información del equipo
+                        $('#informacionEquipo').show(); // Mostrar la sección de información
+                        $('#descripcionEquipo').text(response.data.equipo.descripcion);
+                        $('#tipo_eq').text(response.data.equipo.tipo_nombre);
+                        $('#numeroSerieEquipo').text(response.data.equipo.numero_serie);
+                        $('#ubicacionEquipo').text(response.data.equipo.ubicacion_nombre); // Aquí puedes obtener el nombre si lo necesitas
+                        $('#estadoEquipo').text(
+                            response.data.equipo.estado == "1" ? "Activo" :
+                            response.data.equipo.estado == "0" ? "Inactivo" :
+                            response.data.equipo.estado == "3" ? "Mantenimiento" :
+                            "Desconocido"
+                        );
+                        $('#imagenEquipo').attr('src', response.data.equipo.ruta_imagen);
 
-                    // Llenar el historial de mantenimientos
-                    $('#numMantenimientos').text(response.data.mantenimientos.length);
+                        // Asignar el ID del equipo al botón de generar reporte
+                        $('.reporte_rfid_PDF').data('id', response.data.equipo.id); // Asigna el ID del equipo
 
-                    $('#listaMantenimientos').empty();
-                    if (response.data.mantenimientos.length > 0) {
-                        $.each(response.data.mantenimientos, function(index, mantenimiento) {
-                            // Formatear la fecha
-                            const fecha = new Date(mantenimiento.fecha_solicitud);
-                            const opcionesFecha = {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric'
-                            };
-                            const fechaFormateada = fecha.toLocaleDateString('es-ES', opcionesFecha); // Formato día/mes/año
+                        // Llenar el historial de mantenimientos
+                        $('#numMantenimientos').text(response.data.mantenimientos.length);
 
-                            $('#listaMantenimientos').append(
-                                `<li>${fechaFormateada} - Costo: ${mantenimiento.costoTotal}</li>`
-                            );
-                        });
+                        $('#listaMantenimientos').empty();
+                        if (response.data.mantenimientos.length > 0) {
+                            $.each(response.data.mantenimientos, function(index, mantenimiento) {
+                                // Formatear la fecha
+                                const fecha = new Date(mantenimiento.fecha_solicitud);
+                                const opcionesFecha = {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                };
+                                const fechaFormateada = fecha.toLocaleDateString('es-ES', opcionesFecha); // Formato día/mes/año
+
+                                $('#listaMantenimientos').append(
+                                    `<li>${fechaFormateada} - Costo: ${mantenimiento.costoTotal}</li>`
+                                );
+                            });
+                        } else {
+                            $('#listaMantenimientos').append('<li>No hay mantenimientos registrados.</li>');
+                        }
+
+                        // Limpiar el campo de búsqueda después de obtener los datos
+                        $('#codigoRFID').val('');
                     } else {
-                        $('#listaMantenimientos').append('<li>No hay mantenimientos registrados.</li>');
+                        // Manejo de errores
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Error',
+                            text: 'No se encontró información del equipo.',
+                            confirmButtonText: 'Ok'
+                        });
                     }
-
-                    // Limpiar el campo de búsqueda después de obtener los datos
-                    $('#codigoRFID').val('');
-                } else {
-                    // Manejo de errores
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
                     Swal.fire({
-                        icon: 'warning',
+                        icon: 'error',
                         title: 'Error',
-                        text: 'No se encontró información del equipo.',
+                        text: 'Ocurrió un error al procesar la solicitud.',
                         confirmButtonText: 'Ok'
                     });
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error al procesar la solicitud.',
-                    confirmButtonText: 'Ok'
-                });
-            }
-        });
-    }
-});
-
+            });
+        }
+    });
 </script>
 
 <script>
-
-$(document).on('click', '.reporte_rfid_PDF', function() {
-    var equipoId = $(this).data('id'); // Capturar el ID del equipo
+    $(document).on('click', '.reporte_rfid_PDF', function() {
+        var equipoId = $(this).data('id'); // Capturar el ID del equipo
 
         // SweetAlert de confirmación
         Swal.fire({

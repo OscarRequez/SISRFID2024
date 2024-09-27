@@ -12,7 +12,7 @@
 <!-- Botón para agregar nuevo usuario -->
 <div class="col py-3">
     <div class="row">
-    <h3 class="mb-3">Registros de Usuarios</h3>
+        <h3 class="mb-3">Registros de Usuarios</h3>
         <hr>
         <!-- Columna para el botón de agregar usuario -->
         <div class="col-md-6 py-3">
@@ -30,28 +30,18 @@
         </div>
     </div>
 
+
     <!-- Modal para agregar usuario -->
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header  bg-primary text-white">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addUserModalLabel">Agregar Nuevo Usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <!-- Mostrar mensajes de error o éxito -->
-                <?php if ($this->session->flashdata('error')): ?>
-                    <div class="alert alert-danger">
-                        <?php echo $this->session->flashdata('error'); ?>
-                    </div>
-                <?php endif; ?>
 
-                <?php if ($this->session->flashdata('success')): ?>
-                    <div class="alert alert-success">
-                        <?php echo $this->session->flashdata('success'); ?>
-                    </div>
-                <?php endif; ?>
                 <div class="modal-body">
-                    <form id="addUserForm" method="post" action="<?php echo site_url('guardar_usuario'); ?>">
+                    <form id="addUserForm">
                         <div class="mb-3">
                             <label for="userEmail" class="form-label">Email</label>
                             <input type="text" class="form-control" id="userEmail" name="email" required autocomplete="off">
@@ -65,8 +55,8 @@
                             <input type="text" class="form-control" id="userName" name="nombre" required autocomplete="off">
                         </div>
                         <div class="mb-3">
-                            <label for="userCedula" class="form-label">Cedula de Identidad</label>
-                            <input type="text" class="form-control" id="userCedula" name="cedula" required autocomplete="off">
+                            <label for="userCedula" class="form-label">Cédula de Identidad</label>
+                            <input type="number" class="form-control" id="userCedula" min="0" name="cedula" autocomplete="off">
                         </div>
                         <div class="mb-3">
                             <label for="userRol" class="form-label">Rol</label>
@@ -81,18 +71,82 @@
         </div>
     </div>
 
+
+    <!-- Validar cédula de identidad -->
     <script>
-        $(document).ready(function() {
-            // Verificar si hay mensajes de error o éxito y abrir el modal automáticamente
-            <?php if ($this->session->flashdata('error') || $this->session->flashdata('success')): ?>
-                $('#addUserModal').modal('show');
-            <?php endif; ?>
+        document.getElementById('addUserForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Detener el envío normal del formulario
+            var cedula = document.getElementById('userCedula').value.trim();
+
+            // Validar si la cédula tiene al menos 7 dígitos
+            if (cedula.length < 7) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'La cédula de identidad debe tener al menos 7 dígitos.'
+                });
+                return;
+            }
+
+            // Validar si la cédula es un número negativo
+            if (parseInt(cedula) < 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'La cédula de identidad no puede ser un número negativo.'
+                });
+                return;
+            }
+
+            // Enviar el formulario vía AJAX
+            // Enviar el formulario vía AJAX
+            $.ajax({
+                url: '<?php echo site_url('guardar_usuario'); ?>', // URL del controlador que guarda el usuario
+                type: 'POST',
+                data: $('#addUserForm').serialize(), // Serializa los datos del formulario
+                dataType: 'json', // Asegurarse de que la respuesta es en JSON
+                success: function(response) {
+                    if (response.status === 'error') {
+                        // Mostrar el mensaje de error con SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message // Mensaje de error desde el servidor
+                        });
+                    } else if (response.status === 'success') {
+                        // Cerrar el modal
+                        $('#addUserModal').modal('hide');
+
+                        // Mostrar mensaje de éxito con SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        // Recargar la página después de un corto tiempo
+                        setTimeout(function() {
+                            location.reload(); // Recargar la página después de cerrar el SweetAlert
+                        }, 1600);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Manejar el error y mostrar mensaje con SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al agregar el usuario',
+                        text: 'Ocurrió un error. Por favor, inténtelo de nuevo.'
+                    });
+                }
+            });
         });
     </script>
 
     <!-- HTML para la tabla y la paginación -->
     <div class="table table-responsive">
-        <h4 class="mb-3">Lista de Usuarios</h4>
+        <h4 class="mb-3">Usuarios del Sistema</h4>
         <table class="table table-hover table-bordered table-responsive">
             <thead class="bg-primary text-white">
                 <tr>
@@ -132,7 +186,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="editCedula" class="form-label">Cédula de Identidad</label>
-                            <input type="text" class="form-control" id="editCedula" name="editCedula" required>
+                            <input type="number" class="form-control" id="editCedula" required min="0" name="editCedula" required>
                         </div>
                         <div class="mb-3">
                             <label for="editEmail" class="form-label">Email</label>
@@ -373,54 +427,81 @@
     }
 </script>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var editModal = new bootstrap.Modal(document.getElementById('editModal'));
         var saveChangesBtn = document.getElementById('saveChanges');
 
         document.addEventListener('click', function(event) {
-            if (event.target.classList.contains('editModal')) {
-                var id = event.target.getAttribute('data-id');
-                var nombre = event.target.getAttribute('data-nombre');
-                var cedula = event.target.getAttribute('data-cedula');
-                var email = event.target.getAttribute('data-email');
-                var rol = event.target.getAttribute('data-rol');
+                if (event.target.classList.contains('editModal')) {
+                    var id = event.target.getAttribute('data-id');
+                    var nombre = event.target.getAttribute('data-nombre');
+                    var cedula = event.target.getAttribute('data-cedula');
+                    var email = event.target.getAttribute('data-email');
+                    var rol = event.target.getAttribute('data-rol');
 
-                document.getElementById('editNombre').value = nombre;
-                document.getElementById('editCedula').value = cedula;
-                document.getElementById('editEmail').value = email;
-                document.getElementById('editContraseña').value = '';
+                    document.getElementById('editNombre').value = nombre;
+                    document.getElementById('editCedula').value = cedula;
+                    document.getElementById('editEmail').value = email;
+                    document.getElementById('editContraseña').value = '';
 
-                obtenerRoles('editRol', rol);
-                editModal.show();
+                    // Obtener roles y seleccionar el rol actual
+                    obtenerRoles('editRol', rol);
+                    editModal.show();
 
-                saveChangesBtn.removeEventListener('click', saveChangesHandler);
-                saveChangesBtn.addEventListener('click', saveChangesHandler);
+                    saveChangesBtn.removeEventListener('click', saveChangesHandler);
+                    saveChangesBtn.addEventListener('click', saveChangesHandler);
 
-                function saveChangesHandler() {
-                    var nombreEdit = document.getElementById('editNombre').value;
-                    var cedulaEdit = document.getElementById('editCedula').value;
-                    var emailEdit = document.getElementById('editEmail').value;
-                    var rolEdit = document.getElementById('editRol').value;
-                    var contraseñaEdit = document.getElementById('editContraseña').value;
+                    function saveChangesHandler() {
+                        var nombreEdit = document.getElementById('editNombre').value;
+                        var cedulaEdit = document.getElementById('editCedula').value;
+                        var emailEdit = document.getElementById('editEmail').value;
+                        var rolEdit = document.getElementById('editRol').value;
+                        var contraseñaEdit = document.getElementById('editContraseña').value;
 
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '<?php echo site_url('actualizar_usuario'); ?>', true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                    xhr.onload = function() {
-                        var response = JSON.parse(xhr.responseText);
-
-                        if (response.status === 'success') {
-                            editModal.hide();
+                        // Validar que la cédula tenga al menos 7 dígitos
+                        if (cedulaEdit.length < 7) {
                             Swal.fire({
-                                position: "top-end",
-                                icon: "success",
-                                title: "Editado con éxito!",
-                                showConfirmButton: false,
-                                timer: 1500
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'La cédula debe tener al menos 7 dígitos.',
+                                showConfirmButton: true
                             });
-                            location.reload(); // Recarga la página si se actualiza correctamente
-                        } else if (response.status === 'error') {
+                            return; // Salir si la validación falla
+                        }
+
+                        // Validar que la cédula no sea negativa
+                        if (parseInt(cedulaEdit) < 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'La cédula no puede ser un número negativo.',
+                                showConfirmButton: true
+                            });
+                            return; // Salir si la validación falla
+                        }
+
+                        // Realizar la solicitud AJAX para actualizar el usuario
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', '<?php echo site_url('actualizar_usuario'); ?>', true);
+                        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                        xhr.onload = function() {
+                            var response = JSON.parse(xhr.responseText);
+
+                            if (response.status === 'success') {
+                                editModal.hide(); // Cierra el modal
+                                Swal.fire({
+                                    title: "Éxito!",
+                                    text: "Datos actualizados exitosamente",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload(); // Recarga la página si el usuario confirma
+                                    }
+                                });
+                            }
+                         else if (response.status === 'error') {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -437,6 +518,7 @@
                         }
                     };
 
+                    // Preparar los datos para enviar
                     var postData = 'id=' + encodeURIComponent(id) +
                         '&nombre=' + encodeURIComponent(nombreEdit) +
                         '&cedula=' + encodeURIComponent(cedulaEdit) +
@@ -444,31 +526,31 @@
                         '&rol=' + encodeURIComponent(rolEdit) +
                         '&contraseña=' + encodeURIComponent(contraseñaEdit);
 
-                    xhr.send(postData);
+                    xhr.send(postData); // Enviar los datos
                 }
             }
         });
 
-        function obtenerRoles(selectId, selectedRol = null) {
-            $.ajax({
-                url: "<?php echo site_url('obtener_roles_ajax'); ?>",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    $('#' + selectId).empty();
-                    $.each(data, function(index, rol) {
-                        var option = $('<option></option>').val(rol.id).text(rol.nombre);
-                        if (selectedRol && rol.nombre === selectedRol) {
-                            option.prop('selected', true);
-                        }
-                        $('#' + selectId).append(option);
-                    });
-                },
-                error: function() {
-                    alert('Error al obtener los roles');
-                }
-            });
-        }
+    function obtenerRoles(selectId, selectedRol = null) {
+        $.ajax({
+            url: "<?php echo site_url('obtener_roles_ajax'); ?>",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                $('#' + selectId).empty();
+                $.each(data, function(index, rol) {
+                    var option = $('<option></option>').val(rol.id).text(rol.nombre);
+                    if (selectedRol && rol.nombre === selectedRol) {
+                        option.prop('selected', true);
+                    }
+                    $('#' + selectId).append(option);
+                });
+            },
+            error: function() {
+                alert('Error al obtener los roles');
+            }
+        });
+    }
     });
 </script>
 

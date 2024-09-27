@@ -27,14 +27,14 @@
 <body>
     <style>
         * {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 14px;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 13px;
 
         }
 
         td,
         th {
-            font-size: 13px !important;
+            font-size: 12px !important;
         }
 
         /* PARA EL TAMAÑO DEL CONTENIDO CENTRAL TOMANDO EL ASIDE*/
@@ -383,7 +383,7 @@
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'rfid', 'registro')): ?>
                                                 <li>
                                                     <a href="<?php echo site_url('registro'); ?>" class="nav-link px-0">
-                                                        <i class="fs-4 bi bi-clipboard2-plus"></i>
+                                                    <i class="fs-4 bi bi-motherboard"></i>
                                                         <span class="d-none d-sm-inline">Panel RFID</span>
                                                     </a>
                                                 </li>
@@ -422,7 +422,7 @@
                                                 <li class="w-100">
                                                     <a href="<?php echo site_url('manuales'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-files"></i>
-                                                        <span class="d-none d-sm-inline">Manuales</span>
+                                                        <span class="d-none d-sm-inline">Informes</span>
                                                     </a>
                                                 </li>
                                             <?php endif; ?>

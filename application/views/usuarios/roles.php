@@ -50,7 +50,7 @@
                 <div class="col-md-6">
                     <!-- Botón para abrir el modal de agregar rol -->
                     <button type="button" class="btn mb-3 bg-primary text-white" data-bs-toggle="modal" data-bs-target="#agregarRolModal">
-                        <i class="bi bi-plus-circle"></i> Agregar Rol
+                    Agregar Rol <i class="bi bi-stack-overflow"></i>
                     </button>
                 </div>
             </div>
