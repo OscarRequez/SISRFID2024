@@ -9,11 +9,11 @@
 </style>
 
 <div class="col py-3">
-
     <div class="row">
-        <div class="col-md-12">
-        <h3 class="mt-4">Listado de Equipos Médicos</h3>
+        <h3 class="mb-3">Listado de Equipos Médicos</h3>
         <hr>
+        <div class="col-md-12">
+
             <!-- Input de búsqueda -->
             <div class="form-group">
                 <input type="text" id="buscar" class="form-control" placeholder="Buscar por Nombre, RFID, Codigo o Ubicación">
@@ -57,7 +57,7 @@
             </div>
             <div class="modal-body text-center">
                 <img id="modalImagen" src="" alt="Imagen del equipo" class="img-fluid">
-                
+
                 <p id="modalDescripcion"> </p>
             </div>
         </div>

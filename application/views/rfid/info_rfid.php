@@ -174,7 +174,10 @@
                             title: 'Error',
                             text: 'No se encontró información del equipo.',
                             confirmButtonText: 'Ok'
+
                         });
+                        // Limpiar el campo de búsqueda después de obtener los datos
+                        $('#codigoRFID').val('');
                     }
                 },
                 error: function(xhr, status, error) {

@@ -655,13 +655,13 @@ class TCPDF {
 	 * Title to be printed on default page header.
 	 * @protected
 	 */
-	protected $header_title = 'HOSPITAL SISAMED - RFID_OS';
+	protected $header_title = 'HOSPITAL DE CLÍNICAS - INFOWEB EQ';
 
 	/**
 	 * String to print on page header after title.
 	 * @protected
 	 */
-	protected $header_string = 'La Paz - Bolivia';
+	protected $header_string = 'La Paz - Bolivia - Dev:OFMC-OFRC';
 
 	/**
 	 * Color for header text (RGB array).

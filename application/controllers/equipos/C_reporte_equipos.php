@@ -64,8 +64,9 @@ class C_reporte_equipos extends MY_Controller
             // Establecer el título del documento
             $pdf->SetTitle('Reporte de los Equipos');
             // Establecer los márgenes
-            $pdf->SetMargins(15, 25, 15); // Ajusta los márgenes izquierdo, superior y derecho
+            $pdf->SetMargins(10, 20, 10); // Ajusta los márgenes izquierdo, superior y derecho
             $pdf->SetHeaderMargin(10); // Ajusta el margen inferior del encabezado
+
 
 
             // Añadir una página

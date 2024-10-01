@@ -127,13 +127,13 @@ $route['confirmar_solicitud'] = 'mantenimiento/C_panel_admin/confirmar_solicitud
 $route['mantenimiento_reporte_fechas'] = 'mantenimiento/C_panel_admin/mantenimiento_reporte_fechas';//
 
 //TECNICOS
-$route['tecnicos'] = 'mantenimiento/C_tecnicos';// Ruta
+$route['tecnicos'] = 'mantenimiento/C_tecnicos';// Ruta tareas de los tecnicos de soporte
 $route['obtener_tareas'] = 'mantenimiento/C_tecnicos/obtener_tareas';// Ruta
 $route['marcar_tarea_hecha'] = 'mantenimiento/C_tecnicos/marcar_tarea_hecha';// Ruta
 $route['generar_reporte_tareas'] = 'mantenimiento/C_tecnicos/generar_reporte_tareas';
 
 //DOCUMENTACION
-$route['registro'] = 'documentacion/C_doc_registro';// Ruta
+$route['registro_doc'] = 'documentacion/C_doc_registro';// Ruta registro de documentos
 $route['obtener_documentos'] = 'documentacion/C_doc_registro/obtener_documentos';// Ruta
 $route['agregar_documento'] = 'documentacion/C_doc_registro/agregar_documento';// Ruta
 $route['editar_documento'] = 'documentacion/C_doc_registro/editar_documento';// Ruta

@@ -429,7 +429,7 @@
 
                                             <?php if ($this->M_permisos->tiene_permiso($this->session->userdata('role'), 'documentacion', 'registro')): ?>
                                                 <li>
-                                                    <a href="<?php echo site_url('registro'); ?>" class="nav-link px-0">
+                                                    <a href="<?php echo site_url('registro_doc'); ?>" class="nav-link px-0">
                                                         <i class="fs-4 bi bi-clipboard2-plus"></i>
                                                         <span class="d-none d-sm-inline">Registro</span>
                                                     </a>

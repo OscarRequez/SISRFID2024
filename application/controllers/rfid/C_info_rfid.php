@@ -97,7 +97,9 @@ class C_info_rfid extends MY_Controller
         // Crear el PDF
         $pdf = new TCPDF();
         $pdf->SetTitle('Reporte del equipo');
-        $pdf->SetMargins(10, 20, 10);
+        // Establecer los márgenes
+        $pdf->SetMargins(15, 25, 15); // Ajusta los márgenes izquierdo, superior y derecho
+        $pdf->SetHeaderMargin(10); // Ajusta el margen inferior del encabezado
         $pdf->AddPage();
 
         // Generar HTML del reporte
