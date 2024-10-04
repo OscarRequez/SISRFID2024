@@ -196,16 +196,18 @@
         // Variable para indicar el modo del modal (agregar o editar)
         var modoModal = 'agregar'; // Puede ser 'agregar' o 'editar'
         var ubicacionOriginal; // Variable para guardar la ubicación original del equipo
+        var cantidadEquipos = 5; // Puedes cambiar este valor según tus necesidades
+        var paginaActual = 1; // Variable para guardar la página actual
 
         // Función para mostrar datos de equipos
-        function mostrarDatosEquipos(valorBuscar, pagina, cantidad) {
+        function mostrarDatosEquipos(valorBuscar, pagina) {
             $.ajax({
                 url: "<?php echo site_url('equipos_mostrar'); ?>",
                 type: "POST",
                 data: {
                     buscar: valorBuscar,
                     nropagina: pagina,
-                    cantidad: cantidad
+                    cantidad: cantidadEquipos
                 },
                 dataType: "json",
                 success: function(response) {
@@ -314,6 +316,7 @@
             });
         }
 
+
         // Cargar ubicaciones en el select
         function cargarUbicaciones() {
             $.ajax({
@@ -350,21 +353,23 @@
 
 
         $(document).ready(function() {
-            mostrarDatosEquipos('', 1, 5); //cantidad de equipos el numero 5
+            mostrarDatosEquipos('', 1); //cantidad de equipos el numero 5
             cargarUbicaciones(); // Cargar ubicaciones al inicio
             cargarTiposEquipo();
 
             $(document).on('submit', '#formBusqueda', function(e) {
                 e.preventDefault();
                 var valorBuscar = $('#valorBuscar').val();
-                mostrarDatosEquipos(valorBuscar, 1, 5);
+                paginaActual = 1; // Reiniciar a la primera página al hacer una búsqueda
+                mostrarDatosEquipos(valorBuscar, paginaActual);
             });
 
             $(document).on('click', '.pagination a', function(e) {
                 e.preventDefault();
                 var pagina = $(this).data('pagina');
                 var valorBuscar = $('#valorBuscar').val();
-                mostrarDatosEquipos(valorBuscar, pagina, 5);
+                paginaActual = pagina; // Actualizamos la página actual
+                mostrarDatosEquipos(valorBuscar, pagina); // Recarga la tabla en la página seleccionada
             });
 
             // Mostrar modal de agregar
@@ -459,7 +464,9 @@
                             dataType: 'json',
                             success: function(response) {
                                 $('#modalEquipo').modal('hide');
-                                mostrarDatosEquipos('', 1, 5);
+                                // Actualizamos el valorBuscar antes de recargar los datos
+                                var valorBuscar = $('#valorBuscar').val();
+                                mostrarDatosEquipos(valorBuscar, paginaActual);
 
                                 // Mostrar SweetAlert basado en la respuesta
                                 if (response.status === 'success') {
@@ -474,6 +481,7 @@
                     var formData = new FormData($('#formEquipo')[0]);
                     var url = (modoModal === 'agregar') ? "<?php echo site_url('agregar_equipo'); ?>" : "<?php echo site_url('editar_equipo'); ?>";
 
+                    // En el éxito de la edición:
                     $.ajax({
                         url: url,
                         type: "POST",
@@ -483,7 +491,9 @@
                         dataType: 'json',
                         success: function(response) {
                             $('#modalEquipo').modal('hide');
-                            mostrarDatosEquipos('', 1, 5);
+                            // Actualizamos el valorBuscar antes de recargar los datos
+                            var valorBuscar = $('#valorBuscar').val();
+                            mostrarDatosEquipos(valorBuscar, paginaActual);
 
                             // Mostrar SweetAlert basado en la respuesta
                             if (response.status === 'success') {
@@ -504,6 +514,7 @@
         });
     });
 </script>
+
 <script>
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {

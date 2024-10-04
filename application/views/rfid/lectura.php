@@ -170,7 +170,7 @@
                             '<i title="Lectura de RFID" class="bi bi-upc-scan"></i></button>' +
                             // Botón Reporte PDF
                             '<button class="btn btn-danger btn-sm reportePDF ' +
-                            (item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' +
+                            (item.estado == 2 ||item.estado == 3 || item.estado == 4 ? '' : 'disabled') + '" ' +
                             'data-id="' + item.id + '">' +
                             '<i class="bi bi-file-earmark-pdf" title="Generar Reporte PDF"></i></button>' +
                             // Botón Confirmar

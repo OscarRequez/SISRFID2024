@@ -17,12 +17,14 @@ class M_registro_tareas extends CI_Model
         return $this->db->insert('tareas_lectura', $data);
     }
 
-    // Función para contar el total de equipos en una ubicación específica
+    // Función para contar el total de equipos en una ubicación específica con estado 1 activo
     public function cantidad_equipos_ubicacion($ubicacion_id)
     {
         $this->db->select('COUNT(*) as total_equipos');
         $this->db->from('equipos_medicos');
         $this->db->where('ubicacion_id', $ubicacion_id); // Filtra por ubicación
+        $this->db->where_in('estado', [1, 3]); // Filtra por estado 1 (activo) o 3 (mantenimiento)
+
         $query = $this->db->get();
 
         // Retorna el número total de equipos en esa ubicación

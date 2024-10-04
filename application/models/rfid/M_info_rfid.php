@@ -81,7 +81,7 @@ class M_info_rfid extends CI_Model
     
     public function obtenerMantenimientos($equipoId) {
         // Obtener historial de mantenimientos
-        $this->db->select('m.fecha_solicitud, m.tipo_mantenimiento, m.costoTotal');
+        $this->db->select('m.id, m.fecha_solicitud, m.tipo_mantenimiento, m.costoTotal');
         $this->db->from('mantenimiento m');
         $this->db->where('m.equipo_id', $equipoId);
         $query = $this->db->get();

@@ -531,8 +531,8 @@
                             if (jsonResponse.error) {
                                 // Mostrar SweetAlert si no hay datos
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
+                                    icon: 'info',
+                                    title: 'Información',
                                     text: jsonResponse.error
                                 });
                             } else {

@@ -68,7 +68,7 @@
             <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title" id="tituloEquipo">Datos del Equipo</h5>
+                        <h5 class="card-title" id="tituloEquipo"><strong>Datos del Equipo</strong></h5>
                         <p class="card-text" id="descripcionEquipo"></p>
                         <p class="card-text"><strong>Codigo:</strong> <span id="numeroSerieEquipo"></span></p>
                         <p class="card-text"><strong>Tipo:</strong> <span id="tipo_eq"></span></p>
@@ -171,8 +171,8 @@
                         // Manejo de errores
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Error',
-                            text: 'No se encontró información del equipo.',
+                            title: 'Información',
+                            text: 'Los datos ingresados, no estan asociados a ningun equipo registrado en el sistema.',
                             confirmButtonText: 'Ok'
 
                         });

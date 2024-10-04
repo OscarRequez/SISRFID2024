@@ -89,6 +89,7 @@
 <h3>Mantenimientos</h3>
 <table border="1">
     <tr>
+        <th><strong>ID Mant.</strong></th>
         <th><strong>Fecha</strong></th>
         <th><strong>Tipo de Mantenimiento</strong></th>
         <th><strong>Costo Total</strong></th>
@@ -102,6 +103,7 @@
             $totalGastos += $mantenimiento->costoTotal; // Sumar cada costo total al total de gastos
         ?>
             <tr>
+                <td><?= $mantenimiento->id ?></td>
                 <td><?= $mantenimiento->fecha_solicitud ?></td>
                 <td><?= $mantenimiento->tipo_mantenimiento ?></td>
                 <td><?= number_format($mantenimiento->costoTotal, 2) ?></td>
@@ -110,7 +112,7 @@
 
         <!-- Fila para mostrar el total de gastos en la última columna -->
         <tr>
-            <td colspan="2" style="text-align: right;"><strong>Total Gastos:</strong></td>
+            <td colspan="3" style="text-align: right;"><strong>Total Gastos:</strong></td>
             <td><strong><?= number_format($totalGastos, 2) ?></strong></td>
         </tr>
 
