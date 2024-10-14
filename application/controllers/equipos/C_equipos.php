@@ -343,7 +343,7 @@ class C_equipos extends MY_Controller
                 // Preparar los datos para la notificación
                 $notificacion = array(
                     'titulo' => ' Eliminacion de Equipo',
-                    'mensaje' => 'El equipo con el id ' .  $this->input->post('id') . ' fue Eliminado por el usuario ' . $this->session->userdata('username') . '',
+                    'mensaje' => 'El equipo con el id ' .  $this->input->post('id') . ' fue Eliminado por el usuario ' . $this->session->userdata('username') . 'con el id de usuario '. $this->session->userdata('user_id') .'',
                     'tipo' => 'info',
                     'rol' => 1, // 100 = administrador
                     'feccre' => date('Y-m-d H:i:s'),
