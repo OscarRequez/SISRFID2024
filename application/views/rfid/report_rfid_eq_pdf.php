@@ -35,7 +35,7 @@
 <p>
     <strong>Fecha del Reporte:</strong> <?php echo $reporte_info['fecha']; ?><br>
     <strong>Empresa:</strong> <?php echo $reporte_info['empresa']; ?><br>
-    <strong>Elaborado por:</strong> <?php echo $reporte_info['elaborado_por']; ?>, <?php echo $reporte_info['puesto']; ?>
+    <strong>Generado por:</strong> <?php echo $reporte_info['elaborado_por']; ?>, <?php echo $reporte_info['puesto']; ?>
 </p>
 <hr>
 

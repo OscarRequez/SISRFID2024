@@ -233,7 +233,7 @@
                                 item.estado == 3 ? 'blue' :
                                 'red') + '; cursor: ' +
                             (item.estado == 0 || item.estado == 3 ? 'pointer' : 'default') + ';" ' +
-                            (item.estado == 0 || item.estado == 3 ? 'data-toggle="modal" data-target="#motivoModal"' : '') +
+                            (item.estado == 0 ? 'data-toggle="modal" data-target="#motivoModal"' : '') +
                             'title="' + (item.estado == 1 ? 'Activo' :
                                 item.estado == 3 ? 'Mantenimiento' :
                                 'Eliminado') +
