@@ -562,14 +562,35 @@
                             dataType: "json",
                             success: function(response) {
                                 if (response.status === 'success') {
-                                    // Actualiza el ícono del estado en la vista
+                                    // 1. Capturamos la fila (tr) ANTES de modificar el HTML
                                     var icon = $('i[data-id="' + id + '"]');
+                                    var fila = icon.closest('tr');
+
+                                    // 2. Actualiza el ícono del estado en la vista
                                     icon.removeClass('bi-check-circle bi-wrench-adjustable-circle-fill').addClass('fs-4 bi-x-circle-fill').css('color', 'red');
 
-                                    // Actualiza el HTML de la celda con el nuevo ícono y atributos
+                                    // 3. Actualiza el HTML de la celda con el nuevo ícono y atributos
                                     var newHtml = '<center><i class="fs-4 bi-x-circle-fill" data-id="' + id + '" data-estado="0" style="color: red; cursor: pointer;" data-toggle="modal" data-target="#motivoModal" title="Eliminado"></i></center>';
-                                    icon.closest('tr').find('td').eq(8).html(newHtml);
+                                    fila.find('td').eq(8).html(newHtml);
+                                    
+                                    // 4. Deshabilitar los botones de Editar y Eliminar en esta misma fila
+                                    var btnEditar = fila.find('.editModal');
+                                    var btnEliminar = fila.find('.btn-danger');
 
+                                    // Deshabilitar botón Editar y limpiar sus datos
+                                    btnEditar.addClass('disabled')
+                                             .attr('onclick', 'return false;');
+                                             
+                                    var attrs = ['data-id', 'data-nombre', 'data-descripcion', 'data-numero-serie', 'data-tag-rfid-id', 'data-ubicacion-id', 'data-estado', 'data-imagen', 'data-costo', 'data-tipo_eq'];
+                                    attrs.forEach(function(attr) {
+                                        btnEditar.removeAttr(attr);
+                                    });
+
+                                    // Deshabilitar botón Eliminar
+                                    btnEliminar.addClass('disabled')
+                                               .attr('onclick', 'return false;');
+
+                                    // 5. Mostrar alerta de éxito
                                     Swal.fire({
                                         title: 'Eliminado!',
                                         text: 'El equipo ha sido eliminado.',
